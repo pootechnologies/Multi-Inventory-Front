@@ -138,12 +138,16 @@ const ManageUsers = () => {
       return;
     }
     try {
+      const payload = {
+        email: data.email,
+        tenant_groups: selectedGroup ? [selectedGroup.value] : [],
+      };
+      if (data.password && data.password.trim()) {
+        payload.password = data.password;
+      }
       await axiosInstance.patch(
         `${API_ENDPOINTS.TENANT_USERS}${selectedUser.id}/`,
-        {
-          email: data.email,
-          tenant_groups: selectedGroup ? [selectedGroup.value] : [],
-        }
+        payload
       );
       fetchUsers();
       toast.success("User updated successfully!");
@@ -261,6 +265,7 @@ const ManageUsers = () => {
     const [selectedGroup, setSelectedGroup] = useState(
       initialGroupName ? { label: initialGroupName, value: initialGroupName } : null
     );
+    const [showPassword, setShowPassword] = useState(false);
 
     return (
       <div className="fixed inset-0 z-[100] flex items-start md:items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -283,6 +288,26 @@ const ManageUsers = () => {
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
                 />
                 {errors.email && <p className="mt-2 text-sm text-rose-500">Email is required</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    placeholder="Leave blank to keep current password"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-4 pr-12 py-3 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none flex items-center justify-center h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {errors.password && <p className="mt-2 text-sm text-rose-500">Password must be at least 6 characters</p>}
               </div>
 
               <div className="space-y-2">

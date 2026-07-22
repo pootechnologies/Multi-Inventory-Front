@@ -58,6 +58,8 @@ const AddPurchasePage          = lazy(() => import("./pages/Purchase/AddPurchase
 const ExpenseProductPage       = lazy(() => import("./pages/Purchase/ExpenseProductPage"));
 const AddExpenseProductPage    = lazy(() => import("./pages/Purchase/AddExpenseProductPage"));
 const Subscriptions            = lazy(() => import("./pages/Accounts/Subscriptions"));
+const ManageSubscriptions       = lazy(() => import("./pages/Accounts/ManageSubscriptions"));
+const AddSubscription           = lazy(() => import("./pages/Accounts/AddSubscription"));
 
 // ── Suspense fallback ─────────────────────────────────────────────────────────
 const PageLoader = () => (
@@ -181,7 +183,9 @@ function App() {
         <Route path="/permissions"      element={page(Permissions)} />
 
         {/* Subscription */}
-        <Route path="/subscription"   element={page(Subscriptions)} />
+        <Route path="/subscription"           element={page(Subscriptions)} />
+        <Route path="/add_subscription"       element={page(AddSubscription)} />
+        <Route path="/manage_subscriptions"  element={page(ManageSubscriptions)} />
 
         {/* Misc */}
         <Route path="/logs"    element={page(Logs)} />

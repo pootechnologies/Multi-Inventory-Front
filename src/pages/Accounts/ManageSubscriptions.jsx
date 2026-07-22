@@ -577,9 +577,6 @@ const ManageSubscriptions = () => {
                             <DropdownMenuItem onClick={() => handleUpdateClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
                               <Pencil className="h-4 w-4" /> Update
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700">
-                              <Trash2 className="h-4 w-4" /> Delete
-                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -634,9 +631,6 @@ const ManageSubscriptions = () => {
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleUpdateClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
                           <Pencil className="h-4 w-4" /> Update
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700">
-                          <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

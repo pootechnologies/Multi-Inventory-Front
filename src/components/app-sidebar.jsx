@@ -13,7 +13,8 @@ import {
   CreditCard,
   PackageCheck,
   Bot,
-  Shield
+  Shield,
+  Building2
 } from "lucide-react";
 import { NavMain } from "@/components/ui/nav-main";
 import { NavUser } from "@/components/ui/nav-user";
@@ -174,6 +175,15 @@ const data = {
       items: [
         { title: "add_expense", url: "/add_expense", permission: "inventory.add_otherexpenses" },
         { title: "manage_expense", url: "/manage_expense", permission: "inventory.view_otherexpenses" },
+      ],
+    },
+    {
+      title: "Manage Tenants",
+      url: "#",
+      icon: Building2,
+      items: [
+        { title: "Add Subscriptions", url: "/add_subscription" },
+        { title: "Manage Subscriptions", url: "/manage_subscriptions" },
       ],
     },
     // {

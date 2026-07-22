@@ -3,6 +3,7 @@ export const API_BASE_URL_LOGIN = "https://inventory.pootechnologies.tech/";
 export const IMAGE_BASE_URL = "https://inventory.pootechnologies.tech/";
 export const API_BASE_RENDER_URL = "http://poo-drf.onrender.com/api";
 export const API_BASE_PROFILE = "https://inventory.pootechnologies.tech/auth";
+export const API_BASE_TENANT_URL = "https://inventory.pootechnologies.tech/";
 
 export const API_ENDPOINTS = {
   LOGIN: "/token/",
@@ -11,6 +12,7 @@ export const API_ENDPOINTS = {
   TENANT_PROVISION: "tenants/provision-tenant/",
   TENANT_GROUPS: "tenant/groups/",
   TENANT_USERS: "tenant-users/",
+  TENANT_SUBSCRIPTIONS: "tenants/Subscription-plans/",
   PRODUCTS: "/products",
   PRODUCT_LOG: "/product_log/",
   CATEGORIES: "/category",

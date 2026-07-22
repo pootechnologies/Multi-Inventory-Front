@@ -22,6 +22,12 @@ axiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    
+    const schemaName = localStorage.getItem("schema_name");
+    if (schemaName) {
+      config.headers["X-Schema-Name"] = schemaName;
+    }
+    
     // Cache-busting for GET requests
     if (config.method === "get") {
       config.params = {

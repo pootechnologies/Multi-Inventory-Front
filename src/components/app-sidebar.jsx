@@ -194,6 +194,7 @@ const data = {
         { title: "manage_users", url: "/manage_users", permission: "inventory.view_companyinfo" },
         { title: "Permissions", url: "/permissions", icon: Shield, permission: "inventory.view_companyinfo" },
         { title: "Company Profile", url: "/company_profile", permission: "inventory.view_companyinfo" },
+        { title: "Subscription", url: "/subscription"},
       ],
     }
   ],

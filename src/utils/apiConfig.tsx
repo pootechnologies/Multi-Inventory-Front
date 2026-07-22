@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
   TENANT_USERS: "tenant-users/",
   TENANT_SUBSCRIPTIONS: "tenants/Subscription-plans/",
   TENANT_SUBSCRIPTIONS_MANAGE: "tenants/Subscription-plans/",
+  TENANT_PAYMENT_CHECK: "init-payment/",
   TENANT_PAY: "chapa-initiate",
   PRODUCTS: "/products",
   PRODUCT_LOG: "/product_log/",

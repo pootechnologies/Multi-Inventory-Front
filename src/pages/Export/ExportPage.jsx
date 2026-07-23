@@ -466,24 +466,24 @@ export const ExportPage = () => {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   onClick={clearFilters} 
                   variant="outline" 
-                  className="h-11 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium px-4"
+                  className="h-11 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium px-4 w-full sm:w-auto"
                 >
                   {t("clear_filter")}
                 </Button>
                 <Button
-                  className="h-11 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 font-medium shadow-sm px-4"
+                  className="h-11 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 font-medium shadow-sm px-4 w-full sm:w-auto"
                   onClick={() => setShouldFetch(true)}
                   disabled={!startDate || !endDate}
                 >
                   Apply Dates
                 </Button>
                 <Button 
-                  className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 px-6 font-medium transition-all active:scale-95 flex items-center gap-2"
+                  className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 px-6 font-medium transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
                   onClick={handleExport}
                 >
                   <Download className="w-4 h-4" />

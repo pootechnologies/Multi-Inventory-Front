@@ -22,6 +22,22 @@ const UpdateModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -251,6 +267,7 @@ const UpdateModal = ({
               </div>
 
               {/* Receipt No */}
+              {showReceiptOption && (
               <div className="sm:col-span-2">
                 <label className={labelClass}>{t("receipt_no")}</label>
                 <input
@@ -260,6 +277,7 @@ const UpdateModal = ({
                   className={inputClass}
                 />
               </div>
+              )}
 
               {/* Image */}
               <div className="sm:col-span-2">

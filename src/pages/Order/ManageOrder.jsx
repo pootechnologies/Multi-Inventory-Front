@@ -1786,13 +1786,19 @@ function ManageOrder() {
                         {t("total_amount")}
                      </div>
                   </TableHead>
-                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                     <div className="flex items-center gap-2">
-                        <CreditCard className="w-4 h-4 text-gray-400" />
-                        {t("payment_status")}
-                     </div>
-                  </TableHead>
-                  {!isSimplifiedView && (
+                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                         <CreditCard className="w-4 h-4 text-gray-400" />
+                         {t("payment_status")}
+                      </div>
+                   </TableHead>
+                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                         <ReceiptText className="w-4 h-4 text-gray-400" />
+                         {t("receipt")}
+                      </div>
+                   </TableHead>
+                   {!isSimplifiedView && (
                     <>
                       <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                          <div className="flex items-center gap-2">
@@ -1837,12 +1843,17 @@ function ManageOrder() {
                           <TableCell>{formatCurrency(order.vat)}</TableCell>
                         </>
                       )}
-                      <TableCell className="font-bold">{formatCurrency(order.total_amount)}</TableCell>
-                      <TableCell>
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ color: order.payment_status === "Paid" ? "#10b981" : order.payment_status === "Pending" ? "#f59e0b" : "#ef4444", backgroundColor: order.payment_status === "Paid" ? "#d1fae5" : order.payment_status === "Pending" ? "#fef3c7" : "#fee2e2" }}>
-                          {order.payment_status}
-                        </span>
-                      </TableCell>
+                       <TableCell className="font-bold">{formatCurrency(order.total_amount)}</TableCell>
+                       <TableCell>
+                         <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ color: order.payment_status === "Paid" ? "#10b981" : order.payment_status === "Pending" ? "#f59e0b" : "#ef4444", backgroundColor: order.payment_status === "Paid" ? "#d1fae5" : order.payment_status === "Pending" ? "#fef3c7" : "#fee2e2" }}>
+                           {order.payment_status}
+                         </span>
+                       </TableCell>
+                       <TableCell>
+                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
+                           {order.receipt || "N/A"}
+                         </span>
+                       </TableCell>
                       {!isSimplifiedView && (
                         <>
                           <TableCell className="text-green-600">{formatCurrency(order.paid_amount)}</TableCell>
@@ -1887,7 +1898,7 @@ function ManageOrder() {
                   ))
                 ) : isLoadingOrders ? (
                   <TableRow>
-                    <TableCell colSpan={isSimplifiedView ? 6 : 12} className="h-32 text-center">
+                    <TableCell colSpan={isSimplifiedView ? 7 : 14} className="h-32 text-center">
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
                         <span className="text-sm font-medium text-gray-400">Loading orders...</span>
@@ -1896,7 +1907,7 @@ function ManageOrder() {
                   </TableRow>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={isSimplifiedView ? 6 : 12} className="h-24 text-center text-gray-500 font-medium">
+                    <TableCell colSpan={isSimplifiedView ? 7 : 14} className="h-24 text-center text-gray-500 font-medium">
                       No orders found.
                     </TableCell>
                   </TableRow>
@@ -1961,12 +1972,18 @@ function ManageOrder() {
                       <span className="text-gray-700 font-medium">{t("total_amount")}</span>
                       <span className="font-bold text-gray-900">{formatCurrency(order.total_amount)} ETB</span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">{t("payment_status")}</span>
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ color: order.payment_status === "Paid" ? "#10b981" : order.payment_status === "Pending" ? "#f59e0b" : "#ef4444", backgroundColor: order.payment_status === "Paid" ? "#d1fae5" : order.payment_status === "Pending" ? "#fef3c7" : "#fee2e2" }}>
-                        {order.payment_status}
-                      </span>
-                    </div>
+                     <div className="flex justify-between items-center">
+                       <span className="text-gray-600">{t("payment_status")}</span>
+                       <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ color: order.payment_status === "Paid" ? "#10b981" : order.payment_status === "Pending" ? "#f59e0b" : "#ef4444", backgroundColor: order.payment_status === "Paid" ? "#d1fae5" : order.payment_status === "Pending" ? "#fef3c7" : "#fee2e2" }}>
+                         {order.payment_status}
+                       </span>
+                     </div>
+                     <div className="flex justify-between items-center">
+                       <span className="text-gray-600">{t("receipt")}</span>
+                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
+                         {order.receipt || "N/A"}
+                       </span>
+                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                       <span className="text-gray-600">{t("status")}</span>
                       <span className="px-2.5 py-1 rounded-md text-xs font-semibold text-white" style={{ backgroundColor: order.status === "Pending" ? "#f59e0b" : order.status === "Done" ? "#10b981" : "#ef4444" }}>

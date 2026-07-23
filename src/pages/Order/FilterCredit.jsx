@@ -31,6 +31,22 @@ const FilterOrders = () => {
   const [expandedCards, setExpandedCards] = useState(new Set());
   const itemsPerPage = 10;
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   const {
     data: orderItems = [],
     isLoading,
@@ -156,31 +172,35 @@ const FilterOrders = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
-              <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
-              <div className="relative z-10">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                    <ReceiptText className="w-5 h-5" />
+            {showReceiptOption && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                      <ReceiptText className="w-5 h-5" />
+                    </div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("with_receipt")}</p>
                   </div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("with_receipt")}</p>
+                  <h3 className="text-2xl font-bold text-gray-900">{countWithReceipt}</h3>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">{countWithReceipt}</h3>
               </div>
-            </div>
+            )}
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
-              <div className="absolute right-0 top-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
-              <div className="relative z-10">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
-                    <ActivitySquare className="w-5 h-5" />
+            {showReceiptOption && (
+              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
+                <div className="absolute right-0 top-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                      <ActivitySquare className="w-5 h-5" />
+                    </div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("without_receipt")}</p>
                   </div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("without_receipt")}</p>
+                  <h3 className="text-2xl font-bold text-gray-900">{countWithoutReceipt}</h3>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">{countWithoutReceipt}</h3>
               </div>
-            </div>
+            )}
 
             <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
               <div className="absolute right-0 top-0 w-24 h-24 bg-purple-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
@@ -198,6 +218,7 @@ const FilterOrders = () => {
 
           {/* Filters */}
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            {showReceiptOption && (
             <div className="space-y-2">
               <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 block">
                 {t("filter_by_receipt")}
@@ -225,6 +246,7 @@ const FilterOrders = () => {
                 }}
               />
             </div>
+            )}
             
             <div className="space-y-2">
               <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 block">
@@ -273,12 +295,14 @@ const FilterOrders = () => {
                       {t("products")}
                     </div>
                   </TableHead>
+                  {showReceiptOption && (
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <ReceiptText className="w-4 h-4 text-gray-400" />
                       {t("receipt")}
                     </div>
                   </TableHead>
+                  )}
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">{t("package")}</TableHead>
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">{t("quantity")}</TableHead>
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
@@ -301,11 +325,13 @@ const FilterOrders = () => {
                     <TableRow key={item.id} className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
                       <TableCell className="font-medium text-gray-500">#{item.id}</TableCell>
                       <TableCell className="font-semibold text-gray-900">{item.product_name}</TableCell>
+                      {showReceiptOption && (
                       <TableCell>
                         <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}>
                           {item.item_receipt}
                         </span>
                       </TableCell>
+                      )}
                       <TableCell>{item.package || "-"}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
                       <TableCell className="font-semibold text-emerald-600">{formatCurrency(item.price)} ETB</TableCell>
@@ -318,7 +344,7 @@ const FilterOrders = () => {
                   ))
                 ) : isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center">
+                    <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-32 text-center">
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
                         <span className="text-sm font-medium text-gray-400">Loading details...</span>
@@ -327,7 +353,7 @@ const FilterOrders = () => {
                   </TableRow>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center text-gray-500 font-medium">
+                    <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-24 text-center text-gray-500 font-medium">
                       No items found.
                     </TableCell>
                   </TableRow>
@@ -387,12 +413,14 @@ const FilterOrders = () => {
 
                   {expandedCards.has(item.id) && (
                     <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-sm animate-in fade-in slide-in-from-top-2">
+                      {showReceiptOption && (
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">{t("receipt")}</span>
                         <span className={`px-2 py-0.5 rounded text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}>
                           {item.item_receipt}
                         </span>
                       </div>
+                      )}
                       <div className="flex justify-between">
                         <span className="text-gray-600">{t("package")}</span>
                         <span className="font-medium text-gray-900">{item.package || "-"}</span>

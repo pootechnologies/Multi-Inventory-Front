@@ -177,7 +177,7 @@ const CreditDetailPage = () => {
   const totalPages = Math.ceil(sortedData.length / modalItemsPerPage);
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Gradient Header */}
         <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">

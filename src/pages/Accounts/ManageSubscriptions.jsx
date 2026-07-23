@@ -37,7 +37,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Check
+  Check,
+  ReceiptText
 } from "lucide-react";
 
 const ManageSubscriptions = () => {
@@ -53,6 +54,22 @@ const ManageSubscriptions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [isLoading, setIsLoading] = useState(true);
+
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
 
   const {
     register,
@@ -536,13 +553,21 @@ const ManageSubscriptions = () => {
                       Duration
                     </div>
                   </TableHead>
-                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-gray-400" />
-                      Status
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">Actions</TableHead>
+                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                     <div className="flex items-center gap-2">
+                       <Check className="w-4 h-4 text-gray-400" />
+                       Status
+                     </div>
+                   </TableHead>
+                   {showReceiptOption && (
+                     <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                       <div className="flex items-center gap-2">
+                         <ReceiptText className="w-4 h-4 text-gray-400" />
+                         Receipt
+                       </div>
+                     </TableHead>
+                   )}
+                   <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -553,17 +578,24 @@ const ManageSubscriptions = () => {
                       <TableCell className="font-semibold text-gray-900">{subscription.name}</TableCell>
                       <TableCell className="font-semibold text-gray-900">${subscription.price}</TableCell>
                       <TableCell className="font-semibold text-gray-900">{subscription.duration_days} days</TableCell>
-                      <TableCell>
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          subscription.is_active 
-                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                            : 'bg-red-100 text-red-700 border border-red-200'
-                        }`}>
-                          <Check className="h-3 w-3" />
-                          {subscription.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
+                       <TableCell>
+                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                           subscription.is_active 
+                             ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                             : 'bg-red-100 text-red-700 border border-red-200'
+                         }`}>
+                           <Check className="h-3 w-3" />
+                           {subscription.is_active ? 'Active' : 'Inactive'}
+                         </span>
+                       </TableCell>
+                       {showReceiptOption && (
+                         <TableCell>
+                           <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
+                             N/A
+                           </span>
+                         </TableCell>
+                       )}
+                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900 rounded-lg">
@@ -582,22 +614,22 @@ const ManageSubscriptions = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                ) : isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-32 text-center">
-                      <div className="flex justify-center items-center gap-3 text-emerald-600">
-                        <Spinner className="size-6" />
-                        <span className="text-sm font-medium text-gray-400">Loading subscriptions...</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-gray-500 font-medium">
-                      No subscription plans found.
-                    </TableCell>
-                  </TableRow>
-                )}
+                 ) : isLoading ? (
+                   <TableRow>
+                     <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-32 text-center">
+                       <div className="flex justify-center items-center gap-3 text-emerald-600">
+                         <Spinner className="size-6" />
+                         <span className="text-sm font-medium text-gray-400">Loading subscriptions...</span>
+                       </div>
+                     </TableCell>
+                   </TableRow>
+                 ) : (
+                   <TableRow>
+                     <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-24 text-center text-gray-500 font-medium">
+                       No subscription plans found.
+                     </TableCell>
+                   </TableRow>
+                 )}
               </TableBody>
             </Table>
           </div>
@@ -651,19 +683,27 @@ const ManageSubscriptions = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-                      Status
-                    </p>
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      subscription.is_active 
-                        ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                        : 'bg-red-100 text-red-700 border border-red-200'
-                    }`}>
-                      <Check className="h-3 w-3" />
-                      {subscription.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </div>
+                   <div>
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+                       Status
+                     </p>
+                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                       subscription.is_active 
+                         ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                         : 'bg-red-100 text-red-700 border border-red-200'
+                     }`}>
+                       <Check className="h-3 w-3" />
+                       {subscription.is_active ? 'Active' : 'Inactive'}
+                     </span>
+                   </div>
+                   {showReceiptOption && (
+                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                       <span className="text-gray-600 text-sm">Receipt</span>
+                       <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
+                         N/A
+                       </span>
+                     </div>
+                   )}
                 </div>
               ))
             ) : isLoading ? (

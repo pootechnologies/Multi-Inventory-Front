@@ -53,6 +53,22 @@ const ProductTable = ({
   const [expandedCards, setExpandedCards] = useState({});
   const itemsPerPage = 10;
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   const handleCategoryChange = (option) => {
     setSelectedCategory(option ? option.value : "");
     setCurrentPage(1);
@@ -398,10 +414,12 @@ const ProductTable = ({
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("package")}</p>
                             <p className="font-medium text-gray-900">{product.package || "N/A"}</p>
                           </div>
+                          {showReceiptOption && (
                           <div>
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Receipt No</p>
                             <p className="font-medium text-gray-900">{product.receipt_no || "N/A"}</p>
                           </div>
+                          )}
                           <div>
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("created_by")}</p>
                             <p className="font-medium text-gray-900">{product.user}</p>
@@ -504,36 +522,38 @@ const ProductTable = ({
                 )}
               </button>
 
-              {expandedCards[product.id] && (
-                <div className="mt-1 pt-3 border-t space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("category_name")}</span>
-                    <span className="font-medium text-gray-900">{product.category_name || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("description")}</span>
-                    <span className="font-medium text-gray-900">{product.description || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("supplier")}</span>
-                    <span className="font-medium text-gray-900">{product.supplier_name || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("unit")}</span>
-                    <span className="font-medium text-gray-900">{product.unit}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("piece")}</span>
-                    <span className="font-medium text-gray-900">{product.piece || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("package")}</span>
-                    <span className="font-medium text-gray-900">{product.package || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Receipt No</span>
-                    <span className="font-medium text-gray-900">{product.receipt_no || "N/A"}</span>
-                  </div>
+                  {expandedCards[product.id] && (
+                    <div className="mt-1 pt-3 border-t space-y-3 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("category_name")}</span>
+                        <span className="font-medium text-gray-900">{product.category_name || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("description")}</span>
+                        <span className="font-medium text-gray-900">{product.description || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("supplier")}</span>
+                        <span className="font-medium text-gray-900">{product.supplier_name || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("unit")}</span>
+                        <span className="font-medium text-gray-900">{product.unit}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("piece")}</span>
+                        <span className="font-medium text-gray-900">{product.piece || "N/A"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("package")}</span>
+                        <span className="font-medium text-gray-900">{product.package || "N/A"}</span>
+                      </div>
+                      {showReceiptOption && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Receipt No</span>
+                        <span className="font-medium text-gray-900">{product.receipt_no || "N/A"}</span>
+                      </div>
+                      )}
                   <div className="flex justify-between">
                     <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("created_by")}</span>
                     <span className="font-medium text-gray-900">{product.user}</span>

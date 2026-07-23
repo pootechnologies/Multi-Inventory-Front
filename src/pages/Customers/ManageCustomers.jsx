@@ -217,13 +217,13 @@ const ManageCustomer = () => {
     if (!customer) return null;
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
-        <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-          <div className="p-6">
+        <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col mt-6 md:mt-0 max-h-[calc(100vh-180px)] md:max-h-[85vh]" onClick={e => e.stopPropagation()}>
+          <div className="p-6 border-b border-gray-100">
             <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors">
               <X className="h-5 w-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3">
               <div className="p-2 bg-gray-900 text-white rounded-xl shadow-md">
                 <Info className="h-6 w-6" />
               </div>
@@ -231,7 +231,9 @@ const ManageCustomer = () => {
                 {t("customer_details")}
               </h2>
             </div>
+          </div>
 
+          <div className="flex-1 min-h-0 overflow-y-auto p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
@@ -289,12 +291,12 @@ const ManageCustomer = () => {
                 <p className="font-semibold text-gray-900">{customer.sub_city || "N/A"}</p>
               </div>
             </div>
+          </div>
 
-            <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
-                {t("close")}
-              </Button>
-            </div>
+          <div className="p-6 border-t border-gray-100 flex justify-end">
+            <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
+              {t("close")}
+            </Button>
           </div>
         </div>
       </div>

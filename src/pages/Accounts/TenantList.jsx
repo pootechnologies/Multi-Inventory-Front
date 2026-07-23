@@ -18,6 +18,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
+import Select from "react-select";
 import {
   MoreVertical,
   Eye,
@@ -51,6 +52,13 @@ const TenantList = () => {
   const itemsPerPage = 10;
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
+  const [trialFilter, setTrialFilter] = useState(null);
+
+  const trialOptions = [
+    { value: null, label: "All" },
+    { value: true, label: "Yes" },
+    { value: false, label: "No" },
+  ];
 
   const fetchTenants = async () => {
     setIsLoading(true);
@@ -83,6 +91,15 @@ const TenantList = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    let result = [...tenants];
+    if (trialFilter !== null) {
+      result = result.filter((tenant) => tenant.on_trial === trialFilter);
+    }
+    setFilteredTenants(result);
+    setCurrentPage(1);
+  }, [trialFilter, tenants]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -153,13 +170,13 @@ const TenantList = () => {
     if (!tenant) return null;
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
-        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-          <div className="p-6">
+        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col mt-6 md:mt-0 max-h-[calc(100vh-180px)] md:max-h-[85vh]" onClick={e => e.stopPropagation()}>
+          <div className="p-6 border-b border-gray-100">
             <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors">
               <X className="h-5 w-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-600 text-white rounded-xl shadow-md">
                 <Info className="h-6 w-6" />
               </div>
@@ -167,58 +184,58 @@ const TenantList = () => {
                 Tenant Details
               </h2>
             </div>
+          </div>
 
-            <div className="space-y-3">
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Hash className="w-3 h-3" /> ID
-                </p>
-                <p className="font-semibold text-gray-900">#{tenant.id}</p>
-              </div>
-
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Building2 className="w-3 h-3" /> Name
-                </p>
-                <p className="font-semibold text-gray-900">{tenant.name}</p>
-              </div>
-
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Database className="w-3 h-3" /> Schema Name
-                </p>
-                <p className="font-semibold text-gray-900">{tenant.schema_name}</p>
-              </div>
-
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Calendar className="w-3 h-3" /> Paid Until
-                </p>
-                <p className="font-semibold text-gray-900">{tenant.paid_until}</p>
-              </div>
-
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Check className="w-3 h-3" /> On Trial
-                </p>
-                <p className={`font-semibold ${tenant.on_trial ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {tenant.on_trial ? 'Yes' : 'No'}
-                </p>
-              </div>
-
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
-                  <Mail className="w-3 h-3" /> Email
-                </p>
-                <p className="font-semibold text-gray-900">{tenant.owner?.email || 'N/A'}</p>
-              </div>
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-3">
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Hash className="w-3 h-3" /> ID
+              </p>
+              <p className="font-semibold text-gray-900">#{tenant.id}</p>
             </div>
 
-            <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
-                Close
-              </Button>
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Building2 className="w-3 h-3" /> Name
+              </p>
+              <p className="font-semibold text-gray-900">{tenant.name}</p>
             </div>
+
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Database className="w-3 h-3" /> Schema Name
+              </p>
+              <p className="font-semibold text-gray-900">{tenant.schema_name}</p>
+            </div>
+
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Calendar className="w-3 h-3" /> Paid Until
+              </p>
+              <p className="font-semibold text-gray-900">{tenant.paid_until}</p>
+            </div>
+
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Check className="w-3 h-3" /> On Trial
+              </p>
+              <p className={`font-semibold ${tenant.on_trial ? 'text-emerald-600' : 'text-red-600'}`}>
+                {tenant.on_trial ? 'Yes' : 'No'}
+              </p>
+            </div>
+
+            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
+                <Mail className="w-3 h-3" /> Email
+              </p>
+              <p className="font-semibold text-gray-900">{tenant.owner?.email || 'N/A'}</p>
+            </div>
+          </div>
+
+          <div className="p-6 border-t border-gray-100 flex justify-end">
+            <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
+              Close
+            </Button>
           </div>
         </div>
       </div>
@@ -420,7 +437,36 @@ const TenantList = () => {
 
         <div className="p-4 sm:p-6 space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="text-sm font-medium text-gray-500">
+            <div className="w-full max-w-xs">
+              <div className="relative group">
+                <Select
+                  options={trialOptions}
+                  value={trialOptions.find((opt) => opt.value === trialFilter)}
+                  onChange={(option) => setTrialFilter(option ? option.value : null)}
+                  placeholder="Filter by On Trial..."
+                  className="w-full react-select-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderRadius: "0.75rem",
+                      borderColor: "hsl(var(--border))",
+                      backgroundColor: "hsl(var(--background))",
+                      minHeight: "2.5rem",
+                      "&:hover": {
+                        borderColor: "hsl(var(--primary))",
+                      },
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      borderRadius: "0.75rem",
+                      overflow: "hidden",
+                    }),
+                  }}
+                />
+              </div>
+            </div>
+            <div className="text-sm font-medium text-gray-500 hidden sm:block">
               Total Tenants: <span className="text-gray-900 font-bold ml-1">{filteredTenants.length}</span>
             </div>
           </div>

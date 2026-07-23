@@ -335,6 +335,22 @@ export function AppSidebar({ ...props }) {
   }
   const isSales = Array.isArray(tenantGroups) && tenantGroups.includes("Sales");
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   const hasPermission = (permission) => {
     if (!permission) return true;
     if (!Array.isArray(tenantPermissions)) return false;
@@ -344,6 +360,10 @@ export function AppSidebar({ ...props }) {
   const filteredNavMain = data.navMain
     .map((item) => {
       if (isSales && item.title === "Settings") return null;
+
+      if (!showReceiptOption && (item.title === "performa" || item.title === "purchase")) {
+        return null;
+      }
 
       if (item.items) {
         const filteredItems = item.items.filter((sub) =>

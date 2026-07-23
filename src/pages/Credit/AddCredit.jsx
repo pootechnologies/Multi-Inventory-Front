@@ -916,6 +916,22 @@ const AddCredit = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmOrderModal, setShowConfirmOrderModal] = useState(false);
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   const { t } = useTranslation();
 
   const formatter = new Intl.NumberFormat("am-ET", {
@@ -1082,7 +1098,7 @@ const AddCredit = () => {
       return;
     }
 
-    const hasMissingReceipt = !receipt;
+    const hasMissingReceipt = showReceiptOption && !receipt;
     if (hasMissingReceipt) {
       toast.error("Please select a receipt option.");
       return;
@@ -1443,46 +1459,48 @@ const AddCredit = () => {
                   </>
                 )}
               </>
-              <div className="space-y-2">
-                <label
-                  htmlFor="receipt"
-                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                >
-                  {t("receipt")}
-                </label>
-                <Select
-                  isClearable
-                  id="receipt"
-                  options={[
-                    { value: "Receipt", label: "Receipt" },
-                    { value: "No Receipt", label: "No Receipt" },
-                  ]}
-                  onChange={handleReceiptChange}
-                  value={receipt ? { value: receipt, label: receipt } : null}
-                  placeholder={t("choice_receipt")}
-                  unstyled
-                  classNames={{
-                    control: ({ isFocused }) =>
-                      `flex h-11 w-full bg-muted/20 border ${
-                        isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : "border-muted-foreground/20"
-                      } rounded-xl transition-all text-sm py-1 px-2`,
-                    menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
-                    option: ({ isFocused, isSelected }) =>
-                      `px-4 py-2 cursor-pointer transition-colors ${
-                        isSelected
-                          ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                          : isFocused
-                          ? "bg-muted/50 text-gray-900 dark:text-white"
-                          : "hover:bg-muted/50 text-gray-900 dark:text-white"
-                      }`,
-                    placeholder: () => "text-muted-foreground",
-                    singleValue: () => "text-gray-900 dark:text-white",
-                    valueContainer: () => "gap-1 px-1",
-                    indicatorsContainer: () => "gap-1 pr-2",
-                    indicatorSeparator: () => "hidden",
-                  }}
-                />
-              </div>
+              {showReceiptOption && (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="receipt"
+                    className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                  >
+                    {t("receipt")}
+                  </label>
+                  <Select
+                    isClearable
+                    id="receipt"
+                    options={[
+                      { value: "Receipt", label: "Receipt" },
+                      { value: "No Receipt", label: "No Receipt" },
+                    ]}
+                    onChange={handleReceiptChange}
+                    value={receipt ? { value: receipt, label: receipt } : null}
+                    placeholder={t("choice_receipt")}
+                    unstyled
+                    classNames={{
+                      control: ({ isFocused }) =>
+                        `flex h-11 w-full bg-muted/20 border ${
+                          isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : "border-muted-foreground/20"
+                        } rounded-xl transition-all text-sm py-1 px-2`,
+                      menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                      option: ({ isFocused, isSelected }) =>
+                        `px-4 py-2 cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                            : isFocused
+                            ? "bg-muted/50 text-gray-900 dark:text-white"
+                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                        }`,
+                      placeholder: () => "text-muted-foreground",
+                      singleValue: () => "text-gray-900 dark:text-white",
+                      valueContainer: () => "gap-1 px-1",
+                      indicatorsContainer: () => "gap-1 pr-2",
+                      indicatorSeparator: () => "hidden",
+                    }}
+                  />
+                </div>
+              )}
 
               <div className=" ">
                 <div className="flex flex-col md:flex-row gap-4 mt-4"></div>

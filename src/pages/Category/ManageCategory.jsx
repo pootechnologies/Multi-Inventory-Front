@@ -359,7 +359,7 @@ const ManageCategory = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isSubmitting && onClose()}>
+      <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isSubmitting && onClose()}>
         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
           <div className="p-6">
             <button onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
@@ -428,7 +428,7 @@ const ManageCategory = () => {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
       {isVisible && (
         <button
           onClick={scrollToTop}

@@ -91,7 +91,7 @@ const ProductLog = () => {
 
   if (error) {
     return (
-      <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+      <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-10 text-center text-red-500 font-medium">
           Error loading data
         </div>
@@ -100,7 +100,7 @@ const ProductLog = () => {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
       {isVisible && (
         <button
           onClick={scrollToTop}

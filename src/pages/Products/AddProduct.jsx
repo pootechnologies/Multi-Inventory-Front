@@ -33,6 +33,22 @@ const AddProduct = () => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -416,6 +432,7 @@ const AddProduct = () => {
             </div>
             
             {/* Receipt No */}
+            {showReceiptOption && (
             <div className="space-y-2">
               <label htmlFor="receipt_no" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
                 {t("with_receipt_product")}
@@ -433,6 +450,7 @@ const AddProduct = () => {
                 <p className="text-red-500 text-xs mt-1 ml-1">{errors.receipt_no.message}</p>
               )}
             </div>
+            )}
 
             <div className="hidden md:block"></div>
 

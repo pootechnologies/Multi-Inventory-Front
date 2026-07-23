@@ -415,7 +415,7 @@ const TenantList = () => {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-7xl mx-auto w-full">
+    <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
       {isVisible && (
         <button
           onClick={scrollToTop}

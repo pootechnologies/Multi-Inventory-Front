@@ -1247,6 +1247,22 @@ function ManageCredit() {
   const [totalPages, setTotalPages] = useState(0);
   const PAGE_SIZE = 10; // Match your backend page size
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+
   // Add this function to toggle the view mode
   const toggleView = () => {
     setIsSimplifiedView(!isSimplifiedView);
@@ -1782,12 +1798,14 @@ function ManageCredit() {
                         {t("total_amount")}
                      </div>
                   </TableHead>
-                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                         <ReceiptText className="w-4 h-4 text-gray-400" />
-                         {t("receipt")}
-                      </div>
-                   </TableHead>
+                   {showReceiptOption && (
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                       <div className="flex items-center gap-2">
+                          <ReceiptText className="w-4 h-4 text-gray-400" />
+                          {t("receipt")}
+                       </div>
+                    </TableHead>
+                   )}
                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                          <CreditCard className="w-4 h-4 text-gray-400" />
@@ -1845,11 +1863,13 @@ function ManageCredit() {
                            {order.payment_status}
                          </span>
                        </TableCell>
-                       <TableCell>
-                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
-                           {order.receipt || "N/A"}
-                         </span>
-                       </TableCell>
+                        {showReceiptOption && (
+                          <TableCell>
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
+                              {order.receipt || "N/A"}
+                            </span>
+                          </TableCell>
+                        )}
                       {!isSimplifiedView && (
                         <>
                           <TableCell className="text-green-600">{formatCurrency(order.paid_amount)}</TableCell>
@@ -1882,7 +1902,7 @@ function ManageCredit() {
                             <DropdownMenuItem onClick={() => { setSelectedOrderId(order.id); showOrderDetails(order); }} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
                               <Eye className="h-4 w-4" /> {t("view")}
                             </DropdownMenuItem>
-                            {order.status !== "Pending" && order.status !== "Cancelled" && (
+                            {showReceiptOption && order.status !== "Pending" && order.status !== "Cancelled" && (
                               <DropdownMenuItem onClick={() => { setSelectedOrderId(order.id); handleGeneratePDF(order); }} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
                                 <FileText className="h-4 w-4" /> {t("receipt")}
                               </DropdownMenuItem>
@@ -1894,7 +1914,7 @@ function ManageCredit() {
                   ))
                 ) : isLoadingOrders ? (
                   <TableRow>
-                    <TableCell colSpan={isSimplifiedView ? 7 : 14} className="h-32 text-center">
+                    <TableCell colSpan={isSimplifiedView ? (showReceiptOption ? 7 : 6) : (showReceiptOption ? 14 : 13)} className="h-32 text-center">
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
                         <span className="text-sm font-medium text-gray-400">Loading orders...</span>
@@ -1903,7 +1923,7 @@ function ManageCredit() {
                   </TableRow>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={isSimplifiedView ? 7 : 14} className="h-24 text-center text-gray-500 font-medium">
+                    <TableCell colSpan={isSimplifiedView ? (showReceiptOption ? 7 : 6) : (showReceiptOption ? 14 : 13)} className="h-24 text-center text-gray-500 font-medium">
                       No orders found.
                     </TableCell>
                   </TableRow>
@@ -1950,7 +1970,7 @@ function ManageCredit() {
                         <DropdownMenuItem onClick={() => { setSelectedOrderId(order.id); showOrderDetails(order); }} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
                           <Eye className="h-4 w-4" /> {t("view")}
                         </DropdownMenuItem>
-                        {order.status !== "Pending" && order.status !== "Cancelled" && (
+                        {showReceiptOption && order.status !== "Pending" && order.status !== "Cancelled" && (
                           <DropdownMenuItem onClick={() => { setSelectedOrderId(order.id); handleGeneratePDF(order); }} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
                             <FileText className="h-4 w-4" /> {t("receipt")}
                           </DropdownMenuItem>
@@ -1974,12 +1994,14 @@ function ManageCredit() {
                          {order.payment_status}
                        </span>
                      </div>
-                     <div className="flex justify-between items-center">
-                       <span className="text-gray-600">{t("receipt")}</span>
-                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
-                         {order.receipt || "N/A"}
-                       </span>
-                     </div>
+                      {showReceiptOption && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">{t("receipt")}</span>
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${order.receipt === "Receipt" ? "text-emerald-700 bg-emerald-50" : "text-gray-500 bg-gray-100"}`}>
+                            {order.receipt || "N/A"}
+                          </span>
+                        </div>
+                      )}
                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                       <span className="text-gray-600">{t("status")}</span>
                       <span className="px-2.5 py-1 rounded-md text-xs font-semibold text-white" style={{ backgroundColor: order.status === "Pending" ? "#f59e0b" : order.status === "Done" ? "#10b981" : "#ef4444" }}>

@@ -272,7 +272,7 @@ const data = {
         { title: "Manage Subscriptions", url: "/manage_subscriptions" },
       ],
     },
-    {
+  {
       title: "settings",
       url: "#",
       icon: Settings,
@@ -350,6 +350,7 @@ export function AppSidebar({ ...props }) {
 
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showTenantsOption = currentUserEmail === "poo@gmail.com";
 
   const hasPermission = (permission) => {
     if (!permission) return true;
@@ -362,6 +363,10 @@ export function AppSidebar({ ...props }) {
       if (isSales && item.title === "Settings") return null;
 
       if (!showReceiptOption && (item.title === "performa" || item.title === "purchase")) {
+        return null;
+      }
+
+      if (!showTenantsOption && item.title === "Manage Tenants") {
         return null;
       }
 

@@ -38,7 +38,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
-  ReceiptText
+  ReceiptText,
 } from "lucide-react";
 
 const ManageSubscriptions = () => {
@@ -69,7 +69,8 @@ const ManageSubscriptions = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   const {
     register,
@@ -88,9 +89,11 @@ const ManageSubscriptions = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get(
-        `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS_MANAGE}`
+        `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS_MANAGE}`,
       );
-      const sortedSubscriptions = response.data.results.sort((a, b) => b.id - a.id);
+      const sortedSubscriptions = response.data.results.sort(
+        (a, b) => b.id - a.id,
+      );
       setSubscriptions(sortedSubscriptions);
       setFilteredSubscriptions(sortedSubscriptions);
     } catch (error) {
@@ -120,7 +123,9 @@ const ManageSubscriptions = () => {
     let result = [...subscriptions];
 
     if (selectedOption) {
-      result = result.filter((subscription) => subscription.id === selectedOption.value);
+      result = result.filter(
+        (subscription) => subscription.id === selectedOption.value,
+      );
     }
 
     setFilteredSubscriptions(result);
@@ -161,15 +166,19 @@ const ManageSubscriptions = () => {
   const deleteSubscription = () => {
     if (!subscriptionToDelete) return Promise.resolve();
     return axiosInstance
-      .delete(`${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS_MANAGE}${subscriptionToDelete.id}/`)
+      .delete(
+        `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS_MANAGE}${subscriptionToDelete.id}/`,
+      )
       .then(() => {
         setSubscriptions(
-          subscriptions.filter((subscription) => subscription.id !== subscriptionToDelete.id)
+          subscriptions.filter(
+            (subscription) => subscription.id !== subscriptionToDelete.id,
+          ),
         );
         setFilteredSubscriptions(
           filteredSubscriptions.filter(
-            (subscription) => subscription.id !== subscriptionToDelete.id
-          )
+            (subscription) => subscription.id !== subscriptionToDelete.id,
+          ),
         );
         toast.success("Subscription deleted successfully!");
         closeConfirmDelete();
@@ -177,7 +186,7 @@ const ManageSubscriptions = () => {
       .catch((error) => {
         console.error("There was an error deleting the subscription:", error);
         toast.error(
-          error.response?.data?.error || "Failed to delete subscription!"
+          error.response?.data?.error || "Failed to delete subscription!",
         );
         closeConfirmDelete();
       });
@@ -201,30 +210,41 @@ const ManageSubscriptions = () => {
           price: data.price,
           duration_days: data.duration_days,
           is_active: data.is_active,
-        }
+        },
       );
       fetchSubscriptions();
       toast.success("Subscription updated successfully!");
       setIsUpdateModalOpen(false);
     } catch (error) {
       console.error("There was an error updating the subscription:", error);
-      toast.error(error.response?.data?.error || "Failed to update subscription!");
+      toast.error(
+        error.response?.data?.error || "Failed to update subscription!",
+      );
     }
   };
 
   const totalPages = Math.ceil(filteredSubscriptions.length / itemsPerPage);
   const displaySubscriptions = filteredSubscriptions.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const Modal = ({ subscription, onClose }) => {
     if (!subscription) return null;
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
-        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="p-6">
-            <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors">
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
               <X className="h-5 w-5" />
             </button>
 
@@ -242,42 +262,56 @@ const ManageSubscriptions = () => {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Hash className="w-3 h-3" /> ID
                 </p>
-                <p className="font-semibold text-gray-900">#{subscription.id}</p>
+                <p className="font-semibold text-gray-900">
+                  #{subscription.id}
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Crown className="w-3 h-3" /> Plan Name
                 </p>
-                <p className="font-semibold text-gray-900">{subscription.name}</p>
+                <p className="font-semibold text-gray-900">
+                  {subscription.name}
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <DollarSign className="w-3 h-3" /> Price
                 </p>
-                <p className="font-semibold text-gray-900">${subscription.price}</p>
+                <p className="font-semibold text-gray-900">
+                  ${subscription.price}
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Hash className="w-3 h-3" /> Duration
                 </p>
-                <p className="font-semibold text-gray-900">{subscription.duration_days} days</p>
+                <p className="font-semibold text-gray-900">
+                  {subscription.duration_days} days
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Check className="w-3 h-3" /> Status
                 </p>
-                <p className={`font-semibold ${subscription.is_active ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {subscription.is_active ? 'Active' : 'Inactive'}
+                <p
+                  className={`font-semibold ${subscription.is_active ? "text-emerald-600" : "text-red-600"}`}
+                >
+                  {subscription.is_active ? "Active" : "Inactive"}
                 </p>
               </div>
             </div>
 
             <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="rounded-xl border-gray-200 w-24"
+              >
                 Close
               </Button>
             </div>
@@ -300,9 +334,19 @@ const ManageSubscriptions = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isDeleting && onCancel()}>
-        <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl relative text-center p-8 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-          <button onClick={() => !isDeleting && onCancel()} disabled={isDeleting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={() => !isDeleting && onCancel()}
+      >
+        <div
+          className="bg-white rounded-3xl w-full max-w-sm shadow-2xl relative text-center p-8 animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => !isDeleting && onCancel()}
+            disabled={isDeleting}
+            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
             <X className="h-5 w-5" />
           </button>
 
@@ -314,7 +358,8 @@ const ManageSubscriptions = () => {
             Are you sure?
           </h2>
           <p className="text-gray-500 mb-8 px-2 text-sm leading-relaxed">
-            Do you really want to delete this subscription plan? This action cannot be undone.
+            Do you really want to delete this subscription plan? This action
+            cannot be undone.
           </p>
 
           <div className="flex justify-center space-x-3">
@@ -362,10 +407,20 @@ const ManageSubscriptions = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isSubmitting && onClose()}>
-        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={() => !isSubmitting && onClose()}
+      >
+        <div
+          className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="p-6">
-            <button onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <button
+              onClick={() => !isSubmitting && onClose()}
+              disabled={isSubmitting}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
               <X className="h-5 w-5" />
             </button>
 
@@ -378,7 +433,10 @@ const ManageSubscriptions = () => {
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+            <form
+              onSubmit={handleSubmit(handleFormSubmit)}
+              className="space-y-6"
+            >
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2 block">
                   Plan Name
@@ -436,14 +494,23 @@ const ManageSubscriptions = () => {
                     {...register("is_active")}
                     className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                   />
-                  <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="is_active"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Active
                   </label>
                 </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-6 mt-6">
-                <Button type="button" variant="ghost" onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="rounded-xl font-medium disabled:opacity-40">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => !isSubmitting && onClose()}
+                  disabled={isSubmitting}
+                  className="rounded-xl font-medium disabled:opacity-40"
+                >
                   Cancel
                 </Button>
                 <Button
@@ -525,7 +592,10 @@ const ManageSubscriptions = () => {
               </div>
             </div>
             <div className="text-sm font-medium text-gray-500 hidden sm:block">
-              Total Plans: <span className="text-gray-900 font-bold ml-1">{filteredSubscriptions.length}</span>
+              Total Plans:{" "}
+              <span className="text-gray-900 font-bold ml-1">
+                {filteredSubscriptions.length}
+              </span>
             </div>
           </div>
 
@@ -534,7 +604,9 @@ const ManageSubscriptions = () => {
             <Table>
               <TableHeader className="bg-gray-50/80">
                 <TableRow className="border-b-gray-100">
-                  <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap"># ID</TableHead>
+                  <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
+                    # ID
+                  </TableHead>
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <Crown className="w-4 h-4 text-gray-400" />
@@ -553,60 +625,88 @@ const ManageSubscriptions = () => {
                       Duration
                     </div>
                   </TableHead>
-                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                     <div className="flex items-center gap-2">
-                       <Check className="w-4 h-4 text-gray-400" />
-                       Status
-                     </div>
-                   </TableHead>
-                   {showReceiptOption && (
-                     <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                       <div className="flex items-center gap-2">
-                         <ReceiptText className="w-4 h-4 text-gray-400" />
-                         Receipt
-                       </div>
-                     </TableHead>
-                   )}
-                   <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">Actions</TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-gray-400" />
+                      Status
+                    </div>
+                  </TableHead>
+                  {showReceiptOption && (
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <ReceiptText className="w-4 h-4 text-gray-400" />
+                        Receipt
+                      </div>
+                    </TableHead>
+                  )}
+                  <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {displaySubscriptions.length > 0 ? (
                   displaySubscriptions.map((subscription) => (
-                    <TableRow key={subscription.id} className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
-                      <TableCell className="font-medium text-gray-500">#{subscription.id}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{subscription.name}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">${subscription.price}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{subscription.duration_days} days</TableCell>
-                       <TableCell>
-                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                           subscription.is_active 
-                             ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                             : 'bg-red-100 text-red-700 border border-red-200'
-                         }`}>
-                           <Check className="h-3 w-3" />
-                           {subscription.is_active ? 'Active' : 'Inactive'}
-                         </span>
-                       </TableCell>
-                       {showReceiptOption && (
-                         <TableCell>
-                           <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
-                             N/A
-                           </span>
-                         </TableCell>
-                       )}
-                       <TableCell className="text-right">
+                    <TableRow
+                      key={subscription.id}
+                      className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors"
+                    >
+                      <TableCell className="font-medium text-gray-500">
+                        #{subscription.id}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {subscription.name}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        ${subscription.price}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {subscription.duration_days} days
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            subscription.is_active
+                              ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                              : "bg-red-100 text-red-700 border border-red-200"
+                          }`}
+                        >
+                          <Check className="h-3 w-3" />
+                          {subscription.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </TableCell>
+                      {showReceiptOption && (
+                        <TableCell>
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
+                            N/A
+                          </span>
+                        </TableCell>
+                      )}
+                      <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900 rounded-lg">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-gray-400 hover:text-gray-900 rounded-lg"
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-lg border-gray-100 p-1">
-                            <DropdownMenuItem onClick={() => handleViewClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-40 rounded-xl shadow-lg border-gray-100 p-1"
+                          >
+                            <DropdownMenuItem
+                              onClick={() => handleViewClick(subscription)}
+                              className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50"
+                            >
                               <Eye className="h-4 w-4" /> View
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleUpdateClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
+                            <DropdownMenuItem
+                              onClick={() => handleUpdateClick(subscription)}
+                              className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50"
+                            >
                               <Pencil className="h-4 w-4" /> Update
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -614,22 +714,30 @@ const ManageSubscriptions = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                 ) : isLoading ? (
-                   <TableRow>
-                     <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-32 text-center">
-                       <div className="flex justify-center items-center gap-3 text-emerald-600">
-                         <Spinner className="size-6" />
-                         <span className="text-sm font-medium text-gray-400">Loading subscriptions...</span>
-                       </div>
-                     </TableCell>
-                   </TableRow>
-                 ) : (
-                   <TableRow>
-                     <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-24 text-center text-gray-500 font-medium">
-                       No subscription plans found.
-                     </TableCell>
-                   </TableRow>
-                 )}
+                ) : isLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={showReceiptOption ? 7 : 6}
+                      className="h-32 text-center"
+                    >
+                      <div className="flex justify-center items-center gap-3 text-emerald-600">
+                        <Spinner className="size-6" />
+                        <span className="text-sm font-medium text-gray-400">
+                          Loading subscriptions...
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={showReceiptOption ? 7 : 6}
+                      className="h-24 text-center text-gray-500 font-medium"
+                    >
+                      No subscription plans found.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
@@ -638,7 +746,10 @@ const ManageSubscriptions = () => {
           <div className="md:hidden space-y-4">
             {displaySubscriptions.length > 0 ? (
               displaySubscriptions.map((subscription) => (
-                <div key={subscription.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4">
+                <div
+                  key={subscription.id}
+                  className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4"
+                >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
@@ -653,15 +764,28 @@ const ManageSubscriptions = () => {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                        >
                           <MoreVertical className="h-5 w-5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-lg border-gray-100 p-1">
-                        <DropdownMenuItem onClick={() => handleViewClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-40 rounded-xl shadow-lg border-gray-100 p-1"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => handleViewClick(subscription)}
+                          className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50"
+                        >
                           <Eye className="h-4 w-4" /> View
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleUpdateClick(subscription)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
+                        <DropdownMenuItem
+                          onClick={() => handleUpdateClick(subscription)}
+                          className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50"
+                        >
                           <Pencil className="h-4 w-4" /> Update
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -673,43 +797,51 @@ const ManageSubscriptions = () => {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Price
                       </p>
-                      <p className="text-gray-900 text-[15px] font-bold">${subscription.price}</p>
+                      <p className="text-gray-900 text-[15px] font-bold">
+                        ${subscription.price}
+                      </p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Duration
                       </p>
-                      <p className="text-gray-900 text-[15px] font-bold">{subscription.duration_days} days</p>
+                      <p className="text-gray-900 text-[15px] font-bold">
+                        {subscription.duration_days} days
+                      </p>
                     </div>
                   </div>
 
-                   <div>
-                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
-                       Status
-                     </p>
-                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                       subscription.is_active 
-                         ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                         : 'bg-red-100 text-red-700 border border-red-200'
-                     }`}>
-                       <Check className="h-3 w-3" />
-                       {subscription.is_active ? 'Active' : 'Inactive'}
-                     </span>
-                   </div>
-                   {showReceiptOption && (
-                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                       <span className="text-gray-600 text-sm">Receipt</span>
-                       <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
-                         N/A
-                       </span>
-                     </div>
-                   )}
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+                      Status
+                    </p>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        subscription.is_active
+                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                          : "bg-red-100 text-red-700 border border-red-200"
+                      }`}
+                    >
+                      <Check className="h-3 w-3" />
+                      {subscription.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  {showReceiptOption && (
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                      <span className="text-gray-600 text-sm">Receipt</span>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold text-gray-500 bg-gray-100">
+                        N/A
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))
             ) : isLoading ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
                 <Spinner className="size-7 text-emerald-600" />
-                <span className="text-sm font-medium text-gray-400">Loading subscriptions...</span>
+                <span className="text-sm font-medium text-gray-400">
+                  Loading subscriptions...
+                </span>
               </div>
             ) : (
               <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-500 font-medium shadow-sm">
@@ -725,7 +857,9 @@ const ManageSubscriptions = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="gap-2 rounded-lg"
                 >
@@ -738,14 +872,17 @@ const ManageSubscriptions = () => {
                     if (totalPages > 5) {
                       if (currentPage > 3) {
                         pageNum = currentPage - 2 + i;
-                        if (pageNum > totalPages) pageNum = totalPages - (4 - i);
+                        if (pageNum > totalPages)
+                          pageNum = totalPages - (4 - i);
                       }
                     }
                     if (pageNum <= totalPages) {
                       return (
                         <Button
                           key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "ghost"}
+                          variant={
+                            currentPage === pageNum ? "default" : "ghost"
+                          }
                           size="icon"
                           className="h-8 w-8 rounded-lg"
                           onClick={() => setCurrentPage(pageNum)}
@@ -760,7 +897,9 @@ const ManageSubscriptions = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages || totalPages === 0}
                   className="gap-2 rounded-lg"
                 >

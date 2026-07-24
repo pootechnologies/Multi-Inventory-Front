@@ -272,16 +272,16 @@ const data = {
         { title: "Manage Subscriptions", url: "/manage_subscriptions" },
       ],
     },
-  // {
-  //     title: "settings",
-  //     url: "#",
-  //     icon: Settings,
-  //     items: [
-  //       { title: "accounts", url: "/accounts" },
-  //       { title: "profile", url: "/profile" },
-  //       { title: "company_profile", url: "/company_profile" },
-  //     ],
-  //   },
+    // {
+    //     title: "settings",
+    //     url: "#",
+    //     icon: Settings,
+    //     items: [
+    //       { title: "accounts", url: "/accounts" },
+    //       { title: "profile", url: "/profile" },
+    //       { title: "company_profile", url: "/company_profile" },
+    //     ],
+    //   },
     {
       title: "Settings",
       url: "#",
@@ -349,7 +349,8 @@ export function AppSidebar({ ...props }) {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const showTenantsOption = currentUserEmail === "poo@gmail.com";
 
   const hasPermission = (permission) => {
@@ -362,7 +363,10 @@ export function AppSidebar({ ...props }) {
     .map((item) => {
       if (isSales && item.title === "Settings") return null;
 
-      if (!showReceiptOption && (item.title === "performa" || item.title === "purchase")) {
+      if (
+        !showReceiptOption &&
+        (item.title === "performa" || item.title === "purchase")
+      ) {
         return null;
       }
 

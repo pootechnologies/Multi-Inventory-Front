@@ -5,19 +5,19 @@ import Select from "react-select";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  PackagePlus, 
-  Package, 
-  Tags, 
-  DollarSign, 
-  Box, 
-  Archive, 
-  Layers, 
-  Scale, 
-  Receipt, 
-  Truck, 
-  AlignLeft, 
-  Plus 
+import {
+  PackagePlus,
+  Package,
+  Tags,
+  DollarSign,
+  Box,
+  Archive,
+  Layers,
+  Scale,
+  Receipt,
+  Truck,
+  AlignLeft,
+  Plus,
 } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import AddSupplierModal from "./AddSupplierModal";
@@ -47,7 +47,8 @@ const AddProduct = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -57,7 +58,7 @@ const AddProduct = () => {
           response.data.map((category) => ({
             id: category.id,
             label: category.name,
-          }))
+          })),
         );
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -70,7 +71,7 @@ const AddProduct = () => {
           response.data.map((supplier) => ({
             id: supplier.id,
             label: supplier.name,
-          }))
+          })),
         );
       } catch (error) {
         console.error("Error fetching suppliers:", error);
@@ -165,7 +166,7 @@ const AddProduct = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       reset();
       setSelectedCategory(null);
@@ -192,7 +193,7 @@ const AddProduct = () => {
         response.data.map((category) => ({
           id: category.id,
           label: category.name,
-        }))
+        })),
       );
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -211,7 +212,7 @@ const AddProduct = () => {
         response.data.map((supplier) => ({
           id: supplier.id,
           label: supplier.name,
-        }))
+        })),
       );
     } catch (error) {
       console.error("Error fetching suppliers:", error);
@@ -232,10 +233,12 @@ const AddProduct = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             {/* Name - full width */}
             <div className="space-y-2 md:col-span-2">
-              <label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="name"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("product_name")}
               </label>
               <div className="relative group">
@@ -243,19 +246,24 @@ const AddProduct = () => {
                 <Input
                   type="text"
                   id="name"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.name ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.name ? "border-red-500" : ""}`}
                   placeholder={t("product_name")}
                   {...register("name")}
                 />
               </div>
               {errors.name && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.name.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
             {/* Category */}
             <div className="space-y-2 md:col-span-2">
-              <label htmlFor="category" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="category"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("category")}
               </label>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -278,18 +286,23 @@ const AddProduct = () => {
                     classNames={{
                       control: ({ isFocused }) =>
                         `flex h-11 w-full pl-10 bg-muted/20 border ${
-                          errors.category ? "border-red-500" : "border-muted-foreground/20"
+                          errors.category
+                            ? "border-red-500"
+                            : "border-muted-foreground/20"
                         } ${
-                          isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : ""
+                          isFocused
+                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                            : ""
                         } rounded-xl transition-all text-sm py-1`,
-                      menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                      menu: () =>
+                        "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
                         `px-4 py-2 cursor-pointer transition-colors ${
                           isSelected
                             ? "bg-emerald-500/10 text-emerald-600 font-medium"
                             : isFocused
-                            ? "bg-muted/50 text-gray-900 dark:text-white"
-                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                              ? "bg-muted/50 text-gray-900 dark:text-white"
+                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",
@@ -309,13 +322,18 @@ const AddProduct = () => {
                 </Button>
               </div>
               {errors.category && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.category.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.category.message}
+                </p>
               )}
             </div>
 
             {/* Buying Price */}
             <div className="space-y-2">
-              <label htmlFor="buying_price" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="buying_price"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("buying_price")}
               </label>
               <div className="relative group">
@@ -323,7 +341,7 @@ const AddProduct = () => {
                 <Input
                   type="number"
                   id="buying_price"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.buying_price ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.buying_price ? "border-red-500" : ""}`}
                   {...register("buying_price", {
                     valueAsNumber: true,
                     required: false,
@@ -331,13 +349,18 @@ const AddProduct = () => {
                 />
               </div>
               {errors.buying_price && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.buying_price.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.buying_price.message}
+                </p>
               )}
             </div>
 
             {/* Selling Price */}
             <div className="space-y-2">
-              <label htmlFor="selling_price" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="selling_price"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("selling_price")}
               </label>
               <div className="relative group">
@@ -345,18 +368,23 @@ const AddProduct = () => {
                 <Input
                   type="number"
                   id="selling_price"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.selling_price ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.selling_price ? "border-red-500" : ""}`}
                   {...register("selling_price", { valueAsNumber: true })}
                 />
               </div>
               {errors.selling_price && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.selling_price.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.selling_price.message}
+                </p>
               )}
             </div>
 
             {/* Piece */}
             <div className="space-y-2">
-              <label htmlFor="piece" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="piece"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("piece")}
               </label>
               <div className="relative group">
@@ -364,18 +392,23 @@ const AddProduct = () => {
                 <Input
                   type="number"
                   id="piece"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.piece ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.piece ? "border-red-500" : ""}`}
                   {...register("piece", { valueAsNumber: true })}
                 />
               </div>
               {errors.piece && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.piece.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.piece.message}
+                </p>
               )}
             </div>
 
             {/* Package */}
             <div className="space-y-2">
-              <label htmlFor="package" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="package"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("package")}
               </label>
               <div className="relative group">
@@ -383,18 +416,23 @@ const AddProduct = () => {
                 <Input
                   type="number"
                   id="package"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.package ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.package ? "border-red-500" : ""}`}
                   {...register("package", { valueAsNumber: true })}
                 />
               </div>
               {errors.package && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.package.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.package.message}
+                </p>
               )}
             </div>
 
             {/* Stock */}
             <div className="space-y-2">
-              <label htmlFor="stock" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="stock"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("stock")}
               </label>
               <div className="relative group">
@@ -402,18 +440,23 @@ const AddProduct = () => {
                 <Input
                   type="number"
                   id="stock"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.stock ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.stock ? "border-red-500" : ""}`}
                   {...register("stock", { valueAsNumber: true })}
                 />
               </div>
               {errors.stock && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.stock.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.stock.message}
+                </p>
               )}
             </div>
 
             {/* Unit */}
             <div className="space-y-2">
-              <label htmlFor="unit" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="unit"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("unit")}
               </label>
               <div className="relative group">
@@ -422,41 +465,51 @@ const AddProduct = () => {
                   type="text"
                   id="unit"
                   placeholder={t("select_unit", "Select Unit")}
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.unit ? 'border-red-500' : ''}`}
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.unit ? "border-red-500" : ""}`}
                   {...register("unit")}
                 />
               </div>
               {errors.unit && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.unit.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.unit.message}
+                </p>
               )}
             </div>
-            
+
             {/* Receipt No */}
             {showReceiptOption && (
-            <div className="space-y-2">
-              <label htmlFor="receipt_no" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
-                {t("with_receipt_product")}
-              </label>
-              <div className="relative group">
-                <Receipt className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
-                <Input
-                  type="number"
-                  id="receipt_no"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.receipt_no ? 'border-red-500' : ''}`}
-                  {...register("receipt_no", { valueAsNumber: true })}
-                />
+              <div className="space-y-2">
+                <label
+                  htmlFor="receipt_no"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+                >
+                  {t("with_receipt_product")}
+                </label>
+                <div className="relative group">
+                  <Receipt className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
+                  <Input
+                    type="number"
+                    id="receipt_no"
+                    className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.receipt_no ? "border-red-500" : ""}`}
+                    {...register("receipt_no", { valueAsNumber: true })}
+                  />
+                </div>
+                {errors.receipt_no && (
+                  <p className="text-red-500 text-xs mt-1 ml-1">
+                    {errors.receipt_no.message}
+                  </p>
+                )}
               </div>
-              {errors.receipt_no && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.receipt_no.message}</p>
-              )}
-            </div>
             )}
 
             <div className="hidden md:block"></div>
 
             {/* Supplier */}
             <div className="space-y-2 md:col-span-2">
-              <label htmlFor="supplier" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="supplier"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("supplier")}
               </label>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -479,18 +532,23 @@ const AddProduct = () => {
                     classNames={{
                       control: ({ isFocused }) =>
                         `flex h-11 w-full pl-10 bg-muted/20 border ${
-                          errors.supplier ? "border-red-500" : "border-muted-foreground/20"
+                          errors.supplier
+                            ? "border-red-500"
+                            : "border-muted-foreground/20"
                         } ${
-                          isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : ""
+                          isFocused
+                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                            : ""
                         } rounded-xl transition-all text-sm py-1`,
-                      menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                      menu: () =>
+                        "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
                         `px-4 py-2 cursor-pointer transition-colors ${
                           isSelected
                             ? "bg-emerald-500/10 text-emerald-600 font-medium"
                             : isFocused
-                            ? "bg-muted/50 text-gray-900 dark:text-white"
-                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                              ? "bg-muted/50 text-gray-900 dark:text-white"
+                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",
@@ -510,13 +568,18 @@ const AddProduct = () => {
                 </Button>
               </div>
               {errors.supplier && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.supplier.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.supplier.message}
+                </p>
               )}
             </div>
 
             {/* Description */}
             <div className="space-y-2 md:col-span-2">
-              <label htmlFor="description" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block">
+              <label
+                htmlFor="description"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
                 {t("description")}
               </label>
               <div className="relative group">
@@ -525,15 +588,16 @@ const AddProduct = () => {
                   id="description"
                   rows={4}
                   placeholder={t("description")}
-                  className={`flex w-full pl-10 bg-muted/20 border-muted-foreground/20 border focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 rounded-xl transition-all text-sm py-3 px-3 outline-none dark:bg-gray-800 dark:text-white ${errors.description ? 'border-red-500' : ''}`}
+                  className={`flex w-full pl-10 bg-muted/20 border-muted-foreground/20 border focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 rounded-xl transition-all text-sm py-3 px-3 outline-none dark:bg-gray-800 dark:text-white ${errors.description ? "border-red-500" : ""}`}
                   {...register("description")}
                 ></textarea>
               </div>
               {errors.description && (
-                <p className="text-red-500 text-xs mt-1 ml-1">{errors.description.message}</p>
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.description.message}
+                </p>
               )}
             </div>
-
           </div>
 
           <div className="mt-8 flex justify-end pt-6 border-t border-muted">
@@ -573,4 +637,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-

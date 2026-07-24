@@ -36,7 +36,8 @@ const UpdateModal = ({
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -106,7 +107,10 @@ const UpdateModal = ({
             </h2>
           </div>
 
-          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 max-h-[70vh] overflow-y-auto pr-1">
+          <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="space-y-5 max-h-[70vh] overflow-y-auto pr-1"
+          >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
               {/* Product Name */}
               <div>
@@ -148,14 +152,19 @@ const UpdateModal = ({
                     classNamePrefix="react-select"
                     defaultValue={
                       categories.find(
-                        (cat) => String(cat.id) === String(selectedProduct.category)
+                        (cat) =>
+                          String(cat.id) === String(selectedProduct.category),
                       )
                         ? {
                             value: categories.find(
-                              (cat) => String(cat.id) === String(selectedProduct.category)
+                              (cat) =>
+                                String(cat.id) ===
+                                String(selectedProduct.category),
                             ).id,
                             label: categories.find(
-                              (cat) => String(cat.id) === String(selectedProduct.category)
+                              (cat) =>
+                                String(cat.id) ===
+                                String(selectedProduct.category),
                             ).name,
                           }
                         : null
@@ -268,15 +277,15 @@ const UpdateModal = ({
 
               {/* Receipt No */}
               {showReceiptOption && (
-              <div className="sm:col-span-2">
-                <label className={labelClass}>{t("receipt_no")}</label>
-                <input
-                  type="number"
-                  defaultValue={selectedProduct.receipt_no}
-                  {...register("receipt_no")}
-                  className={inputClass}
-                />
-              </div>
+                <div className="sm:col-span-2">
+                  <label className={labelClass}>{t("receipt_no")}</label>
+                  <input
+                    type="number"
+                    defaultValue={selectedProduct.receipt_no}
+                    {...register("receipt_no")}
+                    className={inputClass}
+                  />
+                </div>
               )}
 
               {/* Image */}

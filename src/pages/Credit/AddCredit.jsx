@@ -32,7 +32,7 @@ import {
   FileText,
   MapPin,
   Building2,
-  X
+  X,
 } from "lucide-react";
 import { formatCurrency } from "@/utils/numberFormaterStats";
 import { convertToWordsWithCurrency } from "@/utils/useNumberToWords";
@@ -50,7 +50,6 @@ import {
 import ConfirmOrderModal from "../Order/ConfirmOrderModal";
 
 import useCreditStore from "@/store/useCreditStore";
-
 
 // Register fonts for PDF (you may need to adjust paths)
 Font.register({
@@ -508,27 +507,29 @@ const MyDoc = ({
                   <Text style={{ fontFamily: "ethio", fontSize: 8 }}>Date</Text>
                 </View>
               </View>
-              {hasReceipt && <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  marginTop: 2,
-                  gap: 4,
-                  marginRight: 22,
-                }}
-              >
-                <Text style={{ fontFamily: "ethio", fontSize: 8 }}>No:</Text>
-                <Text
+              {hasReceipt && (
+                <View
                   style={{
-                    fontFamily: "ethio",
-                    fontSize: 8,
-                    color: "red",
-                    marginRight: 16,
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    marginTop: 2,
+                    gap: 4,
+                    marginRight: 22,
                   }}
                 >
-                  {orderNo ? orderNo : " "}
-                </Text>
-              </View>}
+                  <Text style={{ fontFamily: "ethio", fontSize: 8 }}>No:</Text>
+                  <Text
+                    style={{
+                      fontFamily: "ethio",
+                      fontSize: 8,
+                      color: "red",
+                      marginRight: 16,
+                    }}
+                  >
+                    {orderNo ? orderNo : " "}
+                  </Text>
+                </View>
+              )}
               <View
                 style={{ flexDirection: "row", justifyContent: "space-around" }}
               >
@@ -684,7 +685,7 @@ const MyDoc = ({
               </View>
               {chunk.map((item, index) => {
                 const product = products.find(
-                  (product) => product.id === item.product
+                  (product) => product.id === item.product,
                 );
 
                 const unitPrice =
@@ -702,7 +703,7 @@ const MyDoc = ({
                           1 +
                           (chunkIndex > 0
                             ? itemsPerFirstPage +
-                            (chunkIndex - 1) * itemsPerPage
+                              (chunkIndex - 1) * itemsPerPage
                             : 0)}
                       </Text>
                     </View>
@@ -780,7 +781,7 @@ const MyDoc = ({
                     {formatCurrency(
                       order.items.reduce((acc, item) => {
                         const product = products.find(
-                          (p) => p.id === item.product
+                          (p) => p.id === item.product,
                         );
                         const unitPrice =
                           item.unit_price || product?.selling_price || 0;
@@ -788,7 +789,7 @@ const MyDoc = ({
                           ? item.package * product.piece
                           : item.quantity;
                         return acc + unitPrice * quantity;
-                      }, 0)
+                      }, 0),
                     )}{" "}
                     ETB
                   </Text>
@@ -880,7 +881,6 @@ const AddCredit = () => {
   const [orderResponseData, setOrderResponseData] = useState(null);
   const [orderNo, setOrderNo] = useState(null);
 
-
   const {
     items,
     selectedCustomer,
@@ -905,9 +905,6 @@ const AddCredit = () => {
     resetForm,
   } = useCreditStore();
 
-
-
-
   // const [receipt, setReceipt] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
@@ -930,7 +927,8 @@ const AddCredit = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   const { t } = useTranslation();
 
@@ -954,7 +952,9 @@ const AddCredit = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS}?include_all=True`);
+        const response = await axiosInstance.get(
+          `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
+        );
         setProducts(response.data.all_results || []);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -981,7 +981,7 @@ const AddCredit = () => {
     const fetchCustomers = async () => {
       try {
         const response = await axiosInstance.get(
-          `${API_ENDPOINTS.CUSTOMERS}?include_all=True`
+          `${API_ENDPOINTS.CUSTOMERS}?include_all=True`,
         );
         setCustomers(response?.data?.all_results || []);
       } catch (error) {
@@ -997,28 +997,34 @@ const AddCredit = () => {
     setSelectedCustomer(customer);
   };
 
-
   const handleProductChange = (index, selectedOption) => {
     const selectedProduct = selectedOption ? selectedOption.value : null;
-    updateItem(index, "productInput", selectedOption ? selectedOption.label : "");
+    updateItem(
+      index,
+      "productInput",
+      selectedOption ? selectedOption.label : "",
+    );
     updateItem(index, "selectedProduct", selectedProduct);
     updateItem(index, "quantity", 0);
     updateItem(
       index,
       "disabledPackage",
-      !selectedProduct || selectedProduct.package == null
+      !selectedProduct || selectedProduct.package == null,
     );
     updateItem(index, "package", null);
-    updateItem(index, "unit_price", selectedProduct ? selectedProduct.selling_price : 0);
+    updateItem(
+      index,
+      "unit_price",
+      selectedProduct ? selectedProduct.selling_price : 0,
+    );
     updateItem(index, "unit", selectedProduct ? selectedProduct.unit : "");
     updateItem(index, "stock", selectedProduct ? selectedProduct.stock : 0);
     updateItem(
       index,
       "disabledUnit",
-      !selectedProduct || selectedProduct.unit == null
+      !selectedProduct || selectedProduct.unit == null,
     );
   };
-
 
   const handleQuantityChange = (index, event) => {
     const quantity = event.target.value;
@@ -1026,25 +1032,28 @@ const AddCredit = () => {
     updateItem(index, "disabledPackage", quantity !== "");
   };
 
-
   const handlePackageChange = (index, event) => {
     const packageValue = event.target.value;
-    updateItem(index, "package", packageValue === "" ? null : parseInt(packageValue, 10));
+    updateItem(
+      index,
+      "package",
+      packageValue === "" ? null : parseInt(packageValue, 10),
+    );
     updateItem(index, "disabledQuantity", packageValue !== "");
   };
 
-
   const handleUnitPriceChange = (index, event) => {
     const unitPrice = event.target.value;
-    updateItem(index, "unit_price", unitPrice === "" ? "" : parseFloat(unitPrice));
+    updateItem(
+      index,
+      "unit_price",
+      unitPrice === "" ? "" : parseFloat(unitPrice),
+    );
   };
-
 
   const handleClearAll = () => {
     resetForm(); // Call the Zustand store's resetForm action
   };
-
-
 
   const calculateSubtotal = () => {
     return items
@@ -1068,7 +1077,7 @@ const AddCredit = () => {
         (item) =>
           item.selectedProduct &&
           (item.quantity > 0 || item.package) &&
-          receipt === "Receipt"
+          receipt === "Receipt",
       )
       .reduce((total, item) => {
         const quantity = item.package
@@ -1124,7 +1133,7 @@ const AddCredit = () => {
       items: items
         .filter(
           (item) =>
-            item.selectedProduct && (item.quantity > 0 || item.package > 0)
+            item.selectedProduct && (item.quantity > 0 || item.package > 0),
         )
         .map((item) => ({
           product: item.selectedProduct.id,
@@ -1152,7 +1161,7 @@ const AddCredit = () => {
         const fetchProducts = async () => {
           try {
             const response = await axiosInstance.get(
-              `${API_ENDPOINTS.PRODUCTS}?include_all=True`
+              `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
             );
             setProducts(response.data.all_results || []);
           } catch (error) {
@@ -1184,7 +1193,6 @@ const AddCredit = () => {
     resetForm();
   };
 
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -1202,7 +1210,7 @@ const AddCredit = () => {
         const fetchCustomers = async () => {
           try {
             const response = await axiosInstance.get(
-              `${API_ENDPOINTS.CUSTOMERS}?include_all=True`
+              `${API_ENDPOINTS.CUSTOMERS}?include_all=True`,
             );
             setCustomers(response?.data?.all_results || []);
           } catch (error) {
@@ -1230,267 +1238,161 @@ const AddCredit = () => {
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 max-w-5xl mx-auto mb-40">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-muted shadow-sm overflow-hidden relative">
-      <div className="fixed top-0 right-0 h-full flex items-center z-50">
-        <Sheet>
-          <SheetTrigger asChild>
-            <button className="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-5 rounded-l-xl shadow-xl transition-all duration-200 flex items-center gap-2">
-              <LayoutList className="w-5 h-5" />
-            </button>
-          </SheetTrigger>
+        <div className="fixed top-0 right-0 h-full flex items-center z-50">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold py-3 px-5 rounded-l-xl shadow-xl transition-all duration-200 flex items-center gap-2">
+                <LayoutList className="w-5 h-5" />
+              </button>
+            </SheetTrigger>
 
-          <SheetContent className="w-full sm:w-[540px] p-6 bg-gradient-to-br from-slate-50 to-white border-l border-slate-200 shadow-2xl">
-            <SheetHeader className="mb-6 flex items-center gap-3">
-              <SheetTitle className="text-xl font-bold text-gray-800">
-                {t("order_summary")}
-              </SheetTitle>
-            </SheetHeader>
+            <SheetContent className="w-full sm:w-[540px] p-6 bg-gradient-to-br from-slate-50 to-white border-l border-slate-200 shadow-2xl">
+              <SheetHeader className="mb-6 flex items-center gap-3">
+                <SheetTitle className="text-xl font-bold text-gray-800">
+                  {t("order_summary")}
+                </SheetTitle>
+              </SheetHeader>
 
-            <div className="space-y-4">
-              <div className="h-[50vh] overflow-y-auto space-y-4 pr-2">
-                {items
-                  .filter(
-                    (item) =>
-                      item.selectedProduct &&
-                      (item.quantity > 0 || item.package)
-                  )
-                  .map((item, index) => {
-                    const quantity = item.package
-                      ? item.package * item.selectedProduct.piece
-                      : item.quantity;
-                    const unitPrice =
-                      item.unit_price || item.selectedProduct.selling_price;
-                    const totalPrice = quantity * unitPrice;
+              <div className="space-y-4">
+                <div className="h-[50vh] overflow-y-auto space-y-4 pr-2">
+                  {items
+                    .filter(
+                      (item) =>
+                        item.selectedProduct &&
+                        (item.quantity > 0 || item.package),
+                    )
+                    .map((item, index) => {
+                      const quantity = item.package
+                        ? item.package * item.selectedProduct.piece
+                        : item.quantity;
+                      const unitPrice =
+                        item.unit_price || item.selectedProduct.selling_price;
+                      const totalPrice = quantity * unitPrice;
 
-                    return (
-                      <div
-                        key={index}
-                        className="w-full p-2 bg-white border border-gray-200 transition-all items-center"
-                      >
-                        <div className="flex justify-between items-start ">
-                          <p className="text-base font-semibold text-gray-900">
-                            {item.selectedProduct.name}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Qty: {quantity} × {formatter.format(unitPrice)}
+                      return (
+                        <div
+                          key={index}
+                          className="w-full p-2 bg-white border border-gray-200 transition-all items-center"
+                        >
+                          <div className="flex justify-between items-start ">
+                            <p className="text-base font-semibold text-gray-900">
+                              {item.selectedProduct.name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Qty: {quantity} × {formatter.format(unitPrice)}
+                            </p>
+                          </div>
+                          <p className="text-right text-lg font-bold text-green-600">
+                            {formatter.format(totalPrice)}
                           </p>
                         </div>
-                        <p className="text-right text-lg font-bold text-green-600">
-                          {formatter.format(totalPrice)}
-                        </p>
-                      </div>
-                    );
-                  })}
-              </div>
+                      );
+                    })}
+                </div>
 
-              <div className="space-y-3 border-t pt-4">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-700">
-                    Number of Items
-                  </span>
-                  <span className="font-semibold text-gray-800">
-                    {
-                      items.filter(
-                        (item) =>
-                          item.selectedProduct &&
-                          (item.quantity > 0 || item.package)
-                      ).length
-                    }
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-700">Subtotal</span>
-                  <span className="font-semibold text-gray-800">
-                    {formatter.format(calculateSubtotal())}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium text-gray-700">VAT</span>
-                  <span className="font-semibold text-gray-800">
-                    {formatter.format(calculateVAT())}
-                  </span>
-                </div>
-                <div className="flex justify-between font-bold text-lg text-emerald-600 border-t pt-3">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-5 h-5" />
-                    <span>Total Amount</span>
-                  </div>
-                  <span>{formatter.format(calculateTotalAmount())}</span>
-                </div>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">
-        <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
-          <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
-            <Package className="h-6 w-6" />
-          </div>
-          {t("place_order")}
-        </h2>
-      </div>
-
-      <div className="p-6 md:p-8">
-        <div className="w-full mb-10 min-h-screen">
-          <div className="space-y-8">
-            <div className="flex justify-end w-full">
-              <Button
-                type="button"
-                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl px-4 py-2 transition-all shadow-sm"
-                onClick={openModal}
-              >
-                <Plus className="w-4 h-4 mr-2" /> {t("add_customers")}
-              </Button>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-6 w-full">
-              <div className="space-y-2">
-                <label
-                  htmlFor="customer-name"
-                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                >
-                  {t("customer_name")}
-                </label>
-                <Select
-                  isClearable
-                  id="customer-name"
-                  options={customers.map((customer) => ({
-                    label: customer.name,
-                    value: customer,
-                  }))}
-                  placeholder={t("select_customer_name")}
-                  onChange={handleCustomerChange}
-                  value={
-                    selectedCustomer
-                      ? {
-                        label: selectedCustomer.name,
-                        value: selectedCustomer,
+                <div className="space-y-3 border-t pt-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium text-gray-700">
+                      Number of Items
+                    </span>
+                    <span className="font-semibold text-gray-800">
+                      {
+                        items.filter(
+                          (item) =>
+                            item.selectedProduct &&
+                            (item.quantity > 0 || item.package),
+                        ).length
                       }
-                      : null
-                  }
-                  unstyled
-                  classNames={{
-                    control: ({ isFocused }) =>
-                      `flex h-11 w-full bg-muted/20 border ${
-                        isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : "border-muted-foreground/20"
-                      } rounded-xl transition-all text-sm py-1 px-2`,
-                    menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
-                    option: ({ isFocused, isSelected }) =>
-                      `px-4 py-2 cursor-pointer transition-colors ${
-                        isSelected
-                          ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                          : isFocused
-                          ? "bg-muted/50 text-gray-900 dark:text-white"
-                          : "hover:bg-muted/50 text-gray-900 dark:text-white"
-                      }`,
-                    placeholder: () => "text-muted-foreground",
-                    singleValue: () => "text-gray-900 dark:text-white",
-                    valueContainer: () => "gap-1 px-1",
-                    indicatorsContainer: () => "gap-1 pr-2",
-                    indicatorSeparator: () => "hidden",
-                  }}
-                />
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium text-gray-700">Subtotal</span>
+                    <span className="font-semibold text-gray-800">
+                      {formatter.format(calculateSubtotal())}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium text-gray-700">VAT</span>
+                    <span className="font-semibold text-gray-800">
+                      {formatter.format(calculateVAT())}
+                    </span>
+                  </div>
+                  <div className="flex justify-between font-bold text-lg text-emerald-600 border-t pt-3">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-5 h-5" />
+                      <span>Total Amount</span>
+                    </div>
+                    <span>{formatter.format(calculateTotalAmount())}</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-end mb-0">
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
+            <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
+              <Package className="h-6 w-6" />
+            </div>
+            {t("place_order")}
+          </h2>
+        </div>
+
+        <div className="p-6 md:p-8">
+          <div className="w-full mb-10 min-h-screen">
+            <div className="space-y-8">
+              <div className="flex justify-end w-full">
                 <Button
                   type="button"
-                  onClick={handleToggle}
-                  variant="outline"
-                  size="icon"
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl px-4 py-2 transition-all shadow-sm"
+                  onClick={openModal}
                 >
-                  {showCustomerDetails ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  <Plus className="w-4 h-4 mr-2" /> {t("add_customers")}
                 </Button>
               </div>
-              <>
-                {showCustomerDetails && (
-                  <>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="tin-number"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                      >
-                        {t("tin_number")}
-                      </label>
-                      <input
-                        type="text"
-                        id="tin-number"
-                        value={tinNumber}
-                        onChange={(e) => setTinNumber(e.target.value)}
-                        className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                        readOnly
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="fs-tinNumbernumber"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                      >
-                        {t("fs_number")}
-                      </label>
-                      <input
-                        type="text"
-                        id="fs-number"
-                        value={fsNumber}
-                        onChange={(e) => setFsNumber(e.target.value)}
-                        className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                        readOnly
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="phone-number"
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                      >
-                        {t("Phone_number")}
-                      </label>
-                      <input
-                        type="text"
-                        id="phone-number"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                        readOnly
-                      />
-                    </div>
-                  </>
-                )}
-              </>
-              {showReceiptOption && (
+              <form onSubmit={handleSubmit} className="space-y-6 w-full">
                 <div className="space-y-2">
                   <label
-                    htmlFor="receipt"
+                    htmlFor="customer-name"
                     className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
                   >
-                    {t("receipt")}
+                    {t("customer_name")}
                   </label>
                   <Select
                     isClearable
-                    id="receipt"
-                    options={[
-                      { value: "Receipt", label: "Receipt" },
-                      { value: "No Receipt", label: "No Receipt" },
-                    ]}
-                    onChange={handleReceiptChange}
-                    value={receipt ? { value: receipt, label: receipt } : null}
-                    placeholder={t("choice_receipt")}
+                    id="customer-name"
+                    options={customers.map((customer) => ({
+                      label: customer.name,
+                      value: customer,
+                    }))}
+                    placeholder={t("select_customer_name")}
+                    onChange={handleCustomerChange}
+                    value={
+                      selectedCustomer
+                        ? {
+                            label: selectedCustomer.name,
+                            value: selectedCustomer,
+                          }
+                        : null
+                    }
                     unstyled
                     classNames={{
                       control: ({ isFocused }) =>
                         `flex h-11 w-full bg-muted/20 border ${
-                          isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : "border-muted-foreground/20"
+                          isFocused
+                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                            : "border-muted-foreground/20"
                         } rounded-xl transition-all text-sm py-1 px-2`,
-                      menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                      menu: () =>
+                        "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
                         `px-4 py-2 cursor-pointer transition-colors ${
                           isSelected
                             ? "bg-emerald-500/10 text-emerald-600 font-medium"
                             : isFocused
-                            ? "bg-muted/50 text-gray-900 dark:text-white"
-                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                              ? "bg-muted/50 text-gray-900 dark:text-white"
+                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",
@@ -1500,291 +1402,428 @@ const AddCredit = () => {
                     }}
                   />
                 </div>
-              )}
-
-              <div className=" ">
-                <div className="flex flex-col md:flex-row gap-4 mt-4"></div>
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="space-y-6 mt-6"
-                  >
-                    <div className="space-y-2">
-                      <label
-                        htmlFor={`product-${index}`}
-                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                      >
-                        {t("product_name")}
-                      </label>
-                      <Select
-                        isClearable
-                        id={`product-${index}`}
-                        value={
-                          item.selectedProduct
-                            ? {
-                              label: item.selectedProduct.name,
-                              value: item.selectedProduct,
-                            }
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          handleProductChange(index, selectedOption)
-                        }
-                        options={products.map((product) => ({
-                          label: product.name,
-                          value: product,
-                        }))}
-                        placeholder={t("select_product")}
-                        unstyled
-                        classNames={{
-                          control: ({ isFocused }) =>
-                            `flex h-11 w-full bg-muted/20 border ${
-                              isFocused ? "border-emerald-500/50 ring-1 ring-emerald-500/20" : "border-muted-foreground/20"
-                            } rounded-xl transition-all text-sm py-1 px-2`,
-                          menu: () => "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
-                          option: ({ isFocused, isSelected }) =>
-                            `px-4 py-2 cursor-pointer transition-colors ${
-                              isSelected
-                                ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                                : isFocused
-                                ? "bg-muted/50 text-gray-900 dark:text-white"
-                                : "hover:bg-muted/50 text-gray-900 dark:text-white"
-                            }`,
-                          placeholder: () => "text-muted-foreground",
-                          singleValue: () => "text-gray-900 dark:text-white",
-                          valueContainer: () => "gap-1 px-1",
-                          indicatorsContainer: () => "gap-1 pr-2",
-                          indicatorSeparator: () => "hidden",
-                        }}
-                      />
-                    </div>
-
-                    {item.selectedProduct && (
-                      <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
-                        <div className="space-y-2">
-                          <label
-                            htmlFor={`unit-${index}`}
-                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                          >
-                            Unit
-                          </label>
-                           <input
-                             type="text"
-                             id={`unit-${index}`}
-                             value={item.unit}
-                             onChange={(e) => {
-                               const newItems = [...items];
-                               newItems[index].unit = e.target.value;
-                               setItems(newItems);
-                             }}
-                             className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                              disabled
-                            />
-                        </div>
-
-                        {item.selectedProduct?.package != null && (
-                          <div className="space-y-2">
-                            <label
-                              htmlFor={`package-${index}`}
-                              className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                            >
-                              Package
-                            </label>
-                            <input
-                              type="number"
-                              id={`package-${index}`}
-                              value={item.package || ""}
-                              onChange={(e) => handlePackageChange(index, e)}
-                              className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                              disabled={item.disabledPackage}
-                            />
-                          </div>
-                        )}
-                        <div className="space-y-2">
-                          <label
-                            htmlFor={`unit-price-${index}`}
-                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                          >
-                            {t("unit_price")}
-                          </label>
-                          <input
-                            type="number"
-                            id={`unit-price-${index}`}
-                            value={item.unit_price}
-                            onChange={(e) => handleUnitPriceChange(index, e)}
-                            className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex flex-row justify-between">
-                            <label
-                              htmlFor={`quantity-${index}`}
-                              className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                            >
-                              {t("quantity")}
-                            </label>
-
-                            <span
-                              className={`text-md ${item.stock > 0
-                                ? "text-yellow-600"
-                                : "text-red-600"
-                                }`}
-                            >
-                              Stock available: {item.stock}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="number"
-                              id={`quantity-${index}`}
-                              min="1"
-                              required
-                              value={item.quantity === 0 ? "" : item.quantity}
-                              onChange={(e) => handleQuantityChange(index, e)}
-                              className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                              disabled={item.disabledQuantity}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex justify-end">
-                      {items.length > 1 && (
-                        <Button
-                          className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-4 py-2 transition-all shadow-sm"
-                          type="button"
-                          onClick={() => removeItem(index)}
-                        >
-                          <Trash className="w-4 h-4 mr-2" />
-                          {t("remove")}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                <div className="flex flex-col md:flex-row gap-4 mt-4">
-                  <div>
-                    <label
-                      htmlFor="paymentStatus"
-                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                    >
-                      {t("payment_status")}
-                    </label>
-                    <select
-                      id="paymentStatus"
-                      value={paymentStatus}
-                      onChange={(e) => setPaymentStatus(e.target.value)}
-                      className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                    >
-                      <option value="Pending">{t("pending")}</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="paidAmount"
-                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
-                    >
-                      {t("paid_amount")}
-                    </label>
-                    <input
-                      type="number"
-                      id="paidAmount"
-                      value={paidAmount}
-                      onChange={(e) =>
-                        setPaidAmount(parseFloat(e.target.value))
-                      }
-                      className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-8 flex flex-wrap items-center justify-end gap-4 pt-6 border-t border-muted">
-                {items.length > 0 && (
+                <div className="flex justify-end mb-0">
                   <Button
                     type="button"
-                    onClick={addItem}
-                    className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl px-6 transition-all shadow-sm"
+                    onClick={handleToggle}
+                    variant="outline"
+                    size="icon"
                   >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t("add_more")}
+                    {showCustomerDetails ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </Button>
-                )}
-                <Button
-                  type="button"
-                  onClick={handleClearAll}
-                  className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-6 transition-all shadow-sm"
-                >
-                  <Trash className="mr-2 h-4 w-4" />
-                  {t("clear_all")}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8 shadow-lg shadow-emerald-600/20 transition-all active:scale-95 min-w-[150px]"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      {t("submitting...")}
-                    </div>
-                  ) : (
+                </div>
+                <>
+                  {showCustomerDetails && (
                     <>
-                      <PackageCheck className="mr-2 h-5 w-5" />
-                      {t("submit_order")}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="tin-number"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                        >
+                          {t("tin_number")}
+                        </label>
+                        <input
+                          type="text"
+                          id="tin-number"
+                          value={tinNumber}
+                          onChange={(e) => setTinNumber(e.target.value)}
+                          className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                          readOnly
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="fs-tinNumbernumber"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                        >
+                          {t("fs_number")}
+                        </label>
+                        <input
+                          type="text"
+                          id="fs-number"
+                          value={fsNumber}
+                          onChange={(e) => setFsNumber(e.target.value)}
+                          className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                          readOnly
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="phone-number"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                        >
+                          {t("Phone_number")}
+                        </label>
+                        <input
+                          type="text"
+                          id="phone-number"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                          readOnly
+                        />
+                      </div>
                     </>
                   )}
-                </Button>
-              </div>
+                </>
+                {showReceiptOption && (
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="receipt"
+                      className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                    >
+                      {t("receipt")}
+                    </label>
+                    <Select
+                      isClearable
+                      id="receipt"
+                      options={[
+                        { value: "Receipt", label: "Receipt" },
+                        { value: "No Receipt", label: "No Receipt" },
+                      ]}
+                      onChange={handleReceiptChange}
+                      value={
+                        receipt ? { value: receipt, label: receipt } : null
+                      }
+                      placeholder={t("choice_receipt")}
+                      unstyled
+                      classNames={{
+                        control: ({ isFocused }) =>
+                          `flex h-11 w-full bg-muted/20 border ${
+                            isFocused
+                              ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                              : "border-muted-foreground/20"
+                          } rounded-xl transition-all text-sm py-1 px-2`,
+                        menu: () =>
+                          "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                        option: ({ isFocused, isSelected }) =>
+                          `px-4 py-2 cursor-pointer transition-colors ${
+                            isSelected
+                              ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                              : isFocused
+                                ? "bg-muted/50 text-gray-900 dark:text-white"
+                                : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                          }`,
+                        placeholder: () => "text-muted-foreground",
+                        singleValue: () => "text-gray-900 dark:text-white",
+                        valueContainer: () => "gap-1 px-1",
+                        indicatorsContainer: () => "gap-1 pr-2",
+                        indicatorSeparator: () => "hidden",
+                      }}
+                    />
+                  </div>
+                )}
 
-            </form>
+                <div className=" ">
+                  <div className="flex flex-col md:flex-row gap-4 mt-4"></div>
+                  {items.map((item, index) => (
+                    <div key={index} className="space-y-6 mt-6">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor={`product-${index}`}
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                        >
+                          {t("product_name")}
+                        </label>
+                        <Select
+                          isClearable
+                          id={`product-${index}`}
+                          value={
+                            item.selectedProduct
+                              ? {
+                                  label: item.selectedProduct.name,
+                                  value: item.selectedProduct,
+                                }
+                              : null
+                          }
+                          onChange={(selectedOption) =>
+                            handleProductChange(index, selectedOption)
+                          }
+                          options={products.map((product) => ({
+                            label: product.name,
+                            value: product,
+                          }))}
+                          placeholder={t("select_product")}
+                          unstyled
+                          classNames={{
+                            control: ({ isFocused }) =>
+                              `flex h-11 w-full bg-muted/20 border ${
+                                isFocused
+                                  ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                                  : "border-muted-foreground/20"
+                              } rounded-xl transition-all text-sm py-1 px-2`,
+                            menu: () =>
+                              "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
+                            option: ({ isFocused, isSelected }) =>
+                              `px-4 py-2 cursor-pointer transition-colors ${
+                                isSelected
+                                  ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                                  : isFocused
+                                    ? "bg-muted/50 text-gray-900 dark:text-white"
+                                    : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                              }`,
+                            placeholder: () => "text-muted-foreground",
+                            singleValue: () => "text-gray-900 dark:text-white",
+                            valueContainer: () => "gap-1 px-1",
+                            indicatorsContainer: () => "gap-1 pr-2",
+                            indicatorSeparator: () => "hidden",
+                          }}
+                        />
+                      </div>
+
+                      {item.selectedProduct && (
+                        <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
+                          <div className="space-y-2">
+                            <label
+                              htmlFor={`unit-${index}`}
+                              className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                            >
+                              Unit
+                            </label>
+                            <input
+                              type="text"
+                              id={`unit-${index}`}
+                              value={item.unit}
+                              onChange={(e) => {
+                                const newItems = [...items];
+                                newItems[index].unit = e.target.value;
+                                setItems(newItems);
+                              }}
+                              className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                              disabled
+                            />
+                          </div>
+
+                          {item.selectedProduct?.package != null && (
+                            <div className="space-y-2">
+                              <label
+                                htmlFor={`package-${index}`}
+                                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                              >
+                                Package
+                              </label>
+                              <input
+                                type="number"
+                                id={`package-${index}`}
+                                value={item.package || ""}
+                                onChange={(e) => handlePackageChange(index, e)}
+                                className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                                disabled={item.disabledPackage}
+                              />
+                            </div>
+                          )}
+                          <div className="space-y-2">
+                            <label
+                              htmlFor={`unit-price-${index}`}
+                              className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                            >
+                              {t("unit_price")}
+                            </label>
+                            <input
+                              type="number"
+                              id={`unit-price-${index}`}
+                              value={item.unit_price}
+                              onChange={(e) => handleUnitPriceChange(index, e)}
+                              className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex flex-row justify-between">
+                              <label
+                                htmlFor={`quantity-${index}`}
+                                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                              >
+                                {t("quantity")}
+                              </label>
+
+                              <span
+                                className={`text-md ${
+                                  item.stock > 0
+                                    ? "text-yellow-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                Stock available: {item.stock}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="number"
+                                id={`quantity-${index}`}
+                                min="1"
+                                required
+                                value={item.quantity === 0 ? "" : item.quantity}
+                                onChange={(e) => handleQuantityChange(index, e)}
+                                className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                                disabled={item.disabledQuantity}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex justify-end">
+                        {items.length > 1 && (
+                          <Button
+                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-4 py-2 transition-all shadow-sm"
+                            type="button"
+                            onClick={() => removeItem(index)}
+                          >
+                            <Trash className="w-4 h-4 mr-2" />
+                            {t("remove")}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex flex-col md:flex-row gap-4 mt-4">
+                    <div>
+                      <label
+                        htmlFor="paymentStatus"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                      >
+                        {t("payment_status")}
+                      </label>
+                      <select
+                        id="paymentStatus"
+                        value={paymentStatus}
+                        onChange={(e) => setPaymentStatus(e.target.value)}
+                        className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                      >
+                        <option value="Pending">{t("pending")}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="paidAmount"
+                        className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block mb-2"
+                      >
+                        {t("paid_amount")}
+                      </label>
+                      <input
+                        type="number"
+                        id="paidAmount"
+                        value={paidAmount}
+                        onChange={(e) =>
+                          setPaidAmount(parseFloat(e.target.value))
+                        }
+                        className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8 flex flex-wrap items-center justify-end gap-4 pt-6 border-t border-muted">
+                  {items.length > 0 && (
+                    <Button
+                      type="button"
+                      onClick={addItem}
+                      className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl px-6 transition-all shadow-sm"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      {t("add_more")}
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    onClick={handleClearAll}
+                    className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl px-6 transition-all shadow-sm"
+                  >
+                    <Trash className="mr-2 h-4 w-4" />
+                    {t("clear_all")}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8 shadow-lg shadow-emerald-600/20 transition-all active:scale-95 min-w-[150px]"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        {t("submitting...")}
+                      </div>
+                    ) : (
+                      <>
+                        <PackageCheck className="mr-2 h-5 w-5" />
+                        {t("submit_order")}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
 
-      <CustomerModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onSubmit={handleNewCustomerSubmit}
-      />
-
-      {showConfirmOrderModal && (
-        <ConfirmOrderModal
-          isOpen={showConfirmOrderModal}
-          onConfirm={handleConfirmOrder}
-          onCancel={handleCancelOrder}
+        <CustomerModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onSubmit={handleNewCustomerSubmit}
         />
-      )}
 
-      {showPDFModal && showPDFAtSubmit && (
-        <PDFModal
-          isOpen={showPDFModal}
-          onClose={() => {
-            setShowPDFModal(false);
-            resetForm();
-          }}
-          onPDFClose={resetForm}
-        >
-          <PDFViewer width="100%" height="600">
-            <MyDoc
-              orderNo={orderNo}
-              order={
-                orderResponseData || {
-                  customer: selectedCustomer,
-                  fs_number: fsNumber,
+        {showConfirmOrderModal && (
+          <ConfirmOrderModal
+            isOpen={showConfirmOrderModal}
+            onConfirm={handleConfirmOrder}
+            onCancel={handleCancelOrder}
+          />
+        )}
+
+        {showPDFModal && showPDFAtSubmit && (
+          <PDFModal
+            isOpen={showPDFModal}
+            onClose={() => {
+              setShowPDFModal(false);
+              resetForm();
+            }}
+            onPDFClose={resetForm}
+          >
+            <PDFViewer width="100%" height="600">
+              <MyDoc
+                orderNo={orderNo}
+                order={
+                  orderResponseData || {
+                    customer: selectedCustomer,
+                    fs_number: fsNumber,
+                    items: items
+                      .filter(
+                        (item) =>
+                          (item.selectedProduct && item.quantity) ||
+                          item.package > 0,
+                      )
+                      .map((item) => ({
+                        product: item.selectedProduct.id,
+                        product_name: item.selectedProduct.name,
+                        product_unit: item.selectedProduct.unit,
+                        quantity:
+                          item.quantity ||
+                          item.package * item.selectedProduct.piece,
+                        unit_price:
+                          item.unit_price || item.selectedProduct.selling_price,
+                        price:
+                          (item.unit_price ||
+                            item.selectedProduct.selling_price) * item.quantity,
+                        receipt: receipt,
+                      })),
+                    subtotal: calculateSubtotal(),
+                    vat: calculateVAT(),
+                    total_amount: calculateTotalAmount(),
+                  }
+                }
+                itemsUnit={items.map((item) => item.unit)}
+                products={products}
+                companyData={companyData}
+                receiptData={{
+                  customer: selectedCustomer, // Pass the customer data from the state
                   items: items
-                    .filter(
-                      (item) =>
-                        (item.selectedProduct && item.quantity) ||
-                        item.package > 0
-                    )
+                    .filter((item) => item.selectedProduct && item.quantity > 0)
                     .map((item) => ({
-                      product: item.selectedProduct.id,
                       product_name: item.selectedProduct.name,
                       product_unit: item.selectedProduct.unit,
-                      quantity:
-                        item.quantity ||
-                        item.package * item.selectedProduct.piece,
+                      quantity: item.quantity,
                       unit_price:
                         item.unit_price || item.selectedProduct.selling_price,
                       price:
@@ -1792,34 +1831,11 @@ const AddCredit = () => {
                           item.selectedProduct.selling_price) * item.quantity,
                       receipt: receipt,
                     })),
-                  subtotal: calculateSubtotal(),
-                  vat: calculateVAT(),
-                  total_amount: calculateTotalAmount(),
-                }
-              }
-              itemsUnit={items.map((item) => item.unit)}
-              products={products}
-              companyData={companyData}
-              receiptData={{
-                customer: selectedCustomer, // Pass the customer data from the state
-                items: items
-                  .filter((item) => item.selectedProduct && item.quantity > 0)
-                  .map((item) => ({
-                    product_name: item.selectedProduct.name,
-                    product_unit: item.selectedProduct.unit,
-                    quantity: item.quantity,
-                    unit_price:
-                      item.unit_price || item.selectedProduct.selling_price,
-                    price:
-                      (item.unit_price || item.selectedProduct.selling_price) *
-                      item.quantity,
-                    receipt: receipt,
-                  })),
-              }}
-            />
-          </PDFViewer>
-        </PDFModal>
-      )}
+                }}
+              />
+            </PDFViewer>
+          </PDFModal>
+        )}
       </div>
     </div>
   );
@@ -1829,7 +1845,12 @@ export default AddCredit;
 
 const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
   const { t } = useTranslation();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
@@ -1861,10 +1882,20 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isSubmitting && onClose()}>
-      <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+      onClick={() => !isSubmitting && onClose()}
+    >
+      <div
+        className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-6">
-          <button onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+          <button
+            onClick={() => !isSubmitting && onClose()}
+            disabled={isSubmitting}
+            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
             <X className="h-5 w-5" />
           </button>
 
@@ -1889,10 +1920,12 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
                     type="text"
                     {...register("name", {
                       required: true,
-                      onChange: (e) => setIsEmpty(e.target.value.trim() === "")
+                      onChange: (e) => setIsEmpty(e.target.value.trim() === ""),
                     })}
                     className={`w-full pl-10 h-11 bg-white border ${
-                      errors.name || isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      errors.name || isEmpty
+                        ? "border-red-500 focus:ring-red-500/20"
+                        : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
                     } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
@@ -2003,7 +2036,13 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
             </div>
 
             <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
-              <Button type="button" variant="ghost" onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="rounded-xl font-medium disabled:opacity-40">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => !isSubmitting && onClose()}
+                disabled={isSubmitting}
+                className="rounded-xl font-medium disabled:opacity-40"
+              >
                 {t("cancel")}
               </Button>
               <Button

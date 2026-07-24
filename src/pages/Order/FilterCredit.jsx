@@ -4,7 +4,21 @@ import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { formatCurrency } from "@/utils/numberFormaterStats";
 import { t } from "i18next";
 import axiosInstance from "@/utils/axiosInstance";
-import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Hash, Package, ReceiptText, ActivitySquare, CreditCard, Search, ListFilter, Banknote, ShoppingCart } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Hash,
+  Package,
+  ReceiptText,
+  ActivitySquare,
+  CreditCard,
+  Search,
+  ListFilter,
+  Banknote,
+  ShoppingCart,
+} from "lucide-react";
 import Select from "react-select";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,7 +59,8 @@ const FilterOrders = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   const {
     data: orderItems = [],
@@ -74,12 +89,12 @@ const FilterOrders = () => {
       filteredItems = filteredItems.filter(
         (item) =>
           item.item_receipt ===
-          (receiptFilter === "receipt" ? "Receipt" : "No Receipt")
+          (receiptFilter === "receipt" ? "Receipt" : "No Receipt"),
       );
     }
     if (productFilter !== "all") {
       filteredItems = filteredItems.filter(
-        (item) => item.product_name === productFilter
+        (item) => item.product_name === productFilter,
       );
     }
     // Sort in descending order by original id
@@ -108,10 +123,10 @@ const FilterOrders = () => {
 
   const totalOrderCount = filteredOrderItems.length;
   const countWithReceipt = filteredOrderItems.filter(
-    (item) => item.item_receipt === "Receipt"
+    (item) => item.item_receipt === "Receipt",
   ).length;
   const countWithoutReceipt = filteredOrderItems.filter(
-    (item) => item.item_receipt === "No Receipt"
+    (item) => item.item_receipt === "No Receipt",
   ).length;
   const totalAmountSold = filteredOrderItems.reduce((total, item) => {
     return total + (parseFloat(item.price) || 0);
@@ -121,7 +136,7 @@ const FilterOrders = () => {
   // Apply pagination on already DESC-sorted data
   const displayOrderItems = filteredOrderItems.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const receiptOptions = [
@@ -166,12 +181,16 @@ const FilterOrders = () => {
                   <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
                     <ShoppingCart className="w-5 h-5" />
                   </div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("total_orders")}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                    {t("total_orders")}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">{totalOrderCount}</h3>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {totalOrderCount}
+                </h3>
               </div>
             </div>
-            
+
             {showReceiptOption && (
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 group relative overflow-hidden">
                 <div className="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
@@ -180,9 +199,13 @@ const FilterOrders = () => {
                     <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
                       <ReceiptText className="w-5 h-5" />
                     </div>
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("with_receipt")}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                      {t("with_receipt")}
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900">{countWithReceipt}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {countWithReceipt}
+                  </h3>
                 </div>
               </div>
             )}
@@ -195,9 +218,13 @@ const FilterOrders = () => {
                     <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
                       <ActivitySquare className="w-5 h-5" />
                     </div>
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("without_receipt")}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                      {t("without_receipt")}
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900">{countWithoutReceipt}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {countWithoutReceipt}
+                  </h3>
                 </div>
               </div>
             )}
@@ -209,9 +236,13 @@ const FilterOrders = () => {
                   <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
                     <Banknote className="w-5 h-5" />
                   </div>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{t("total_amount_sold")}</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-gray-500">
+                    {t("total_amount_sold")}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-emerald-600">{formatCurrency(totalAmountSold)} ETB</h3>
+                <h3 className="text-2xl font-bold text-emerald-600">
+                  {formatCurrency(totalAmountSold)} ETB
+                </h3>
               </div>
             </div>
           </div>
@@ -219,35 +250,35 @@ const FilterOrders = () => {
           {/* Filters */}
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             {showReceiptOption && (
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 block">
-                {t("filter_by_receipt")}
-              </label>
-              <Select
-                options={receiptOptions}
-                value={receiptOptions.find((o) => o.value === receiptFilter)}
-                onChange={handleReceiptFilterChange}
-                className="w-full react-select-container"
-                classNamePrefix="react-select"
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    borderRadius: "0.75rem",
-                    borderColor: "hsl(var(--border))",
-                    backgroundColor: "hsl(var(--background))",
-                    minHeight: "44px",
-                    "&:hover": { borderColor: "hsl(var(--primary))" },
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    borderRadius: "0.75rem",
-                    overflow: "hidden",
-                  }),
-                }}
-              />
-            </div>
+              <div className="space-y-2">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 block">
+                  {t("filter_by_receipt")}
+                </label>
+                <Select
+                  options={receiptOptions}
+                  value={receiptOptions.find((o) => o.value === receiptFilter)}
+                  onChange={handleReceiptFilterChange}
+                  className="w-full react-select-container"
+                  classNamePrefix="react-select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderRadius: "0.75rem",
+                      borderColor: "hsl(var(--border))",
+                      backgroundColor: "hsl(var(--background))",
+                      minHeight: "44px",
+                      "&:hover": { borderColor: "hsl(var(--primary))" },
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      borderRadius: "0.75rem",
+                      overflow: "hidden",
+                    }),
+                  }}
+                />
+              </div>
             )}
-            
+
             <div className="space-y-2">
               <label className="text-[11px] font-bold uppercase tracking-widest text-gray-500 block">
                 {t("filter_by_product")}
@@ -296,15 +327,19 @@ const FilterOrders = () => {
                     </div>
                   </TableHead>
                   {showReceiptOption && (
-                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <ReceiptText className="w-4 h-4 text-gray-400" />
-                      {t("receipt")}
-                    </div>
-                  </TableHead>
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <ReceiptText className="w-4 h-4 text-gray-400" />
+                        {t("receipt")}
+                      </div>
+                    </TableHead>
                   )}
-                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">{t("package")}</TableHead>
-                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">{t("quantity")}</TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("package")}
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("quantity")}
+                  </TableHead>
                   <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <Banknote className="w-4 h-4 text-gray-400" />
@@ -322,21 +357,42 @@ const FilterOrders = () => {
               <TableBody>
                 {displayOrderItems.length > 0 ? (
                   displayOrderItems.map((item) => (
-                    <TableRow key={item.id} className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
-                      <TableCell className="font-medium text-gray-500">#{item.id}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{item.product_name}</TableCell>
-                      {showReceiptOption && (
-                      <TableCell>
-                        <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}>
-                          {item.item_receipt}
-                        </span>
+                    <TableRow
+                      key={item.id}
+                      className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors"
+                    >
+                      <TableCell className="font-medium text-gray-500">
+                        #{item.id}
                       </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {item.product_name}
+                      </TableCell>
+                      {showReceiptOption && (
+                        <TableCell>
+                          <span
+                            className={`px-2.5 py-1 rounded-md text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
+                          >
+                            {item.item_receipt}
+                          </span>
+                        </TableCell>
                       )}
                       <TableCell>{item.package || "-"}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
-                      <TableCell className="font-semibold text-emerald-600">{formatCurrency(item.price)} ETB</TableCell>
+                      <TableCell className="font-semibold text-emerald-600">
+                        {formatCurrency(item.price)} ETB
+                      </TableCell>
                       <TableCell>
-                        <span className="px-2.5 py-1 rounded-md text-xs font-semibold text-white" style={{ backgroundColor: item.status === "Pending" ? "#f59e0b" : item.status === "Done" ? "#10b981" : "#ef4444" }}>
+                        <span
+                          className="px-2.5 py-1 rounded-md text-xs font-semibold text-white"
+                          style={{
+                            backgroundColor:
+                              item.status === "Pending"
+                                ? "#f59e0b"
+                                : item.status === "Done"
+                                  ? "#10b981"
+                                  : "#ef4444",
+                          }}
+                        >
                           {item.status}
                         </span>
                       </TableCell>
@@ -344,16 +400,24 @@ const FilterOrders = () => {
                   ))
                 ) : isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-32 text-center">
+                    <TableCell
+                      colSpan={showReceiptOption ? 7 : 6}
+                      className="h-32 text-center"
+                    >
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
-                        <span className="text-sm font-medium text-gray-400">Loading details...</span>
+                        <span className="text-sm font-medium text-gray-400">
+                          Loading details...
+                        </span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={showReceiptOption ? 7 : 6} className="h-24 text-center text-gray-500 font-medium">
+                    <TableCell
+                      colSpan={showReceiptOption ? 7 : 6}
+                      className="h-24 text-center text-gray-500 font-medium"
+                    >
                       No items found.
                     </TableCell>
                   </TableRow>
@@ -367,11 +431,16 @@ const FilterOrders = () => {
             {isLoading ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
                 <Spinner className="size-7 text-emerald-600" />
-                <span className="text-sm font-medium text-gray-400">Loading details...</span>
+                <span className="text-sm font-medium text-gray-400">
+                  Loading details...
+                </span>
               </div>
             ) : displayOrderItems.length > 0 ? (
               displayOrderItems.map((item) => (
-                <div key={item.id} className={`bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4 ${expandedCards.size > 0 && !expandedCards.has(item.id) ? 'opacity-40 blur-sm' : ''}`}>
+                <div
+                  key={item.id}
+                  className={`bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4 ${expandedCards.size > 0 && !expandedCards.has(item.id) ? "opacity-40 blur-sm" : ""}`}
+                >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
@@ -386,11 +455,15 @@ const FilterOrders = () => {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-xl border border-gray-100">
                       <span className="text-gray-500">{t("quantity")}:</span>
-                      <span className="font-medium text-gray-900">{item.quantity}</span>
+                      <span className="font-medium text-gray-900">
+                        {item.quantity}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-xl border border-gray-100">
                       <span className="text-gray-500">{t("price")}:</span>
-                      <span className="font-semibold text-emerald-600">{formatCurrency(item.price)}</span>
+                      <span className="font-semibold text-emerald-600">
+                        {formatCurrency(item.price)}
+                      </span>
                     </div>
                   </div>
 
@@ -414,20 +487,34 @@ const FilterOrders = () => {
                   {expandedCards.has(item.id) && (
                     <div className="mt-3 pt-3 border-t border-gray-100 space-y-2.5 text-sm animate-in fade-in slide-in-from-top-2">
                       {showReceiptOption && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">{t("receipt")}</span>
-                        <span className={`px-2 py-0.5 rounded text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}>
-                          {item.item_receipt}
-                        </span>
-                      </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">{t("receipt")}</span>
+                          <span
+                            className={`px-2 py-0.5 rounded text-xs font-semibold ${item.item_receipt === "Receipt" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
+                          >
+                            {item.item_receipt}
+                          </span>
+                        </div>
                       )}
                       <div className="flex justify-between">
                         <span className="text-gray-600">{t("package")}</span>
-                        <span className="font-medium text-gray-900">{item.package || "-"}</span>
+                        <span className="font-medium text-gray-900">
+                          {item.package || "-"}
+                        </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">{t("status")}</span>
-                        <span className="px-2.5 py-1 rounded-md text-xs font-semibold text-white" style={{ backgroundColor: item.status === "Pending" ? "#f59e0b" : item.status === "Done" ? "#10b981" : "#ef4444" }}>
+                        <span
+                          className="px-2.5 py-1 rounded-md text-xs font-semibold text-white"
+                          style={{
+                            backgroundColor:
+                              item.status === "Pending"
+                                ? "#f59e0b"
+                                : item.status === "Done"
+                                  ? "#10b981"
+                                  : "#ef4444",
+                          }}
+                        >
                           {item.status}
                         </span>
                       </div>
@@ -449,7 +536,9 @@ const FilterOrders = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="gap-2 rounded-lg"
                 >
@@ -469,7 +558,9 @@ const FilterOrders = () => {
                       return (
                         <Button
                           key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "ghost"}
+                          variant={
+                            currentPage === pageNum ? "default" : "ghost"
+                          }
                           size="icon"
                           className="h-8 w-8 rounded-lg"
                           onClick={() => setCurrentPage(pageNum)}
@@ -484,7 +575,9 @@ const FilterOrders = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, pageCount))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, pageCount))
+                  }
                   disabled={currentPage === pageCount || pageCount === 0}
                   className="gap-2 rounded-lg"
                 >

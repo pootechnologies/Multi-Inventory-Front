@@ -67,7 +67,8 @@ const ProductTable = ({
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyo@gmail.com";
+  const showReceiptOption =
+    currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
   const handleCategoryChange = (option) => {
     setSelectedCategory(option ? option.value : "");
@@ -93,7 +94,7 @@ const ProductTable = ({
 
   const totalAmount = allProducts.reduce(
     (acc, product) => acc + product.buying_price * product.stock,
-    0
+    0,
   );
 
   // FETCH ALL PRODUCTS
@@ -101,7 +102,7 @@ const ProductTable = ({
     const fetchProducts = async () => {
       try {
         const response = await axiosInstance.get(
-          `${API_ENDPOINTS.PRODUCTS}?include_all=True`
+          `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
         );
         if (Array.isArray(response.data.all_results)) {
           setAllProducts(response?.data?.all_results);
@@ -240,11 +241,10 @@ const ProductTable = ({
     saveAs(blob, fileName);
   };
 
-
   const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
   const displayProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const totalPages = pageCount;
@@ -318,7 +318,9 @@ const ProductTable = ({
         <Table>
           <TableHeader className="bg-gray-50/80">
             <TableRow className="border-b-gray-100">
-              <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap"># {t("id")}</TableHead>
+              <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
+                # {t("id")}
+              </TableHead>
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-gray-400" />
@@ -337,7 +339,9 @@ const ProductTable = ({
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 {t("stock")}
               </TableHead>
-              <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">{t("actions")}</TableHead>
+              <TableHead className="text-right font-bold text-gray-900 whitespace-nowrap">
+                {t("actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -345,8 +349,12 @@ const ProductTable = ({
               displayProducts.map((product) => (
                 <React.Fragment key={product.id}>
                   <TableRow className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
-                    <TableCell className="font-medium text-gray-500">#{product.id}</TableCell>
-                    <TableCell className="font-semibold text-gray-900">{product.name}</TableCell>
+                    <TableCell className="font-medium text-gray-500">
+                      #{product.id}
+                    </TableCell>
+                    <TableCell className="font-semibold text-gray-900">
+                      {product.name}
+                    </TableCell>
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {product.category_name || "N/A"}
                     </TableCell>
@@ -356,34 +364,62 @@ const ProductTable = ({
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {formatCurrency(product.selling_price)} ETB
                     </TableCell>
-                    <TableCell className={`font-bold ${product.stock <= 3 ? "text-red-500" : "text-gray-900"}`}>
+                    <TableCell
+                      className={`font-bold ${product.stock <= 3 ? "text-red-500" : "text-gray-900"}`}
+                    >
                       {product.stock}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-900 rounded-lg">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-gray-400 hover:text-gray-900 rounded-lg"
+                          >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-lg border-gray-100 p-1">
-                          <DropdownMenuItem 
-                            onClick={() => setExpandedCards(prev => {
-                              const isCurrentlyExpanded = prev[product.id];
-                              return isCurrentlyExpanded ? {} : { [product.id]: true };
-                            })}
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-40 rounded-xl shadow-lg border-gray-100 p-1"
+                        >
+                          <DropdownMenuItem
+                            onClick={() =>
+                              setExpandedCards((prev) => {
+                                const isCurrentlyExpanded = prev[product.id];
+                                return isCurrentlyExpanded
+                                  ? {}
+                                  : { [product.id]: true };
+                              })
+                            }
                             className="cursor-pointer gap-2 py-2 rounded-lg text-blue-600 font-medium hover:text-blue-700 hover:bg-blue-50"
                           >
-                            {expandedCards[product.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                            {expandedCards[product.id] ? (t("hide_details") || "Hide Details") : (t("show_details") || "Show Details")}
+                            {expandedCards[product.id] ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                            {expandedCards[product.id]
+                              ? t("hide_details") || "Hide Details"
+                              : t("show_details") || "Show Details"}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onViewClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
+                          <DropdownMenuItem
+                            onClick={() => onViewClick(product)}
+                            className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50"
+                          >
                             <Eye className="h-4 w-4" /> {t("view")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onUpdateClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
+                          <DropdownMenuItem
+                            onClick={() => onUpdateClick(product)}
+                            className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50"
+                          >
                             <Pencil className="h-4 w-4" /> {t("update")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onDeleteClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700">
+                          <DropdownMenuItem
+                            onClick={() => onDeleteClick(product)}
+                            className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700"
+                          >
                             <Trash2 className="h-4 w-4" /> {t("delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -395,34 +431,62 @@ const ProductTable = ({
                       <TableCell colSpan={7} className="p-0 border-b">
                         <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-gray-50/50">
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("description")}</p>
-                            <p className="font-medium text-gray-900">{product.description || "N/A"}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("description")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.description || "N/A"}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("supplier")}</p>
-                            <p className="font-medium text-gray-900">{product.supplier_name || "N/A"}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("supplier")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.supplier_name || "N/A"}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("unit")}</p>
-                            <p className="font-medium text-gray-900">{product.unit}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("unit")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.unit}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("piece")}</p>
-                            <p className="font-medium text-gray-900">{product.piece || "N/A"}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("piece")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.piece || "N/A"}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("package")}</p>
-                            <p className="font-medium text-gray-900">{product.package || "N/A"}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("package")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.package || "N/A"}
+                            </p>
                           </div>
                           {showReceiptOption && (
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Receipt No</p>
-                            <p className="font-medium text-gray-900">{product.receipt_no || "N/A"}</p>
-                          </div>
+                            <div>
+                              <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                                Receipt No
+                              </p>
+                              <p className="font-medium text-gray-900">
+                                {product.receipt_no || "N/A"}
+                              </p>
+                            </div>
                           )}
                           <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("created_by")}</p>
-                            <p className="font-medium text-gray-900">{product.user}</p>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("created_by")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.user}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
@@ -435,13 +499,18 @@ const ProductTable = ({
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex justify-center items-center gap-3 text-emerald-600">
                     <Spinner className="size-6" />
-                    <span className="text-sm font-medium text-gray-400">Loading products...</span>
+                    <span className="text-sm font-medium text-gray-400">
+                      Loading products...
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-gray-500 font-medium">
+                <TableCell
+                  colSpan={7}
+                  className="h-24 text-center text-gray-500 font-medium"
+                >
                   No products found.
                 </TableCell>
               </TableRow>
@@ -454,7 +523,10 @@ const ProductTable = ({
       <div className="md:hidden space-y-4">
         {displayProducts.length > 0 ? (
           displayProducts.map((product) => (
-            <div key={product.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4">
+            <div
+              key={product.id}
+              className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
@@ -469,18 +541,34 @@ const ProductTable = ({
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                    >
                       <MoreVertical className="h-5 w-5" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-lg border-gray-100 p-1">
-                    <DropdownMenuItem onClick={() => onViewClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50">
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-40 rounded-xl shadow-lg border-gray-100 p-1"
+                  >
+                    <DropdownMenuItem
+                      onClick={() => onViewClick(product)}
+                      className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50"
+                    >
                       <Eye className="h-4 w-4" /> {t("view")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onUpdateClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50">
+                    <DropdownMenuItem
+                      onClick={() => onUpdateClick(product)}
+                      className="cursor-pointer gap-2 py-2 rounded-lg text-emerald-600 font-medium hover:text-emerald-700 hover:bg-emerald-50"
+                    >
                       <Pencil className="h-4 w-4" /> {t("update")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDeleteClick(product)} className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700">
+                    <DropdownMenuItem
+                      onClick={() => onDeleteClick(product)}
+                      className="cursor-pointer gap-2 py-2 rounded-lg text-red-600 font-medium hover:text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700"
+                    >
                       <Trash2 className="h-4 w-4" /> {t("delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -489,24 +577,40 @@ const ProductTable = ({
 
               <div>
                 <div className="flex justify-between mb-3">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{t("buying_price")}</span>
-                  <span className="font-semibold text-gray-900">{formatCurrency(product.buying_price)} ETB</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    {t("buying_price")}
+                  </span>
+                  <span className="font-semibold text-gray-900">
+                    {formatCurrency(product.buying_price)} ETB
+                  </span>
                 </div>
                 <div className="flex justify-between mb-3">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{t("selling_price")}</span>
-                  <span className="font-semibold text-gray-900">{formatCurrency(product.selling_price)} ETB</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    {t("selling_price")}
+                  </span>
+                  <span className="font-semibold text-gray-900">
+                    {formatCurrency(product.selling_price)} ETB
+                  </span>
                 </div>
                 <div className="flex justify-between items-center py-2.5 px-3 bg-gray-50 rounded-xl">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{t("stock")}</span>
-                  <span className={`font-bold text-base ${product.stock <= 3 ? "text-red-500" : "text-gray-900"}`}>{product.stock}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    {t("stock")}
+                  </span>
+                  <span
+                    className={`font-bold text-base ${product.stock <= 3 ? "text-red-500" : "text-gray-900"}`}
+                  >
+                    {product.stock}
+                  </span>
                 </div>
               </div>
 
               <button
-                onClick={() => setExpandedCards(prev => {
-                  const isCurrentlyExpanded = prev[product.id];
-                  return isCurrentlyExpanded ? {} : { [product.id]: true };
-                })}
+                onClick={() =>
+                  setExpandedCards((prev) => {
+                    const isCurrentlyExpanded = prev[product.id];
+                    return isCurrentlyExpanded ? {} : { [product.id]: true };
+                  })
+                }
                 className="w-full pt-3 border-t flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
               >
                 {expandedCards[product.id] ? (
@@ -522,41 +626,73 @@ const ProductTable = ({
                 )}
               </button>
 
-                  {expandedCards[product.id] && (
-                    <div className="mt-1 pt-3 border-t space-y-3 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("category_name")}</span>
-                        <span className="font-medium text-gray-900">{product.category_name || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("description")}</span>
-                        <span className="font-medium text-gray-900">{product.description || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("supplier")}</span>
-                        <span className="font-medium text-gray-900">{product.supplier_name || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("unit")}</span>
-                        <span className="font-medium text-gray-900">{product.unit}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("piece")}</span>
-                        <span className="font-medium text-gray-900">{product.piece || "N/A"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("package")}</span>
-                        <span className="font-medium text-gray-900">{product.package || "N/A"}</span>
-                      </div>
-                      {showReceiptOption && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Receipt No</span>
-                        <span className="font-medium text-gray-900">{product.receipt_no || "N/A"}</span>
-                      </div>
-                      )}
+              {expandedCards[product.id] && (
+                <div className="mt-1 pt-3 border-t space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{t("created_by")}</span>
-                    <span className="font-medium text-gray-900">{product.user}</span>
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("category_name")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.category_name || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("description")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.description || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("supplier")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.supplier_name || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("unit")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.unit}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("piece")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.piece || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("package")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.package || "N/A"}
+                    </span>
+                  </div>
+                  {showReceiptOption && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                        Receipt No
+                      </span>
+                      <span className="font-medium text-gray-900">
+                        {product.receipt_no || "N/A"}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("created_by")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.user}
+                    </span>
                   </div>
                 </div>
               )}
@@ -565,7 +701,9 @@ const ProductTable = ({
         ) : isLoadingProducts ? (
           <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
             <Spinner className="size-7 text-emerald-600" />
-            <span className="text-sm font-medium text-gray-400">Loading products...</span>
+            <span className="text-sm font-medium text-gray-400">
+              Loading products...
+            </span>
           </div>
         ) : (
           <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-500 font-medium shadow-sm">
@@ -616,7 +754,9 @@ const ProductTable = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages || totalPages === 0}
               className="gap-2 rounded-lg"
             >

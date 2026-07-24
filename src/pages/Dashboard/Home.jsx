@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
-import {
-  API_ENDPOINTS
-} from "@/utils/apiConfig";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
 import ChartData from "./ChartData";
 import StatsSection from "./StatsSection";
 import RecentActivities from "./RecentActivities";
@@ -29,7 +27,7 @@ const Home = () => {
 
   const fetchProducts = async () => {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.PRODUCTS}?include_all=True`
+      `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
     );
     return response?.data?.all_results;
   };
@@ -58,7 +56,6 @@ const Home = () => {
     },
   });
 
-
   if (isLoading) {
     return (
       <div className="w-full h-64 flex items-center justify-center">
@@ -75,19 +72,21 @@ const Home = () => {
           <div className="inline-flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
             <button
               onClick={() => setShowChartData(true)}
-              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${showChartData
-                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                showChartData
+                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              }`}
             >
               {t("revenue")}
             </button>
             <button
               onClick={() => setShowChartData(false)}
-              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${!showChartData
-                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }`}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                !showChartData
+                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+              }`}
             >
               {t("expense")}
             </button>
@@ -95,9 +94,17 @@ const Home = () => {
         </div>
         <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
           {showChartData ? (
-            isSales ? <ChartDataForSalesMan /> : <ChartData period="weekly" />
+            <div key="revenue">
+              {isSales ? (
+                <ChartDataForSalesMan />
+              ) : (
+                <ChartData period="weekly" />
+              )}
+            </div>
           ) : (
-            <ExpenseChart />
+            <div key="expense">
+              <ExpenseChart />
+            </div>
           )}
           <RecentActivities />
         </div>

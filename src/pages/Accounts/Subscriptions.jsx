@@ -57,6 +57,49 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 
+const planFeatures = [
+  {
+    name: "Basic",
+    subtitle: "For Small-sized businesses",
+    features: [
+      "Sales Management System",
+      "Real-time Inventory Tracking & Dashboard",
+      "Product Catalog (Manual + Excel Export)",
+      "Stock Movement & Transfers",
+      "Low-stock Alerts",
+      "Customer Management (profiles & order history)",
+      "Credit Management",
+      "Role-Based Access Control",
+      "Reports & Analytics (sales, inventory changes, trends)",
+      "Mobile-friendly, Cloud Hosting & Regular Backups",
+      "Hosting + Regular Support + Continuous System updates",
+    ],
+  },
+  {
+    name: "Pro",
+    subtitle: "For Medium-sized businesses and multi-branch organizations",
+    features: [
+      "All features from the Basic Plan",
+      "Multi-branch Management",
+      "Multi-warehouse Management",
+    ],
+  },
+  {
+    name: "Premium",
+    subtitle: "Large enterprises, multi-branch organizations and distributors",
+    features: [
+      "All features from the Pro Plan",
+      "Batch / Serial Number & Expiry Date Tracking",
+      "Supplier & Purchase Order Management",
+      "Performa Management",
+      "Automated Reorder Rules & Advanced Alerting",
+      "Custom Analytics Dashboards & KPI Reports",
+      "Integration with POS",
+      "Dedicated Account Manager",
+    ],
+  },
+];
+
 export default function Subscriptions() {
   const [plans, setPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
@@ -160,6 +203,13 @@ export default function Subscriptions() {
       setValue("is_active", selectedPlan.subscriptionPlan?.is_active);
     }
   }, [selectedPlan, setValue]);
+
+  const getPlanFeatures = (planName) => {
+    const match = planFeatures.find(
+      (pf) => pf.name.toLowerCase() === (planName || "").toLowerCase()
+    );
+    return match ? match.features : ["Full access to all features"];
+  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -673,21 +723,19 @@ export default function Subscriptions() {
                                   <span className="text-muted-foreground">/{plan.duration_days} days</span>
                                 </CardDescription>
                               </CardHeader>
-                              <CardContent className="px-5 pb-5">
-                                <div className="space-y-2 mb-4">
-                                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                    <span>Full access to all features</span>
-                                  </div>
-                                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                    <span>Valid for {plan.duration_days} days</span>
-                                  </div>
-                                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                    <span>Priority support</span>
-                                  </div>
-                                </div>
+                               <CardContent className="px-5 pb-5">
+                                 <div className="space-y-2 mb-4">
+                                   {getPlanFeatures(plan.name).map((feature, idx) => (
+                                     <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                                       <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                       <span>{feature}</span>
+                                     </div>
+                                   ))}
+                                   <div className="flex items-center gap-2 text-xs text-gray-600">
+                                     <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                     <span>Valid for {plan.duration_days} days</span>
+                                   </div>
+                                 </div>
                                 <Button
                                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2"
                                   disabled={!plan.is_active}
@@ -825,21 +873,19 @@ export default function Subscriptions() {
                           <span className="text-muted-foreground">/{plan.duration_days} days</span>
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="px-5 pb-5">
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                            <span>Full access to all features</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                            <span>Valid for {plan.duration_days} days</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                            <span>Priority support</span>
-                          </div>
-                        </div>
+                       <CardContent className="px-5 pb-5">
+                         <div className="space-y-2 mb-4">
+                           {getPlanFeatures(plan.name).map((feature, idx) => (
+                             <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                               <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                               <span>{feature}</span>
+                             </div>
+                           ))}
+                           <div className="flex items-center gap-2 text-xs text-gray-600">
+                             <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                             <span>Valid for {plan.duration_days} days</span>
+                           </div>
+                         </div>
                         <Button
                           className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2"
                           disabled={!plan.is_active}

@@ -9,6 +9,7 @@ import { useState, lazy, Suspense } from "react";
 import ErrorBoundary from "./utils/ErrorBoundary";
 import MainLayout from "./components/mainLayout/layout";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import SplashScreen from "./components/SplashScreen";
 
 // ── Eagerly loaded (critical path) ───────────────────────────────────────────
 import LoginPage from "./pages/Login";
@@ -117,6 +118,7 @@ function App() {
 
   return (
     <ErrorBoundary>
+      <SplashScreen />
       <PWAInstallPrompt />
       <Routes>
         <Route path="/login" element={<LoginPage />} />

@@ -11,10 +11,10 @@ export default defineConfig({
       devOptions: {
         enabled: true
       },
-      includeAssets: ["favicon.svg", "icon-192x192.png", "icon-512x512.png", "apple-touch-icon.png", "assets/noImage.jpeg"],
+      includeAssets: ["favicon.svg", "icon-192x192.png", "icon-512x512.png", "apple-touch-icon.png", "splash-640x1136.png", "splash-750x1334.png", "splash-1242x2208.png", "splash-1125x2436.png", "assets/noImage.jpeg"],
       manifest: {
         name: "Po'o Inventory",
-        short_name: "Inventory",
+        short_name: "Po'o Inventory",
         description: "Multi-Inventory Management System",
         theme_color: "#059669",
         background_color: "#ffffff",
@@ -34,6 +34,28 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
+          }
+        ],
+        splashscreens: [
+          {
+            src: "splash-640x1136.png",
+            sizes: "640x1136",
+            type: "image/png"
+          },
+          {
+            src: "splash-750x1334.png",
+            sizes: "750x1334",
+            type: "image/png"
+          },
+          {
+            src: "splash-1242x2208.png",
+            sizes: "1242x2208",
+            type: "image/png"
+          },
+          {
+            src: "splash-1125x2436.png",
+            sizes: "1125x2436",
+            type: "image/png"
           }
         ]
       },

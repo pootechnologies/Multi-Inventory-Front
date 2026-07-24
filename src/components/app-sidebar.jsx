@@ -272,16 +272,16 @@ const data = {
         { title: "Manage Subscriptions", url: "/manage_subscriptions" },
       ],
     },
-  {
-      title: "settings",
-      url: "#",
-      icon: Settings,
-      items: [
-        { title: "accounts", url: "/accounts" },
-        { title: "profile", url: "/profile" },
-        { title: "company_profile", url: "/company_profile" },
-      ],
-    },
+  // {
+  //     title: "settings",
+  //     url: "#",
+  //     icon: Settings,
+  //     items: [
+  //       { title: "accounts", url: "/accounts" },
+  //       { title: "profile", url: "/profile" },
+  //       { title: "company_profile", url: "/company_profile" },
+  //     ],
+  //   },
     {
       title: "Settings",
       url: "#",

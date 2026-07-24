@@ -28,7 +28,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const ExpenseChart = () => {
@@ -44,7 +44,7 @@ const ExpenseChart = () => {
       setExpensesData(response.data);
       setFilteredData(response.data);
       setTotalAmount(
-        response.data.reduce((sum, item) => sum + parseFloat(item.cost), 0)
+        response.data.reduce((sum, item) => sum + parseFloat(item.cost), 0),
       );
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -66,14 +66,14 @@ const ExpenseChart = () => {
           isWithinInterval(parseISO(expense.created_at), {
             start: startDate,
             end: adjustedEndDate,
-          })
+          }),
         );
       } else {
         filtered = expensesData;
       }
       setFilteredData(filtered);
       setTotalAmount(
-        filtered.reduce((sum, item) => sum + parseFloat(item.cost), 0)
+        filtered.reduce((sum, item) => sum + parseFloat(item.cost), 0),
       );
     };
     filterData();
@@ -82,18 +82,18 @@ const ExpenseChart = () => {
   const isValidDate = (date) => {
     return expensesData.some(
       (expense) =>
-        new Date(expense.created_at).toDateString() === date.toDateString()
+        new Date(expense.created_at).toDateString() === date.toDateString(),
     );
   };
 
   const chartData = {
-    labels: filteredData.map((item) =>
-      format(parseISO(item.created_at), "yyyy-MM-dd")
+    labels: filteredData?.map((item) =>
+      format(parseISO(item.created_at), "yyyy-MM-dd"),
     ),
     datasets: [
       {
         label: t("expense"),
-        data: filteredData.map((item) => parseFloat(item.cost)),
+        data: filteredData?.map((item) => parseFloat(item.cost)),
         borderColor: "#4F46E5",
         backgroundColor: "rgba(79, 70, 229, 0.2)",
         tension: 0.3,
@@ -106,7 +106,7 @@ const ExpenseChart = () => {
       <div className="bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent px-6 py-6 border-b border-indigo-500/10">
         <h2 className="flex items-center gap-3 text-2xl font-bold text-indigo-600">
           <div className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-600/20">
-              <LineChart className="h-6 w-6" />
+            <LineChart className="h-6 w-6" />
           </div>
           {t("expense")}
         </h2>
@@ -149,8 +149,8 @@ const ExpenseChart = () => {
                 setTotalAmount(
                   expensesData.reduce(
                     (sum, item) => sum + parseFloat(item.cost),
-                    0
-                  )
+                    0,
+                  ),
                 );
               }}
               variant="outline"

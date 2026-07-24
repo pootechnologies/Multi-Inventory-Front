@@ -261,27 +261,27 @@ const data = {
         },
       ],
     },
-    // {
-    //   title: "Manage Tenants",
-    //   url: "#",
-    //   icon: Building2,
-    //   items: [
-    //     { title: "Add Tenant", url: "/add_tenant" },
-    //     { title: "Tenant List", url: "/tenant_list" },
-    //     { title: "Add Subscriptions", url: "/add_subscription" },
-    //     { title: "Manage Subscriptions", url: "/manage_subscriptions" },
-    //   ],
-    // },
-    // {
-    //   title: "settings",
-    //   url: "#",
-    //   icon: Settings,
-    //   items: [
-    //     { title: "accounts", url: "/accounts" },
-    //     { title: "profile", url: "/profile" },
-    //     { title: "company_profile", url: "/company_profile" },
-    //   ],
-    // },
+    {
+      title: "Manage Tenants",
+      url: "#",
+      icon: Building2,
+      items: [
+        { title: "Add Tenant", url: "/add_tenant" },
+        { title: "Tenant List", url: "/tenant_list" },
+        { title: "Add Subscriptions", url: "/add_subscription" },
+        { title: "Manage Subscriptions", url: "/manage_subscriptions" },
+      ],
+    },
+    {
+      title: "settings",
+      url: "#",
+      icon: Settings,
+      items: [
+        { title: "accounts", url: "/accounts" },
+        { title: "profile", url: "/profile" },
+        { title: "company_profile", url: "/company_profile" },
+      ],
+    },
     {
       title: "Settings",
       url: "#",

@@ -98,7 +98,37 @@ const planFeatures = [
       "Dedicated Account Manager",
     ],
   },
+  {
+    name: "Tokiyo",
+    subtitle: "Large enterprises, multi-branch organizations and distributors",
+    features: [
+      "All features from the Pro Plan",
+      "Batch / Serial Number & Expiry Date Tracking",
+      "Supplier & Purchase Order Management",
+      "Performa Management",
+      "Automated Reorder Rules & Advanced Alerting",
+      "Custom Analytics Dashboards & KPI Reports",
+      "Integration with POS",
+      "Dedicated Account Manager",
+    ],
+  },
 ];
+
+
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
 
 export default function Subscriptions() {
   const [plans, setPlans] = useState([]);
@@ -155,7 +185,18 @@ export default function Subscriptions() {
       const response = await axiosInstance.get(
         `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS}`,
       );
-      setSubscriptionPlans(response.data?.results || []);
+      let plans = response.data?.results || [];
+      
+      // Filter plans based on email
+      if (currentUserEmail === "tokiyogeneraltrading@gmail.com") {
+        // Show only Tokiyo plan
+        plans = plans.filter(plan => plan.name.toLowerCase().includes("tokiyo"));
+      } else {
+        // Hide Tokiyo plan for other users
+        plans = plans.filter(plan => !plan.name.toLowerCase().includes("tokiyo"));
+      }
+      
+      setSubscriptionPlans(plans);
     } catch (error) {
       console.error("There was an error fetching subscription plans:", error);
     } finally {
@@ -236,10 +277,11 @@ export default function Subscriptions() {
       case "cancelled":
         return "Cancelled";
       default:
-        return status ? status.charAt(0).toUpperCase() + status.slice(1) : status;
+        return status
+          ? status.charAt(0).toUpperCase() + status.slice(1)
+          : status;
     }
   };
-
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -849,7 +891,7 @@ export default function Subscriptions() {
                                       {plan.price}
                                     </span>
                                     <span className="text-muted-foreground">
-                                      /year
+                                      br/year
                                     </span>
                                   </div>
                                 </CardDescription>

@@ -717,10 +717,13 @@ export default function Subscriptions() {
                                   {plan.name}
                                 </CardTitle>
                                 <CardDescription className="text-sm">
-                                  <span className="text-xl font-bold text-gray-900">
-                                    ${plan.price}
-                                  </span>
-                                  <span className="text-muted-foreground">/{plan.duration_days} days</span>
+                                  <div className="flex flex-col items-center gap-1">
+                                    <DollarSign className="h-5 w-5 text-gray-400" />
+                                    <span className="text-xl font-bold text-gray-900">
+                                      {plan.price}
+                                    </span>
+                                    <span className="text-muted-foreground">/year</span>
+                                  </div>
                                 </CardDescription>
                               </CardHeader>
                                <CardContent className="px-5 pb-5">
@@ -867,10 +870,13 @@ export default function Subscriptions() {
                           {plan.name}
                         </CardTitle>
                         <CardDescription className="text-sm">
-                          <span className="text-xl font-bold text-gray-900">
-                            ${plan.price}
-                          </span>
-                          <span className="text-muted-foreground">/{plan.duration_days} days</span>
+                          <div className="flex flex-col items-center gap-1">
+                            <DollarSign className="h-5 w-5 text-gray-400" />
+                            <span className="text-xl font-bold text-gray-900">
+                              {plan.price}
+                            </span>
+                            <span className="text-muted-foreground">/year</span>
+                          </div>
                         </CardDescription>
                       </CardHeader>
                        <CardContent className="px-5 pb-5">

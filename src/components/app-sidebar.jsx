@@ -351,7 +351,7 @@ export function AppSidebar({ ...props }) {
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
-  const showTenantsOption = currentUserEmail === "poo@gmail.com";
+  const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
 
   const hasPermission = (permission) => {
     if (!permission) return true;

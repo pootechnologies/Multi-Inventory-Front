@@ -51,7 +51,7 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertTriangle,
-  X
+  X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -136,7 +136,8 @@ export default function Subscriptions() {
   const fetchPlans = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.TENANT_PAYMENT_CHECK
+      const response = await axiosInstance.get(
+        API_ENDPOINTS.TENANT_PAYMENT_CHECK,
       );
       const sortedPlans = response.data.sort((a, b) => b.id - a.id);
       setPlans(sortedPlans);
@@ -152,7 +153,7 @@ export default function Subscriptions() {
     setIsSubLoading(true);
     try {
       const response = await axiosInstance.get(
-        `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS}`
+        `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS}`,
       );
       setSubscriptionPlans(response.data?.results || []);
     } catch (error) {
@@ -206,10 +207,39 @@ export default function Subscriptions() {
 
   const getPlanFeatures = (planName) => {
     const match = planFeatures.find(
-      (pf) => pf.name.toLowerCase() === (planName || "").toLowerCase()
+      (pf) => pf.name.toLowerCase() === (planName || "").toLowerCase(),
     );
     return match ? match.features : ["Full access to all features"];
   };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "paid_verified":
+        return "bg-emerald-50 text-emerald-600 border-emerald-200";
+      case "pending":
+        return "bg-yellow-50 text-yellow-600 border-yellow-200";
+      case "failed":
+        return "bg-red-50 text-red-600 border-red-200";
+      case "cancelled":
+        return "bg-gray-50 text-gray-600 border-gray-200";
+      default:
+        return "bg-blue-50 text-blue-600 border-blue-200";
+    }
+  };
+  const formatStatusForDisplay = (status) => {
+    switch (status) {
+      case "paid_verified":
+        return "Paid";
+      case "pending":
+        return "Pending";
+      case "failed":
+        return "Failed";
+      case "cancelled":
+        return "Cancelled";
+      default:
+        return status ? status.charAt(0).toUpperCase() + status.slice(1) : status;
+    }
+  };
+
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -236,15 +266,11 @@ export default function Subscriptions() {
   const deletePlan = () => {
     if (!planToDelete) return Promise.resolve();
     return axiosInstance
-        .delete(`${API_ENDPOINTS.TENANT_PAYMENT_CHECK}${planToDelete.id}/`)
+      .delete(`${API_ENDPOINTS.TENANT_PAYMENT_CHECK}${planToDelete.id}/`)
       .then(() => {
-        setPlans(
-          plans.filter((plan) => plan.id !== planToDelete.id)
-        );
+        setPlans(plans.filter((plan) => plan.id !== planToDelete.id));
         setFilteredPlans(
-          filteredPlans.filter(
-            (plan) => plan.id !== planToDelete.id
-          )
+          filteredPlans.filter((plan) => plan.id !== planToDelete.id),
         );
         toast.success("Payment record deleted successfully!");
         closeConfirmDelete();
@@ -252,7 +278,7 @@ export default function Subscriptions() {
       .catch((error) => {
         console.error("There was an error deleting the record:", error);
         toast.error(
-          error.response?.data?.error || "Failed to delete payment record!"
+          error.response?.data?.error || "Failed to delete payment record!",
         );
         closeConfirmDelete();
       });
@@ -276,30 +302,41 @@ export default function Subscriptions() {
           price: data.price,
           duration_days: data.duration_days,
           is_active: data.is_active,
-        }
+        },
       );
       fetchPlans();
       toast.success("Payment record updated successfully!");
       setIsUpdateModalOpen(false);
     } catch (error) {
       console.error("There was an error updating the record:", error);
-      toast.error(error.response?.data?.error || "Failed to update payment record!");
+      toast.error(
+        error.response?.data?.error || "Failed to update payment record!",
+      );
     }
   };
 
   const totalPages = Math.ceil(filteredPlans.length / itemsPerPage);
   const displayPlans = filteredPlans.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const Modal = ({ plan, onClose }) => {
     if (!plan) return null;
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={onClose}>
-        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={onClose}
+      >
+        <div
+          className="bg-white rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="p-6">
-            <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors">
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
               <X className="h-5 w-5" />
             </button>
 
@@ -331,29 +368,37 @@ export default function Subscriptions() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Crown className="w-3 h-3" /> Plan Name
                 </p>
-                <p className="font-semibold text-gray-900">{plan.subscriptionPlan?.name}</p>
+                <p className="font-semibold text-gray-900">
+                  {plan.subscriptionPlan?.name}
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <DollarSign className="w-3 h-3" /> Price
                 </p>
-                <p className="font-semibold text-gray-900">${plan.subscriptionPlan?.price}</p>
+                <p className="font-semibold text-gray-900">
+                  ${plan.subscriptionPlan?.price}
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Hash className="w-3 h-3" /> Duration
                 </p>
-                <p className="font-semibold text-gray-900">{plan.subscriptionPlan?.duration_days} days</p>
+                <p className="font-semibold text-gray-900">
+                  {plan.subscriptionPlan?.duration_days} days
+                </p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Check className="w-3 h-3" /> Active
                 </p>
-                <p className={`font-semibold ${plan.subscriptionPlan?.is_active ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {plan.subscriptionPlan?.is_active ? 'Yes' : 'No'}
+                <p
+                  className={`font-semibold ${plan.subscriptionPlan?.is_active ? "text-emerald-600" : "text-red-600"}`}
+                >
+                  {plan.subscriptionPlan?.is_active ? "Yes" : "No"}
                 </p>
               </div>
 
@@ -361,14 +406,20 @@ export default function Subscriptions() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Check className="w-3 h-3" /> Payment Status
                 </p>
-                <p className={`font-semibold ${plan.status === 'paid_verified' ? 'text-emerald-600' : 'text-yellow-600'}`}>
-                  {plan.status}
+                <p
+                  className={`font-semibold ${plan.status === "paid_verified" ? "text-emerald-600" : "text-yellow-600"}`}
+                >
+                  {formatStatusForDisplay(plan.status)}
                 </p>
               </div>
             </div>
 
             <div className="mt-6 flex justify-end">
-              <Button variant="outline" onClick={onClose} className="rounded-xl border-gray-200 w-24">
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="rounded-xl border-gray-200 w-24"
+              >
                 Close
               </Button>
             </div>
@@ -391,9 +442,19 @@ export default function Subscriptions() {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isDeleting && onCancel()}>
-        <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl relative text-center p-8 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-          <button onClick={() => !isDeleting && onCancel()} disabled={isDeleting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={() => !isDeleting && onCancel()}
+      >
+        <div
+          className="bg-white rounded-3xl w-full max-w-sm shadow-2xl relative text-center p-8 animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={() => !isDeleting && onCancel()}
+            disabled={isDeleting}
+            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
             <X className="h-5 w-5" />
           </button>
 
@@ -405,7 +466,8 @@ export default function Subscriptions() {
             Are you sure?
           </h2>
           <p className="text-gray-500 mb-8 px-2 text-sm leading-relaxed">
-            Do you really want to delete this subscription plan? This action cannot be undone.
+            Do you really want to delete this subscription plan? This action
+            cannot be undone.
           </p>
 
           <div className="flex justify-center space-x-3">
@@ -453,10 +515,20 @@ export default function Subscriptions() {
     };
 
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4" onClick={() => !isSubmitting && onClose()}>
-        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[9999] p-4"
+        onClick={() => !isSubmitting && onClose()}
+      >
+        <div
+          className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="p-6">
-            <button onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+            <button
+              onClick={() => !isSubmitting && onClose()}
+              disabled={isSubmitting}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
               <X className="h-5 w-5" />
             </button>
 
@@ -469,7 +541,10 @@ export default function Subscriptions() {
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+            <form
+              onSubmit={handleSubmit(handleFormSubmit)}
+              className="space-y-6"
+            >
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2 block">
                   Plan Name
@@ -527,14 +602,23 @@ export default function Subscriptions() {
                     {...register("is_active")}
                     className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                   />
-                  <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="is_active"
+                    className="text-sm font-medium text-gray-700"
+                  >
                     Active
                   </label>
                 </div>
               </div>
 
               <div className="flex justify-end gap-3 pt-6 mt-6">
-                <Button type="button" variant="ghost" onClick={() => !isSubmitting && onClose()} disabled={isSubmitting} className="rounded-xl font-medium disabled:opacity-40">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => !isSubmitting && onClose()}
+                  disabled={isSubmitting}
+                  className="rounded-xl font-medium disabled:opacity-40"
+                >
                   Cancel
                 </Button>
                 <Button
@@ -616,7 +700,10 @@ export default function Subscriptions() {
               </div> */}
             </div>
             <div className="text-sm font-medium text-gray-500 hidden sm:block">
-              Total Plans: <span className="text-gray-900 font-bold ml-1">{filteredPlans.length}</span>
+              Total Plans:{" "}
+              <span className="text-gray-900 font-bold ml-1">
+                {filteredPlans.length}
+              </span>
             </div>
           </div>
 
@@ -626,7 +713,9 @@ export default function Subscriptions() {
               {filteredPlans.length > 0 && (
                 <TableHeader className="bg-gray-50/80">
                   <TableRow className="border-b-gray-100">
-                    <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap"># ID</TableHead>
+                    <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
+                      # ID
+                    </TableHead>
                     <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Crown className="w-4 h-4 text-gray-400" />
@@ -657,6 +746,12 @@ export default function Subscriptions() {
                         Active
                       </div>
                     </TableHead>
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-gray-400" />
+                        Status
+                      </div>
+                    </TableHead>
                     {/* Actions header removed */}
                   </TableRow>
                 </TableHeader>
@@ -664,42 +759,73 @@ export default function Subscriptions() {
               <TableBody>
                 {displayPlans.length > 0 ? (
                   displayPlans.map((plan) => (
-                    <TableRow key={plan.id} className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
-                      <TableCell className="font-medium text-gray-500">#{plan.id}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{plan.tenant}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{plan.subscriptionPlan?.name}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">${plan.subscriptionPlan?.price}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{plan.subscriptionPlan?.duration_days} days</TableCell>
+                    <TableRow
+                      key={plan.id}
+                      className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors"
+                    >
+                      <TableCell className="font-medium text-gray-500">
+                        #{plan.id}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {plan.tenant}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {plan.subscriptionPlan?.name}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        ${plan.subscriptionPlan?.price}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
+                        {plan.subscriptionPlan?.duration_days} days
+                      </TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          plan.subscriptionPlan?.is_active 
-                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                            : 'bg-red-100 text-red-700 border border-red-200'
-                        }`}>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            plan.subscriptionPlan?.is_active
+                              ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                              : "bg-red-100 text-red-700 border border-red-200"
+                          }`}
+                        >
                           <Check className="h-3 w-3" />
-                          {plan.subscriptionPlan?.is_active ? 'Yes' : 'No'}
+                          {plan.subscriptionPlan?.is_active ? "Yes" : "No"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(plan.status)}`}
+                        >
+                          {formatStatusForDisplay(plan.status)}
                         </span>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-32 text-center">
+                    <TableCell colSpan={7} className="h-32 text-center">
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
-                        <span className="text-sm font-medium text-gray-400">Loading payment records...</span>
+                        <span className="text-sm font-medium text-gray-400">
+                          Loading payment records...
+                        </span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : subscriptionPlans.length > 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="p-6">
+                    <TableCell colSpan={7} className="p-6">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {subscriptionPlans.map((plan) => {
                           const planName = (plan.name || "").toLowerCase();
-                          const Icon = (planName.includes("pro") || planName.includes("enterprise")) ? Crown : Zap;
+                          const Icon =
+                            planName.includes("pro") ||
+                            planName.includes("enterprise")
+                              ? Crown
+                              : Zap;
                           return (
-                            <Card key={plan.id} className="border shadow-sm rounded-xl hover:shadow-md transition-all duration-200 bg-white">
+                            <Card
+                              key={plan.id}
+                              className="border shadow-sm rounded-xl hover:shadow-md transition-all duration-200 bg-white"
+                            >
                               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                               <CardHeader className="pt-5 pb-3 px-5">
                                 <div className="flex items-center justify-between">
@@ -722,23 +848,32 @@ export default function Subscriptions() {
                                     <span className="text-xl font-bold text-gray-900">
                                       {plan.price}
                                     </span>
-                                    <span className="text-muted-foreground">/year</span>
+                                    <span className="text-muted-foreground">
+                                      /year
+                                    </span>
                                   </div>
                                 </CardDescription>
                               </CardHeader>
-                               <CardContent className="px-5 pb-5">
-                                 <div className="space-y-2 mb-4">
-                                   {getPlanFeatures(plan.name).map((feature, idx) => (
-                                     <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
-                                       <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                       <span>{feature}</span>
-                                     </div>
-                                   ))}
-                                   <div className="flex items-center gap-2 text-xs text-gray-600">
-                                     <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                     <span>Valid for {plan.duration_days} days</span>
-                                   </div>
-                                 </div>
+                              <CardContent className="px-5 pb-5">
+                                <div className="space-y-2 mb-4">
+                                  {getPlanFeatures(plan.name).map(
+                                    (feature, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="flex items-center gap-2 text-xs text-gray-600"
+                                      >
+                                        <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                        <span>{feature}</span>
+                                      </div>
+                                    ),
+                                  )}
+                                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                    <span>
+                                      Valid for {plan.duration_days} days
+                                    </span>
+                                  </div>
+                                </div>
                                 <Button
                                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2"
                                   disabled={!plan.is_active}
@@ -747,7 +882,9 @@ export default function Subscriptions() {
                                     setIsSubDialogOpen(true);
                                   }}
                                 >
-                                  {plan.is_active ? "Subscribe Now" : "Unavailable"}
+                                  {plan.is_active
+                                    ? "Subscribe Now"
+                                    : "Unavailable"}
                                 </Button>
                               </CardContent>
                             </Card>
@@ -758,7 +895,10 @@ export default function Subscriptions() {
                   </TableRow>
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-gray-500 font-medium">
+                    <TableCell
+                      colSpan={7}
+                      className="h-24 text-center text-gray-500 font-medium"
+                    >
                       No payment records found.
                     </TableCell>
                   </TableRow>
@@ -771,7 +911,10 @@ export default function Subscriptions() {
           <div className="md:hidden space-y-4">
             {displayPlans.length > 0 ? (
               displayPlans.map((plan) => (
-                <div key={plan.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4">
+                <div
+                  key={plan.id}
+                  className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4"
+                >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
@@ -809,7 +952,9 @@ export default function Subscriptions() {
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                       Plan Name
                     </p>
-                    <p className="text-gray-900 text-[15px] font-bold">{plan.subscriptionPlan?.name}</p>
+                    <p className="text-gray-900 text-[15px] font-bold">
+                      {plan.subscriptionPlan?.name}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -817,13 +962,17 @@ export default function Subscriptions() {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Price
                       </p>
-                      <p className="text-gray-900 text-[15px] font-bold">${plan.subscriptionPlan?.price}</p>
+                      <p className="text-gray-900 text-[15px] font-bold">
+                        ${plan.subscriptionPlan?.price}
+                      </p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Duration
                       </p>
-                      <p className="text-gray-900 text-[15px] font-bold">{plan.subscriptionPlan?.duration_days} days</p>
+                      <p className="text-gray-900 text-[15px] font-bold">
+                        {plan.subscriptionPlan?.duration_days} days
+                      </p>
                     </div>
                   </div>
 
@@ -831,13 +980,26 @@ export default function Subscriptions() {
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                       Active
                     </p>
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      plan.subscriptionPlan?.is_active 
-                        ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-                        : 'bg-red-100 text-red-700 border border-red-200'
-                    }`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        plan.subscriptionPlan?.is_active
+                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                          : "bg-red-100 text-red-700 border border-red-200"
+                      }`}
+                    >
                       <Check className="h-3 w-3" />
-                      {plan.subscriptionPlan?.is_active ? 'Yes' : 'No'}
+                      {plan.subscriptionPlan?.is_active ? "Yes" : "No"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
+                      Status
+                    </p>
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(plan.status)}`}
+                    >
+                      {formatStatusForDisplay(plan.status)}
                     </span>
                   </div>
                 </div>
@@ -845,14 +1007,24 @@ export default function Subscriptions() {
             ) : isLoading ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
                 <Spinner className="size-7 text-emerald-600" />
-                <span className="text-sm font-medium text-gray-400">Loading payment records...</span>
+                <span className="text-sm font-medium text-gray-400">
+                  Loading payment records...
+                </span>
               </div>
             ) : subscriptionPlans.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {subscriptionPlans.map((plan) => {
-                  const Icon = (plan.name && plan.name.toLowerCase().includes("pro")) ? Crown : plan.name.toLowerCase().includes("enterprise") ? Crown : Zap;
+                  const Icon =
+                    plan.name && plan.name.toLowerCase().includes("pro")
+                      ? Crown
+                      : plan.name.toLowerCase().includes("enterprise")
+                        ? Crown
+                        : Zap;
                   return (
-                    <Card key={plan.id} className="border shadow-sm rounded-xl bg-white">
+                    <Card
+                      key={plan.id}
+                      className="border shadow-sm rounded-xl bg-white"
+                    >
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
                       <CardHeader className="pt-5 pb-3 px-5">
                         <div className="flex items-center justify-between">
@@ -879,19 +1051,22 @@ export default function Subscriptions() {
                           </div>
                         </CardDescription>
                       </CardHeader>
-                       <CardContent className="px-5 pb-5">
-                         <div className="space-y-2 mb-4">
-                           {getPlanFeatures(plan.name).map((feature, idx) => (
-                             <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
-                               <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                               <span>{feature}</span>
-                             </div>
-                           ))}
-                           <div className="flex items-center gap-2 text-xs text-gray-600">
-                             <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                             <span>Valid for {plan.duration_days} days</span>
-                           </div>
-                         </div>
+                      <CardContent className="px-5 pb-5">
+                        <div className="space-y-2 mb-4">
+                          {getPlanFeatures(plan.name).map((feature, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-2 text-xs text-gray-600"
+                            >
+                              <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                              <span>{feature}</span>
+                            </div>
+                          ))}
+                          <div className="flex items-center gap-2 text-xs text-gray-600">
+                            <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                            <span>Valid for {plan.duration_days} days</span>
+                          </div>
+                        </div>
                         <Button
                           className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2"
                           disabled={!plan.is_active}
@@ -921,7 +1096,9 @@ export default function Subscriptions() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="gap-2 rounded-lg"
                 >
@@ -934,14 +1111,17 @@ export default function Subscriptions() {
                     if (totalPages > 5) {
                       if (currentPage > 3) {
                         pageNum = currentPage - 2 + i;
-                        if (pageNum > totalPages) pageNum = totalPages - (4 - i);
+                        if (pageNum > totalPages)
+                          pageNum = totalPages - (4 - i);
                       }
                     }
                     if (pageNum <= totalPages) {
                       return (
                         <Button
                           key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "ghost"}
+                          variant={
+                            currentPage === pageNum ? "default" : "ghost"
+                          }
                           size="icon"
                           className="h-8 w-8 rounded-lg"
                           onClick={() => setCurrentPage(pageNum)}
@@ -956,7 +1136,9 @@ export default function Subscriptions() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages || totalPages === 0}
                   className="gap-2 rounded-lg"
                 >
@@ -992,9 +1174,15 @@ export default function Subscriptions() {
               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <Crown className="h-8 w-8 text-white" />
               </div>
-              <DialogTitle className="text-2xl">Confirm Subscription</DialogTitle>
+              <DialogTitle className="text-2xl">
+                Confirm Subscription
+              </DialogTitle>
               <DialogDescription className="text-base">
-                You are about to subscribe to the <span className="font-semibold text-gray-900">{selectedSubPlan?.name}</span> plan
+                You are about to subscribe to the{" "}
+                <span className="font-semibold text-gray-900">
+                  {selectedSubPlan?.name}
+                </span>{" "}
+                plan
               </DialogDescription>
             </DialogHeader>
 
@@ -1029,13 +1217,13 @@ export default function Subscriptions() {
                     setIsSubProcessing(true);
                     const response = await axiosInstance.post(
                       `${API_ENDPOINTS.TENANT_PAY}/`,
-                      { plan: selectedSubPlan?.id }
+                      { plan: selectedSubPlan?.id },
                     );
                     const { payment_url } = response.data;
-                    window.open(payment_url, '_blank');
+                    window.open(payment_url, "_blank");
                     setIsSubDialogOpen(false);
                   } catch (err) {
-                    console.error('Payment initiation failed:', err);
+                    console.error("Payment initiation failed:", err);
                   } finally {
                     setIsSubProcessing(false);
                   }

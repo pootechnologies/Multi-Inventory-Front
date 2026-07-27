@@ -63,6 +63,7 @@ const ManageSubscriptions       = lazy(() => import("./pages/Accounts/ManageSubs
 const AddSubscription           = lazy(() => import("./pages/Accounts/AddSubscription"));
 const TenantManagement          = lazy(() => import("./pages/Accounts/TenantManagement"));
 const TenantList                = lazy(() => import("./pages/Accounts/TenantList"));
+const BusinessCategoryManagement = lazy(() => import("./pages/Accounts/BusinessCategoryManagement"));
 
 // ── Suspense fallback ─────────────────────────────────────────────────────────
 const PageLoader = () => (
@@ -194,6 +195,7 @@ function App() {
         {/* Tenants */}
         <Route path="/add_tenant"             element={page(TenantManagement)} />
         <Route path="/tenant_list"            element={page(TenantList)} />
+        <Route path="/business_categories"    element={page(BusinessCategoryManagement)} />
 
         {/* Misc */}
         <Route path="/logs"    element={page(Logs)} />

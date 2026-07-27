@@ -270,6 +270,7 @@ const data = {
         { title: "Tenant List", url: "/tenant_list" },
         { title: "Add Subscriptions", url: "/add_subscription" },
         { title: "Manage Subscriptions", url: "/manage_subscriptions" },
+        { title: "Business Categories", url: "/business_categories" },
       ],
     },
     // {

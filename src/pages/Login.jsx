@@ -1,5 +1,5 @@
-import { Lightbulb, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight, Building2 } from "lucide-react";
-import { useState } from "react";
+import { Lightbulb, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight, Building2, User, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "@/utils/axiosInstance";
@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import toast from "react-hot-toast";
+import EmailVerificationModal from "@/components/EmailVerificationModal";
+import Select from "react-select";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -22,11 +24,36 @@ const LoginPage = () => {
   // Registration States
   const [isRegistering, setIsRegistering] = useState(false);
   const [companyName, setCompanyName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [businessCategory, setBusinessCategory] = useState(null);
+  const [businessCategories, setBusinessCategories] = useState([]);
   const [registerLoading, setRegisterLoading] = useState(false);
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  // Fetch business categories on component mount
+  useEffect(() => {
+    const fetchBusinessCategories = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL_LOGIN}${API_ENDPOINTS.TENANT_BUSINESS_CATEGORIES}`
+        );
+        const categories = response.data.map((cat) => ({
+          value: cat.id,
+          label: cat.name,
+        }));
+        setBusinessCategories(categories);
+      } catch (error) {
+        console.error("Error fetching business categories:", error);
+      }
+    };
+    fetchBusinessCategories();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -69,10 +96,14 @@ const LoginPage = () => {
       navigate("/");
       window.location.reload();
     } catch (error) {
-      setError(
-        error.response?.data?.detail ||
-        "Invalid credentials. Please check your email and password."
-      );
+      const errorMessage = error.response?.data?.detail || "Invalid credentials. Please check your email and password.";
+      
+      if (errorMessage === "Please verify your email before signing in") {
+        setShowVerificationModal(true);
+        setError("");
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -87,11 +118,15 @@ const LoginPage = () => {
     try {
       const payload = {
         campany_name: companyName,
+        business_category: businessCategory ? businessCategory.value : null,
         on_trial: true,
         owner: {
+          first_name: firstName,
+          last_name: lastName,
+          phone_number: phoneNumber,
           email: registerEmail,
-          password: registerPassword
-        }
+          password: registerPassword,
+        },
       };
 
       await axios.post(
@@ -110,8 +145,12 @@ const LoginPage = () => {
         setIsRegistering(false);
         setRegisterSuccess(false);
         setCompanyName("");
+        setFirstName("");
+        setLastName("");
+        setPhoneNumber("");
         setRegisterEmail("");
         setRegisterPassword("");
+        setBusinessCategory(null);
       }, 1500);
     } catch (error) {
       console.error("Registration error:", error);
@@ -299,6 +338,76 @@ const LoginPage = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Business Category</label>
+                  <Select
+                    value={businessCategory}
+                    onChange={setBusinessCategory}
+                    options={businessCategories}
+                    placeholder="Select business category"
+                    className="react-select-container"
+                    classNamePrefix="react-select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        minHeight: '56px',
+                        borderRadius: '16px',
+                        border: '1px solid rgb(226 232 240)',
+                        '&:hover': { borderColor: 'rgb(59 130 246)' },
+                        backgroundColor: 'rgb(255 255 255)',
+                        boxShadow: 'none',
+                      }),
+                    }}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">First Name</label>
+                    <div className="group relative transition-all">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="w-full h-14 pl-12 pr-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-slate-900 dark:text-white font-medium"
+                        placeholder="First name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Last Name</label>
+                    <div className="group relative transition-all">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="w-full h-14 pl-12 pr-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-slate-900 dark:text-white font-medium"
+                        placeholder="Last name"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Phone Number</label>
+                  <div className="group relative transition-all">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                    <input
+                      type="text"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-slate-900 dark:text-white font-medium"
+                      placeholder="Enter phone number"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
                   <div className="group relative transition-all">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
@@ -381,6 +490,12 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
+
+      <EmailVerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        email={email}
+      />
     </div>
   );
 };

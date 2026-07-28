@@ -21,6 +21,22 @@ const BottomNavigation = () => {
     tenantPermissions = [];
   }
 
+  const getCurrentUserEmail = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.email || null;
+      }
+    } catch (e) {
+      console.error("Error parsing user_info from localStorage", e);
+    }
+    return null;
+  };
+
+  const currentUserEmail = getCurrentUserEmail();
+  const showReceiptOption = currentUserEmail === "tokiyogeneraltrading@gmail.com";
+
   const hasPermission = (permission) => {
     if (!permission) return true;
     if (!Array.isArray(tenantPermissions)) return false;
@@ -75,13 +91,20 @@ const BottomNavigation = () => {
     },
   ];
 
-  const navItems = allNavItems.map(item => {
-    const filteredSubItems = item.subItems.filter(sub => hasPermission(sub.permission));
-    if (filteredSubItems.length > 0) {
-      return { ...item, subItems: filteredSubItems };
-    }
-    return null;
-  }).filter(Boolean);
+  const navItems = allNavItems
+    .filter(item => {
+      if (!showReceiptOption && (item.id === 'performa' || item.id === 'purchase')) {
+        return false;
+      }
+      return true;
+    })
+    .map(item => {
+      const filteredSubItems = item.subItems.filter(sub => hasPermission(sub.permission));
+      if (filteredSubItems.length > 0) {
+        return { ...item, subItems: filteredSubItems };
+      }
+      return null;
+    }).filter(Boolean);
 
   const handleItemClick = (item) => {
     if (expandedItem === item.id) {

@@ -153,17 +153,6 @@ const PasswordResetPage = () => {
                 </Button>
               </form>
             )}
-
-            <div className="text-center animate-in fade-in duration-300">
-              <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-                <button
-                  onClick={() => navigate("/login")}
-                  className="text-blue-600 font-bold hover:underline underline-offset-4"
-                >
-                  Back to Sign In
-                </button>
-              </p>
-            </div>
           </div>
         </div>
 

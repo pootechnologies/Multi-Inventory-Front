@@ -12,6 +12,7 @@ import PWAInstallPrompt from "./components/PWAInstallPrompt";
 
 // ── Eagerly loaded (critical path) ───────────────────────────────────────────
 import LoginPage from "./pages/Login";
+import PasswordResetPage from "./pages/PasswordReset";
 import HomePage from "./pages/Dashboard/Home";
 
 // ── Lazily loaded pages ───────────────────────────────────────────────────────
@@ -104,7 +105,7 @@ function App() {
   if (isLoading) return <div>Loading...</div>;
 
   // Direct redirect if they aren't logged in at all
-  if (!user && location.pathname !== "/login") {
+  if (!user && location.pathname !== "/login" && location.pathname !== "/password/reset") {
     return <Navigate to="/login" replace />;
   }
 
@@ -122,6 +123,7 @@ function App() {
       <PWAInstallPrompt />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/password/reset" element={<PasswordResetPage />} />
 
         <Route path="/" element={page(HomePage)} />
 

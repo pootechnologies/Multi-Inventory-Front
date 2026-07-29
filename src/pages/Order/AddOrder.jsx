@@ -920,6 +920,13 @@ const AddOrder = () => {
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
 
+  // Set default receipt value based on user email
+  useEffect(() => {
+    if (!showReceiptOption && receipt !== "Receipt") {
+      setReceipt("Receipt");
+    }
+  }, [showReceiptOption, receipt, setReceipt]);
+
   const { t } = useTranslation();
 
   const formatter = new Intl.NumberFormat("am-ET", {
@@ -1058,12 +1065,13 @@ const AddOrder = () => {
   };
 
   const calculateVAT = () => {
+    const finalReceipt = !showReceiptOption ? "Receipt" : receipt;
     const subtotalWithReceipt = items
       .filter(
         (item) =>
           item.selectedProduct &&
           (item.quantity > 0 || item.package) &&
-          receipt === "Receipt",
+          finalReceipt === "Receipt",
       )
       .reduce((total, item) => {
         const quantity = item.package
@@ -1105,13 +1113,16 @@ const AddOrder = () => {
   const handleConfirmOrder = async () => {
     setIsSubmitting(true);
 
+    // Ensure receipt is set to "Receipt" if option is not shown
+    const finalReceipt = !showReceiptOption ? "Receipt" : receipt;
+
     const order = {
       customer: selectedCustomer ? selectedCustomer.id : null,
       total_amount: calculateTotalAmount(),
       phone_number: phoneNumber,
       tin_number: tinNumber,
       fs_number: fsNumber,
-      receipt: receipt,
+      receipt: finalReceipt,
       items: items
         .filter(
           (item) =>
@@ -1751,7 +1762,7 @@ const AddOrder = () => {
                       price:
                         (item.unit_price ||
                           item.selectedProduct.selling_price) * item.quantity,
-                      receipt: receipt,
+                      receipt: !showReceiptOption ? "Receipt" : receipt,
                     })),
                   subtotal: calculateSubtotal(),
                   vat: calculateVAT(),
@@ -1774,7 +1785,7 @@ const AddOrder = () => {
                     price:
                       (item.unit_price || item.selectedProduct.selling_price) *
                       item.quantity,
-                    receipt: receipt,
+                    receipt: !showReceiptOption ? "Receipt" : receipt,
                   })),
               }}
             />

@@ -331,6 +331,12 @@ const ProductTable = ({
                 {t("category_name")}
               </TableHead>
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                {t("specification")}
+              </TableHead>
+              <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                {t("is_bundle")}
+              </TableHead>
+              <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 {t("buying_price")}
               </TableHead>
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
@@ -357,6 +363,20 @@ const ProductTable = ({
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {product.category_name || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm font-medium">
+                      {product.specification || "N/A"}
+                    </TableCell>
+                    <TableCell className="text-gray-600 text-sm font-medium">
+                      {product.is_bundle ? (
+                        <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                          Yes
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                          No
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {formatCurrency(product.buying_price)} ETB
@@ -448,6 +468,22 @@ const ProductTable = ({
                           </div>
                           <div>
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("specification")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.specification || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                              {t("is_bundle")}
+                            </p>
+                            <p className="font-medium text-gray-900">
+                              {product.is_bundle ? "Yes" : "No"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
                               {t("unit")}
                             </p>
                             <p className="font-medium text-gray-900">
@@ -496,7 +532,7 @@ const ProductTable = ({
               ))
             ) : isLoadingProducts ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-32 text-center">
+                <TableCell colSpan={9} className="h-32 text-center">
                   <div className="flex justify-center items-center gap-3 text-emerald-600">
                     <Spinner className="size-6" />
                     <span className="text-sm font-medium text-gray-400">
@@ -508,7 +544,7 @@ const ProductTable = ({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={9}
                   className="h-24 text-center text-gray-500 font-medium"
                 >
                   No products found.
@@ -634,6 +670,22 @@ const ProductTable = ({
                     </span>
                     <span className="font-medium text-gray-900">
                       {product.category_name || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("specification")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.specification || "N/A"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                      {t("is_bundle")}
+                    </span>
+                    <span className="font-medium text-gray-900">
+                      {product.is_bundle ? "Yes" : "No"}
                     </span>
                   </div>
                   <div className="flex justify-between">

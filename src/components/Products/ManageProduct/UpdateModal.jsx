@@ -15,6 +15,7 @@ const UpdateModal = ({
   handleSubmit,
   handleFileChange,
   fileName,
+  setValue,
 }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,9 +170,11 @@ const UpdateModal = ({
                           }
                         : null
                     }
-                    onChange={(option) =>
-                      setValue("category", option ? option.value : "")
-                    }
+                    onChange={(option) => {
+                      if (setValue) {
+                        setValue("category", option ? option.value : "");
+                      }
+                    }}
                     styles={{
                       control: (base) => ({
                         ...base,
@@ -192,6 +195,33 @@ const UpdateModal = ({
                     }}
                   />
                 )}
+              </div>
+
+              {/* Specification */}
+              <div>
+                <label className={labelClass}>{t("specification")}</label>
+                <input
+                  type="text"
+                  defaultValue={selectedProduct.specification}
+                  {...register("specification")}
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Is Bundle */}
+              <div>
+                <label className={labelClass}>{t("is_bundle")}</label>
+                <div className="flex items-center gap-3 h-11 px-3 bg-white border border-gray-200 rounded-xl">
+                  <input
+                    type="checkbox"
+                    defaultChecked={selectedProduct.is_bundle}
+                    {...register("is_bundle")}
+                    className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    {selectedProduct.is_bundle ? "Yes" : "No"}
+                  </span>
+                </div>
               </div>
 
               {/* Description */}

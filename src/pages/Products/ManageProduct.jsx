@@ -82,6 +82,7 @@ const ManageProduct = () => {
     setSelectedProduct(product);
     setValue("name", product.name);
     setValue("specification", product.specification);
+    setValue("is_bundle", product.is_bundle);
     setValue("description", product.description);
     setValue("buyingPrice", product.buying_price);
     setValue("sellingPrice", product.selling_price);
@@ -98,6 +99,12 @@ const ManageProduct = () => {
     const formData = new FormData();
     if (data.name !== selectedProduct.name) {
       formData.append("name", data.name);
+    }
+    if (data.specification !== selectedProduct.specification) {
+      formData.append("specification", data.specification);
+    }
+    if (data.is_bundle !== selectedProduct.is_bundle) {
+      formData.append("is_bundle", data.is_bundle);
     }
     if (data.description !== selectedProduct.description) {
       formData.append("description", data.description);
@@ -228,6 +235,7 @@ const ManageProduct = () => {
           handleSubmit={handleSubmit}
           handleFileChange={handleFileChange}
           fileName={fileName}
+          setValue={setValue}
         />
       )}
         </div>

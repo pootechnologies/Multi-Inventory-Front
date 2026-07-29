@@ -26,6 +26,7 @@ import axiosInstance from "@/utils/axiosInstance";
 
 const AddProduct = () => {
   const [categories, setCategories] = useState([]);
+  const [isBundle, setIsBundle] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
@@ -148,6 +149,7 @@ const AddProduct = () => {
     if (data.buying_price && data.buying_price > 0) {
       formData.append("buying_price", data.buying_price);
     }
+    formData.append("is_bundle", isBundle);
     if (data.selling_price)
       formData.append("selling_price", data.selling_price);
     if (data.description) formData.append("description", data.description);
@@ -157,20 +159,17 @@ const AddProduct = () => {
     if (data.receipt_no) formData.append("receipt_no", data.receipt_no);
     if (data.stock) formData.append("stock", data.stock);
     if (data.unit) formData.append("unit", data.unit);
+    if (data.specification)
+      formData.append("specification", data.specification);
 
     try {
-      const response = await axiosInstance.post(
-        API_ENDPOINTS.PRODUCTS,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
+      await axiosInstance.post(API_ENDPOINTS.PRODUCTS, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       reset();
       setSelectedCategory(null);
       setSelectedSupplier(null);
+      setIsBundle(false);
       toast.success("Product added successfully!");
     } catch (error) {
       console.error("There was an error adding the product:", error);
@@ -285,24 +284,21 @@ const AddProduct = () => {
                     unstyled
                     classNames={{
                       control: ({ isFocused }) =>
-                        `flex h-11 w-full pl-10 bg-muted/20 border ${
-                          errors.category
-                            ? "border-red-500"
-                            : "border-muted-foreground/20"
-                        } ${
-                          isFocused
-                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                            : ""
+                        `flex h-11 w-full pl-10 bg-muted/20 border ${errors.category
+                          ? "border-red-500"
+                          : "border-muted-foreground/20"
+                        } ${isFocused
+                          ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                          : ""
                         } rounded-xl transition-all text-sm py-1`,
                       menu: () =>
                         "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
-                        `px-4 py-2 cursor-pointer transition-colors ${
-                          isSelected
-                            ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                            : isFocused
-                              ? "bg-muted/50 text-gray-900 dark:text-white"
-                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                        `px-4 py-2 cursor-pointer transition-colors ${isSelected
+                          ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                          : isFocused
+                            ? "bg-muted/50 text-gray-900 dark:text-white"
+                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",
@@ -324,6 +320,30 @@ const AddProduct = () => {
               {errors.category && (
                 <p className="text-red-500 text-xs mt-1 ml-1">
                   {errors.category.message}
+                </p>
+              )}
+            </div>
+
+            {/* Specification */}
+            <div className="space-y-2 md:col-span-2">
+              <label
+                htmlFor="specification"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
+                {t("specification")}
+              </label>
+              <div className="relative group">
+                <AlignLeft className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
+                <Input
+                  type="text"
+                  id="specification"
+                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.specification ? "border-red-500" : ""}`}
+                  {...register("specification")}
+                />
+              </div>
+              {errors.specification && (
+                <p className="text-red-500 text-xs mt-1 ml-1">
+                  {errors.specification.message}
                 </p>
               )}
             </div>
@@ -502,6 +522,25 @@ const AddProduct = () => {
               </div>
             )}
 
+            {/* Is Bundle */}
+            <div className="space-y-2 md:col-span-2">
+              <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-xl border border-muted-foreground/20">
+                <input
+                  id="isBundle"
+                  type="checkbox"
+                  checked={isBundle}
+                  onChange={(e) => setIsBundle(e.target.checked)}
+                  className="w-5 h-5 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+                />
+                <label
+                  htmlFor="isBundle"
+                  className="text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer select-none"
+                >
+                  Is Bundle
+                </label>
+              </div>
+            </div>
+
             <div className="hidden md:block"></div>
 
             {/* Supplier */}
@@ -531,24 +570,21 @@ const AddProduct = () => {
                     unstyled
                     classNames={{
                       control: ({ isFocused }) =>
-                        `flex h-11 w-full pl-10 bg-muted/20 border ${
-                          errors.supplier
-                            ? "border-red-500"
-                            : "border-muted-foreground/20"
-                        } ${
-                          isFocused
-                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                            : ""
+                        `flex h-11 w-full pl-10 bg-muted/20 border ${errors.supplier
+                          ? "border-red-500"
+                          : "border-muted-foreground/20"
+                        } ${isFocused
+                          ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                          : ""
                         } rounded-xl transition-all text-sm py-1`,
                       menu: () =>
                         "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
-                        `px-4 py-2 cursor-pointer transition-colors ${
-                          isSelected
-                            ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                            : isFocused
-                              ? "bg-muted/50 text-gray-900 dark:text-white"
-                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                        `px-4 py-2 cursor-pointer transition-colors ${isSelected
+                          ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                          : isFocused
+                            ? "bg-muted/50 text-gray-900 dark:text-white"
+                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",

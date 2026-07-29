@@ -47,9 +47,24 @@ const AddProduct = () => {
     return null;
   };
 
+  const getBusinessCategory = () => {
+    try {
+      const userInfo = localStorage.getItem("user_info");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        return parsed.business_category || null;
+      }
+    } catch (e) {
+      console.error("Error parsing business_category from localStorage", e);
+    }
+    return null;
+  };
+
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const businessCategory = getBusinessCategory();
+  const isElectronics = businessCategory === "Electronics";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -325,28 +340,30 @@ const AddProduct = () => {
             </div>
 
             {/* Specification */}
-            <div className="space-y-2 md:col-span-2">
-              <label
-                htmlFor="specification"
-                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
-              >
-                {t("specification")}
-              </label>
-              <div className="relative group">
-                <AlignLeft className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
-                <Input
-                  type="text"
-                  id="specification"
-                  className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.specification ? "border-red-500" : ""}`}
-                  {...register("specification")}
-                />
+            {isElectronics && (
+              <div className="space-y-2 md:col-span-2">
+                <label
+                  htmlFor="specification"
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+                >
+                  {t("specification")}
+                </label>
+                <div className="relative group">
+                  <AlignLeft className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
+                  <Input
+                    type="text"
+                    id="specification"
+                    className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.specification ? "border-red-500" : ""}`}
+                    {...register("specification")}
+                  />
+                </div>
+                {errors.specification && (
+                  <p className="text-red-500 text-xs mt-1 ml-1">
+                    {errors.specification.message}
+                  </p>
+                )}
               </div>
-              {errors.specification && (
-                <p className="text-red-500 text-xs mt-1 ml-1">
-                  {errors.specification.message}
-                </p>
-              )}
-            </div>
+            )}
 
             {/* Buying Price */}
             <div className="space-y-2">
@@ -523,25 +540,27 @@ const AddProduct = () => {
             )}
 
             {/* Is Bundle */}
-            <div className="space-y-2 md:col-span-2">
-              <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-xl border border-muted-foreground/20">
-                <input
-                  id="isBundle"
-                  type="checkbox"
-                  checked={isBundle}
-                  onChange={(e) => setIsBundle(e.target.checked)}
-                  className="w-5 h-5 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
-                />
-                <label
-                  htmlFor="isBundle"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer select-none"
-                >
-                  Is Bundle
-                </label>
+            {isElectronics ? (
+              <div className="space-y-2 md:col-span-2">
+                <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-xl border border-muted-foreground/20">
+                  <input
+                    id="isBundle"
+                    type="checkbox"
+                    checked={isBundle}
+                    onChange={(e) => setIsBundle(e.target.checked)}
+                    className="w-5 h-5 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="isBundle"
+                    className="text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer select-none"
+                  >
+                    Is Bundle
+                  </label>
+                </div>
               </div>
-            </div>
-
-            <div className="hidden md:block"></div>
+            ) : (
+              <div className="hidden md:block"></div>
+            )}
 
             {/* Supplier */}
             <div className="space-y-2 md:col-span-2">

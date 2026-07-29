@@ -326,5 +326,6 @@
   "show_details":"Show Details",
   "hide_details":"Hide Details",
   "sales_overview":"Sales Overview",
-  "manage_users":"Manage Users"
+  "manage_users":"Manage Users",
+  "is_bundle":"Is Bundle"
 }

@@ -9,15 +9,15 @@ import { Toaster } from "react-hot-toast";
 import i18n from "../src/i18n";
 
 // Register service worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(() => {
-      console.log('Service Worker registered');
-    }).catch((error) => {
-      console.error('Service Worker registration failed:', error);
-    });
-  });
-}
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/sw.js').then(() => {
+//       console.log('Service Worker registered');
+//     }).catch((error) => {
+//       console.error('Service Worker registration failed:', error);
+//     });
+//   });
+// }
 
 const Main = () => {
   return (

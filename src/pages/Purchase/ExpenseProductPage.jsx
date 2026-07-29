@@ -408,13 +408,13 @@ const ExpenseProductPage = () => {
       )}
 
       {/* Update Product Modal */}
-      <UpdateExpenseProductModal
+      {/* <UpdateExpenseProductModal
         isUpdateProductModalOpen={isUpdateProductModalOpen}
         setIsUpdateProductModalOpen={setIsUpdateProductModalOpen}
         selectedProduct={selectedProduct}
         setSelectedProduct={setSelectedProduct}
         formatCurrency={formatCurrency}
-      />
+      /> */}
     </div>
   );
 };

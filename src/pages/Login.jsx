@@ -95,6 +95,7 @@ const LoginPage = () => {
       localStorage.removeItem("isFirstLogin");
       localStorage.removeItem("tenant_groups");
       localStorage.removeItem("tenant_permissions");
+      localStorage.removeItem("business_category")
 
       const loginResponse = await axiosInstance.post(
         `${API_BASE_URL_LOGIN}${API_ENDPOINTS.LOGIN_TENANT}`,
@@ -116,6 +117,7 @@ const LoginPage = () => {
       localStorage.setItem("user_info", JSON.stringify(user));
       localStorage.setItem("tenant_groups", JSON.stringify(tenantGroups || []));
       localStorage.setItem("tenant_permissions", JSON.stringify(tenantPermissions || []));
+      localStorage.setItem("business_category",tenants[0].business_category)
 
       if (tenants && tenants.length > 0) {
         localStorage.setItem("schema_name", tenants[0].schema_name);

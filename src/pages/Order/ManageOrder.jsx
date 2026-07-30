@@ -1317,6 +1317,7 @@ function ManageOrder() {
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const showReceiptDropdown = true;
 
   // Add this function to toggle the view mode
   const toggleView = () => {
@@ -2052,7 +2053,7 @@ function ManageOrder() {
                             >
                               <Eye className="h-4 w-4" /> {t("view")}
                             </DropdownMenuItem>
-                            {showReceiptOption &&
+                            {showReceiptDropdown &&
                               order.status !== "Pending" &&
                               order.status !== "Cancelled" && (
                                 <DropdownMenuItem
@@ -2193,7 +2194,7 @@ function ManageOrder() {
                         >
                           <Eye className="h-4 w-4" /> {t("view")}
                         </DropdownMenuItem>
-                        {showReceiptOption &&
+                        {showReceiptDropdown &&
                           order.status !== "Pending" &&
                           order.status !== "Cancelled" && (
                             <DropdownMenuItem

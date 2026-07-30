@@ -47,6 +47,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import ConfirmOrderModal from "./ConfirmOrderModal";
 
 import useOrderStore from "@/store/useOrderStore";
@@ -919,6 +926,8 @@ const AddOrder = () => {
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const businessCategory = localStorage.getItem("business_category");
+  const isElectronics = businessCategory?.toLowerCase() === "electronics";
 
   // Set default receipt value based on user email
   useEffect(() => {
@@ -952,14 +961,49 @@ const AddOrder = () => {
         const response = await axiosInstance.get(
           `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
         );
-        setProducts(response.data.all_results || []);
+        
+        if (isElectronics) {
+          // Process products with variants based on specification
+          const productsByName = response?.data?.all_results?.reduce(
+            (acc, product) => {
+              const existing = acc.find((p) => p.name === product.name);
+              if (!existing) {
+                acc.push({ ...product, variants: [] });
+              }
+              return acc;
+            },
+            []
+          );
+          const processedProducts = productsByName.map((product) => {
+            const variants = response?.data?.all_results?.filter(
+              (p) => p.name === product.name
+            );
+            const uniqueVariants = variants.reduce((acc, variant) => {
+              // Only add if this specification is not already in the accumulator
+              const spec = variant.specification || "Standard";
+              if (!acc.some((v) => (v.specification || "Standard") === spec)) {
+                acc.push({
+                  ...variant,
+                  variant_spec: variant.specification,
+                  variant_desc: variant.description,
+                });
+              }
+              return acc;
+            }, []);
+            return { ...product, variants: uniqueVariants };
+          });
+          setProducts(processedProducts);
+        } else {
+          // Use products as-is for non-electronics
+          setProducts(response.data.all_results || []);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [isElectronics]);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -1017,6 +1061,15 @@ const AddOrder = () => {
     );
     updateItem(index, "unit", selectedProduct ? selectedProduct.unit : "");
     updateItem(index, "stock", selectedProduct ? selectedProduct.stock : 0);
+    
+    // Handle variants if electronics
+    if (isElectronics && selectedProduct?.variants?.length > 0) {
+      updateItem(index, "selectedVariant", selectedProduct.variants[0]);
+      updateItem(index, "unit_price", selectedProduct.variants[0].selling_price);
+      updateItem(index, "stock", selectedProduct.variants[0].stock);
+    } else {
+      updateItem(index, "selectedVariant", null);
+    }
   };
 
   const handleQuantityChange = (index, event) => {
@@ -1042,6 +1095,12 @@ const AddOrder = () => {
       "unit_price",
       unitPrice === "" ? "" : parseFloat(unitPrice),
     );
+  };
+
+  const handleVariantSelect = (index, variant) => {
+    updateItem(index, "selectedVariant", variant);
+    updateItem(index, "unit_price", variant.selling_price);
+    updateItem(index, "stock", variant.stock);
   };
 
   const handleClearAll = () => {
@@ -1128,18 +1187,21 @@ const AddOrder = () => {
           (item) =>
             item.selectedProduct && (item.quantity > 0 || item.package > 0),
         )
-        .map((item) => ({
-          product: item.selectedProduct.id,
-          quantity: item.quantity,
-          package: item.package,
-          unit_price: item.unit_price || item.selectedProduct.selling_price,
-          unit: item.unit,
-          price:
-            (item.unit_price || item.selectedProduct.selling_price) *
-            (item.package
-              ? item.package * item.selectedProduct.piece
-              : item.quantity),
-        })),
+        .map((item) => {
+          const product = item.selectedVariant || item.selectedProduct;
+          return {
+            product: product.id,
+            quantity: item.quantity,
+            package: item.package,
+            unit_price: item.unit_price || product.selling_price,
+            unit: product.unit,
+            price:
+              (item.unit_price || product.selling_price) *
+              (item.package
+                ? item.package * (product.piece || 1)
+                : item.quantity),
+          };
+        }),
     };
 
     try {
@@ -1154,7 +1216,40 @@ const AddOrder = () => {
             const response = await axiosInstance.get(
               `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
             );
-            setProducts(response.data.all_results || []);
+            
+            if (isElectronics) {
+              // Process products with variants based on specification
+              const productsByName = response?.data?.all_results?.reduce(
+                (acc, product) => {
+                  const existing = acc.find((p) => p.name === product.name);
+                  if (!existing) {
+                    acc.push({ ...product, variants: [] });
+                  }
+                  return acc;
+                },
+                []
+              );
+              const processedProducts = productsByName.map((product) => {
+                const variants = response?.data?.all_results?.filter(
+                  (p) => p.name === product.name
+                );
+                const uniqueVariants = variants.reduce((acc, variant) => {
+                  if (!acc.some((v) => v.specification === variant.specification)) {
+                    acc.push({
+                      ...variant,
+                      variant_spec: variant.specification,
+                      variant_desc: variant.description,
+                    });
+                  }
+                  return acc;
+                }, []);
+                return { ...product, variants: uniqueVariants };
+              });
+              setProducts(processedProducts);
+            } else {
+              // Use products as-is for non-electronics
+              setProducts(response.data.all_results || []);
+            }
           } catch (error) {
             console.error("Error fetching products:", error);
           }
@@ -1220,6 +1315,27 @@ const AddOrder = () => {
 
   const handleReceiptChange = (selectedOption) => {
     setReceipt(selectedOption ? selectedOption.value : null);
+  };
+
+  const getProductOptions = () => {
+    if (isElectronics) {
+      const uniqueProducts = products.reduce((acc, product) => {
+        if (!acc.some((p) => p.name === product.name)) {
+          acc.push({
+            label: product.name,
+            value: product,
+            hasVariants: product.variants && product.variants.length > 0,
+          });
+        }
+        return acc;
+      }, []);
+      return uniqueProducts;
+    } else {
+      return products.map((product) => ({
+        label: product.name,
+        value: product,
+      }));
+    }
   };
 
   const handleToggle = () => {
@@ -1528,16 +1644,14 @@ const AddOrder = () => {
                               ? {
                                   label: item.selectedProduct.name,
                                   value: item.selectedProduct,
+                                  hasVariants: item.selectedProduct.variants && item.selectedProduct.variants.length > 0,
                                 }
                               : null
                           }
                           onChange={(selectedOption) =>
                             handleProductChange(index, selectedOption)
                           }
-                          options={products.map((product) => ({
-                            label: product.name,
-                            value: product,
-                          }))}
+                          options={getProductOptions()}
                           placeholder={t("select_product")}
                           unstyled
                           classNames={{
@@ -1566,6 +1680,17 @@ const AddOrder = () => {
                         />
                       </div>
 
+                      {/* Product Variants Display */}
+                      {isElectronics && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
+                        <ProductVariantsDisplay
+                          product={item.selectedProduct}
+                          selectedVariant={item.selectedVariant}
+                          onSelectVariant={(variant) =>
+                            handleVariantSelect(index, variant)
+                          }
+                        />
+                      )}
+
                       {item.selectedProduct && (
                         <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
                           <div className="space-y-2">
@@ -1580,9 +1705,7 @@ const AddOrder = () => {
                               id={`unit-${index}`}
                               value={item.unit}
                               onChange={(e) => {
-                                const newItems = [...items];
-                                newItems[index].unit = e.target.value;
-                                setItems(newItems);
+                                updateItem(index, "unit", e.target.value);
                               }}
                               className="flex h-11 w-full bg-muted/20 border border-muted-foreground/20 rounded-xl transition-all text-sm px-3 py-1 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 dark:bg-gray-800 dark:text-white"
                               disabled={item.selectedProduct?.unit == null}
@@ -2015,6 +2138,91 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
             </div>
           </form>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const ProductVariantsDisplay = ({
+  product,
+  selectedVariant,
+  onSelectVariant,
+}) => {
+  if (!product || !product.variants || product.variants.length === 0)
+    return null;
+  
+  // Check if any variant has a specification
+  const hasSpecifications = product.variants.some(v => v.specification);
+  if (!hasSpecifications) return null;
+  
+  return (
+    <div className="mt-4">
+      <h4 className="mb-2 text-sm font-medium">Available Variants:</h4>
+      <div className="flex py-2 pb-4 space-x-3 overflow-x-auto">
+        {product.variants.map((variant, idx) => {
+          const isSelected = selectedVariant?.id === variant.id;
+          return (
+            <div
+              key={idx}
+              className={`mx-4 flex-shrink-0 relative group cursor-pointer transition-all duration-200 ${
+                isSelected
+                  ? "ring-2 ring-blue-500 ring-offset-2 rounded-md"
+                  : "hover:ring-2 hover:ring-gray-300"
+              }`}
+              onClick={() => onSelectVariant(variant)}
+            >
+              <div
+                className="overflow-hidden border-2 rounded-lg p-2"
+                style={{
+                  borderColor: isSelected ? "" : "transparent",
+                }}
+              >
+                <div className="p-2 text-xs text-center">
+                  <div className="font-bold">
+                    {variant.specification || "Standard"}
+                  </div>
+                </div>
+                {/* Info Icon and Dialog */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    {/* <button
+                      className="absolute top-1 right-1 p-1 rounded-full hover:bg-gray-100"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Info className="w-4 h-4 text-gray-500" />
+                    </button> */}
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Varient: {variant.specification || "Standard"}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      {/* UPDATED: Replace commas with a closing paragraph, a margin utility class, and a new paragraph opener. */}
+                      <p
+                        className="text-sm text-gray-600"
+                        dangerouslySetInnerHTML={{
+                          __html: variant.description
+                            ? '<p class="mb-2">' +
+                              variant.description.replace(
+                                /,\s*/g,
+                                '</p><p class="mb-2">'
+                              ) +
+                              "</p>"
+                            : "No description available.",
+                        }}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                {isSelected && (
+                  <div className="absolute inset-0 bg-blue-500 rounded-lg bg-opacity-10"></div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

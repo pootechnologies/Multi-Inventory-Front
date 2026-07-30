@@ -125,16 +125,15 @@ const data = {
         },
       ],
     },
-
-    // {
-    //   title: "link_product",
-    //   url: "#",
-    //   icon: Package,
-    //   items: [
-    //     { title: "link_product", url: "/link_product" },
-    //     { title: "manage_linked_product", url: "/manage_linked_product" },
-    //   ],
-    // },
+    {
+      title: "link_product",
+      url: "#",
+      icon: Package,
+      items: [
+        { title: "link_product", url: "/link_product" },
+        { title: "manage_linked_product", url: "/manage_linked_product" },
+      ],
+    },
     {
       title: "stock",
       url: "#",

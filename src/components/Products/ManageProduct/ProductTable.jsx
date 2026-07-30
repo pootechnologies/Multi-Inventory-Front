@@ -629,7 +629,7 @@ const ProductTable = ({
                       className="cursor-pointer hover:scale-110 transition-transform flex-shrink-0"
                     >
                       <img
-                        src={`${getImageBaseURL()}${product.image}`}
+                        src={getImageUrl(product.image)}
                         alt={product.name}
                         className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                       />

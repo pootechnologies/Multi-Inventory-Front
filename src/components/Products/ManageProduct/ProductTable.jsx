@@ -103,12 +103,18 @@ const ProductTable = ({
     0,
   );
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${getImageBaseURL()}${imagePath}`;
+  };
+
   const handleImageClick = (imageUrl) => {
-    const fullImageUrl = imageUrl.startsWith('http') 
-      ? imageUrl 
-      : `${getImageBaseURL()}${imageUrl}`;
-    setSelectedImage(fullImageUrl);
-    setIsImageModalOpen(true);
+    const fullImageUrl = getImageUrl(imageUrl);
+    if (fullImageUrl) {
+      setSelectedImage(fullImageUrl);
+      setIsImageModalOpen(true);
+    }
   };
 
   const closeImageModal = () => {

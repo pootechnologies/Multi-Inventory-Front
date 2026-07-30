@@ -9,6 +9,7 @@ const useOrderStore = create(
         {
           productInput: "",
           selectedProduct: null,
+          selectedVariant: null,
           quantity: 0,
           unit_price: "",
           unit: "",
@@ -33,6 +34,7 @@ const useOrderStore = create(
             {
               productInput: "",
               selectedProduct: null,
+              selectedVariant: null,
               quantity: 0,
               unit_price: "",
               unit: "",
@@ -78,6 +80,7 @@ const useOrderStore = create(
             {
               productInput: "",
               selectedProduct: null,
+              selectedVariant: null,
               quantity: 0,
               unit_price: "",
               unit: "",

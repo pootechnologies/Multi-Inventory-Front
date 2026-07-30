@@ -5,7 +5,8 @@ import toast from "react-hot-toast";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, Trash2, Package, Link } from "lucide-react";
 import { t } from "i18next";
 import { useState, useEffect } from "react";
 import Select from "react-select";
@@ -52,6 +53,7 @@ const LinkProduct = () => {
 
   const [bundleProducts, setBundleProducts] = useState([]);
   const [componentProducts, setComponentProducts] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // FETCH PRODUCTS WITH BUNDLE (is_bundle: true)
   useEffect(() => {
@@ -90,6 +92,7 @@ const LinkProduct = () => {
   }, []);
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
       // ✅ Updated payload to match new API structure
       const payload = {
@@ -114,146 +117,204 @@ const LinkProduct = () => {
     } catch (error) {
       console.error(error);
       toast.error(error?.response?.data?.error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="relative w-full md:max-w-xl container p-5 bg-white dark:bg-gray-800">
-      {/* Modal Header */}
-      <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {t("link_product")}
-        </h3>
-      </div>
-      {/* Modal Body */}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 gap-4">
-          {/* Bundle (name) */}
-          <div>
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Bundle
-            </label>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  options={bundleProducts}
-                  placeholder="Select product"
-                  classNamePrefix="react-select"
-                  value={field.value}
-                  onChange={(val) => field.onChange(val)}
-                />
-              )}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
-          </div>
-
-          {/* Components List */}
-          <div>
-            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Components
-            </label>
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-2 mb-2 items-end">
-                <div className="flex-1">
-                  <Controller
-                    name={`components.${index}.component`}
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        options={componentProducts}
-                        placeholder="Select component"
-                        classNamePrefix="react-select"
-                        value={field.value}
-                        onChange={(val) => field.onChange(val)}
-                      />
-                    )}
-                  />
-                  {errors.components?.[index]?.component && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.components[index].component.message}
-                    </p>
-                  )}
-                </div>
-                <div className="w-24">
-                  {/* ✅ Added label for quantity */}
-                  <label
-                    htmlFor={`components.${index}.quantity`}
-                    Quantity
-                    className="block mb-1 text-xs font-medium text-gray-900 dark:text-white"
-                  >
-                    {t("quantity")}
-                  </label>
-                  <Controller
-                    name={`components.${index}.quantity`}
-                    control={control}
-                    render={({ field }) => (
-                      <input
-                        type="number"
-                        min="1"
-                        {...field}
-                        className={`bg-gray-50 border ${
-                          errors.components?.[index]?.quantity
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        } text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
-                        placeholder="Qty"
-                      />
-                    )}
-                  />
-                  {errors.components?.[index]?.quantity && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.components[index].quantity.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  {fields.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => remove(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append({ component: null, quantity: 1 })}
-              className="mt-2"
-            >
-              <Plus className="mr-1 h-3.5 w-3.5" />
-              Add More
-            </Button>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              className="text-white bg-[#55B990] hover:bg-[#54ce9b] px-4 py-2 rounded-md"
-            >
-              <Plus className="mr-1" />
-              {t("submit")}
-            </Button>
-          </div>
+    <div className="flex-1 space-y-6 p-4 md:p-8 max-w-4xl mx-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-muted shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
+            <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
+              <Link className="h-6 w-6" />
+            </div>
+            {t("link_product")}
+          </h2>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Bundle (name) */}
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                  Bundle Product
+                </label>
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={bundleProducts}
+                      placeholder="Select bundle product"
+                      classNamePrefix="react-select"
+                      value={field.value}
+                      onChange={(val) => field.onChange(val)}
+                      menuPortalTarget={document.body}
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          minHeight: '44px',
+                          borderRadius: '12px',
+                          border: '1px solid rgb(226 232 240)',
+                          '&:hover': { borderColor: 'rgb(16 185 129)' },
+                          '&:focus-within': { 
+                            borderColor: 'rgb(16 185 129)',
+                            boxShadow: '0 0 0 1px rgb(16 185 129)'
+                          }
+                        }),
+                        menu: (base) => ({
+                          ...base,
+                          zIndex: 9999,
+                          position: 'absolute'
+                        }),
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999
+                        })
+                      }}
+                    />
+                  )}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-sm ml-1">{errors.name.message}</p>
+                )}
+              </div>
+
+              {/* Components List */}
+              <div className="md:col-span-2 space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                    Components
+                  </label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => append({ component: null, quantity: 1 })}
+                    disabled={isSubmitting}
+                    className="gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Component
+                  </Button>
+                </div>
+
+                {fields.map((field, index) => (
+                  <div key={field.id} className="flex gap-4 items-end p-4 border border-gray-200 rounded-xl bg-gray-50/50">
+                    <div className="flex-1">
+                      <label className="block mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                        Component Product
+                      </label>
+                      <Controller
+                        name={`components.${index}.component`}
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            options={componentProducts}
+                            placeholder="Select component"
+                            classNamePrefix="react-select"
+                            value={field.value}
+                            onChange={(val) => field.onChange(val)}
+                            menuPortalTarget={document.body}
+                            styles={{
+                              control: (base) => ({
+                                ...base,
+                                minHeight: '44px',
+                                borderRadius: '12px',
+                                border: '1px solid rgb(226 232 240)',
+                                '&:hover': { borderColor: 'rgb(16 185 129)' },
+                                '&:focus-within': { 
+                                  borderColor: 'rgb(16 185 129)',
+                                  boxShadow: '0 0 0 1px rgb(16 185 129)'
+                                }
+                              }),
+                              menu: (base) => ({
+                                ...base,
+                                zIndex: 9999,
+                                position: 'absolute'
+                              }),
+                              menuPortal: (base) => ({
+                                ...base,
+                                zIndex: 9999
+                              })
+                            }}
+                          />
+                        )}
+                      />
+                      {errors.components?.[index]?.component && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.components[index].component.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="w-32">
+                      <label className="block mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                        {t("quantity")}
+                      </label>
+                      <Controller
+                        name={`components.${index}.quantity`}
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            type="number"
+                            min="1"
+                            {...field}
+                            className={`h-11 ${
+                              errors.components?.[index]?.quantity
+                                ? "border-red-500"
+                                : "border-gray-200"
+                            }`}
+                            placeholder="Qty"
+                          />
+                        )}
+                      />
+                      {errors.components?.[index]?.quantity && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.components[index].quantity.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
+                      {fields.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => remove(index)}
+                          disabled={isSubmitting}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end pt-6 border-t border-muted">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8 shadow-lg shadow-emerald-600/20 transition-all active:scale-95 min-w-[120px]"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {t("submitting...")}
+                  </div>
+                ) : (
+                  t("link_product")
+                )}
+              </Button>
+            </div>
+          </form>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
+import { getImageBaseURL } from "@/utils/urlHelper";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
   MapPin,
   Building2,
   X,
+  ZoomIn,
 } from "lucide-react";
 import { formatCurrency } from "@/utils/numberFormaterStats";
 import { convertToWordsWithCurrency } from "@/utils/useNumberToWords";
@@ -2148,6 +2150,8 @@ const ProductVariantsDisplay = ({
   selectedVariant,
   onSelectVariant,
 }) => {
+  const [maximizedImage, setMaximizedImage] = useState(null);
+
   if (!product || !product.variants || product.variants.length === 0)
     return null;
   
@@ -2155,76 +2159,145 @@ const ProductVariantsDisplay = ({
   const hasSpecifications = product.variants.some(v => v.specification);
   if (!hasSpecifications) return null;
   
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${getImageBaseURL()}${imagePath}`;
+  };
+
   return (
-    <div className="mt-4">
-      <h4 className="mb-2 text-sm font-medium">Available Variants:</h4>
-      <div className="flex py-2 pb-4 space-x-3 overflow-x-auto">
-        {product.variants.map((variant, idx) => {
-          const isSelected = selectedVariant?.id === variant.id;
-          return (
-            <div
-              key={idx}
-              className={`mx-4 flex-shrink-0 relative group cursor-pointer transition-all duration-200 ${
-                isSelected
-                  ? "ring-2 ring-blue-500 ring-offset-2 rounded-md"
-                  : "hover:ring-2 hover:ring-gray-300"
-              }`}
-              onClick={() => onSelectVariant(variant)}
-            >
+    <>
+      <div className="mt-4">
+        <h4 className="mb-3 text-sm font-semibold text-gray-700">Available Variants:</h4>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          {product.variants.map((variant, idx) => {
+            const isSelected = selectedVariant?.id === variant.id;
+            return (
               <div
-                className="overflow-hidden border-2 rounded-lg p-2"
-                style={{
-                  borderColor: isSelected ? "" : "transparent",
-                }}
+                key={idx}
+                className={`relative transition-all duration-200 ${
+                  isSelected
+                    ? "ring-2 ring-emerald-500 ring-offset-2 rounded-xl shadow-lg"
+                    : "hover:ring-2 hover:ring-emerald-300 hover:shadow-md"
+                }`}
               >
-                <div className="p-2 text-xs text-center">
-                  <div className="font-bold">
-                    {variant.specification || "Standard"}
+                <div 
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 cursor-pointer"
+                  onClick={() => onSelectVariant(variant)}
+                >
+                  {/* Product Image */}
+                  <div 
+                    className="relative group p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (variant.image) {
+                        setMaximizedImage(getImageUrl(variant.image));
+                      }
+                    }}
+                  >
+                    {variant.image ? (
+                      <div className="relative w-20 h-20 mx-auto">
+                        <img
+                          src={getImageUrl(variant.image)}
+                          alt={variant.specification || "Standard"}
+                          className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50"
+                        />
+                        <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <ZoomIn className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 mx-auto flex items-center justify-center text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
+                        <Package className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Specification Info */}
+                  <div className="p-2">
+                    <div className="text-xs font-semibold text-gray-900 mb-1 truncate text-center">
+                      {variant.specification || "Standard"}
+                    </div>
+                    {variant.description && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            className="text-xs text-emerald-600 hover:text-emerald-700 font-medium mt-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View details
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader>
+                            <DialogTitle className="text-lg font-bold text-gray-900">
+                              {variant.specification || "Standard"}
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="mt-4">
+                            {variant.image && (
+                              <div className="mb-4">
+                                <img
+                                  src={getImageUrl(variant.image)}
+                                  alt={variant.specification || "Standard"}
+                                  className="w-full h-48 object-contain rounded-lg bg-gray-50 border border-gray-200"
+                                />
+                              </div>
+                            )}
+                            <div
+                              className="text-sm text-gray-600 leading-relaxed"
+                              dangerouslySetInnerHTML={{
+                                __html: variant.description
+                                  ? '<p class="mb-2">' +
+                                    variant.description.replace(
+                                      /,\s*/g,
+                                      '</p><p class="mb-2">'
+                                    ) +
+                                    "</p>"
+                                  : "No description available.",
+                              }}
+                            />
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
                 </div>
-                {/* Info Icon and Dialog */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <button
-                      className="absolute top-1 right-1 p-1 rounded-full hover:bg-gray-100"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Info className="w-4 h-4 text-gray-500" />
-                    </button> */}
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>
-                        Varient: {variant.specification || "Standard"}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-4">
-                      {/* UPDATED: Replace commas with a closing paragraph, a margin utility class, and a new paragraph opener. */}
-                      <p
-                        className="text-sm text-gray-600"
-                        dangerouslySetInnerHTML={{
-                          __html: variant.description
-                            ? '<p class="mb-2">' +
-                              variant.description.replace(
-                                /,\s*/g,
-                                '</p><p class="mb-2">'
-                              ) +
-                              "</p>"
-                            : "No description available.",
-                        }}
-                      />
-                    </div>
-                  </DialogContent>
-                </Dialog>
                 {isSelected && (
-                  <div className="absolute inset-0 bg-blue-500 rounded-lg bg-opacity-10"></div>
+                  <div className="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
                 )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+
+      {/* Maximized Image Modal */}
+      {maximizedImage && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-center z-[10000] p-4"
+          onClick={() => setMaximizedImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <button
+              onClick={() => setMaximizedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <img
+              src={maximizedImage}
+              alt="Maximized view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

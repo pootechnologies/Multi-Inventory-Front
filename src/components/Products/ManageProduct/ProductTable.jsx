@@ -4,8 +4,10 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { t } from "i18next";
 import { formatCurrency } from "@/utils/numberFormaterStats";
-import { API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
+import { getImageBaseURL } from "@/utils/urlHelper";
 import axiosInstance from "@/utils/axiosInstance";
+import ImageModal from "./ImageModal";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -25,6 +27,7 @@ import {
   Search,
   Package,
   FileSpreadsheet,
+  Image as ImageIcon,
 } from "lucide-react";
 import Select from "react-select";
 import {
@@ -52,6 +55,8 @@ const ProductTable = ({
   const [companyData, setCompanyData] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [expandedCards, setExpandedCards] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const itemsPerPage = 10;
 
   const getCurrentUserEmail = () => {
@@ -97,6 +102,19 @@ const ProductTable = ({
     (acc, product) => acc + product.buying_price * product.stock,
     0,
   );
+
+  const handleImageClick = (imageUrl) => {
+    const fullImageUrl = imageUrl.startsWith('http') 
+      ? imageUrl 
+      : `${getImageBaseURL()}${imageUrl}`;
+    setSelectedImage(fullImageUrl);
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    setSelectedImage(null);
+  };
 
   // FETCH ALL PRODUCTS
   useEffect(() => {
@@ -322,6 +340,9 @@ const ProductTable = ({
               <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
                 # {t("id")}
               </TableHead>
+              <TableHead className="w-[80px] font-bold text-gray-900 whitespace-nowrap">
+                {t("image")}
+              </TableHead>
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-gray-400" />
@@ -362,6 +383,24 @@ const ProductTable = ({
                   <TableRow className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
                     <TableCell className="font-medium text-gray-500">
                       #{product.id}
+                    </TableCell>
+                    <TableCell className="font-medium text-gray-500">
+                      {product.image ? (
+                        <button
+                          onClick={() => handleImageClick(product.image)}
+                          className="cursor-pointer hover:scale-110 transition-transform"
+                        >
+                          <img
+                            src={`${getImageBaseURL()}${product.image}`}
+                            alt={product.name}
+                            className="w-10 h-10 object-cover rounded-lg border border-gray-200"
+                          />
+                        </button>
+                      ) : (
+                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <ImageIcon className="w-5 h-5 text-gray-400" />
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="font-semibold text-gray-900">
                       {product.name}
@@ -457,7 +496,7 @@ const ProductTable = ({
                   </TableRow>
                   {expandedCards[product.id] && (
                     <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-                      <TableCell colSpan={7} className="p-0 border-b">
+                      <TableCell colSpan={isElectronics ? 9 : 7} className="p-0 border-b">
                         <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-gray-50/50">
                           <div>
                             <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
@@ -577,16 +616,34 @@ const ProductTable = ({
               className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4"
             >
               <div className="flex justify-between items-start">
-                <div>
-                  <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
-                    #{product.id}
+                <div className="flex gap-3">
+                  {product.image ? (
+                    <button
+                      onClick={() => handleImageClick(product.image)}
+                      className="cursor-pointer hover:scale-110 transition-transform flex-shrink-0"
+                    >
+                      <img
+                        src={`${getImageBaseURL()}${product.image}`}
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                      />
+                    </button>
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ImageIcon className="w-8 h-8 text-gray-400" />
+                    </div>
+                  )}
+                  <div>
+                    <div className="inline-flex items-center px-2 py-0.5 bg-gray-100/80 text-gray-500 text-[11px] font-bold rounded-md mb-3">
+                      #{product.id}
+                    </div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+                      {t("product_name")}
+                    </p>
+                    <p className="font-bold text-gray-900 text-lg">
+                      {product.name}
+                    </p>
                   </div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
-                    {t("product_name")}
-                  </p>
-                  <p className="font-bold text-gray-900 text-lg">
-                    {product.name}
-                  </p>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -834,6 +891,14 @@ const ProductTable = ({
             </Button>
           </div>
         </div>
+      )}
+      
+      {/* Image Modal */}
+      {isImageModalOpen && (
+        <ImageModal
+          imageUrl={selectedImage}
+          onClose={closeImageModal}
+        />
       )}
     </div>
   );

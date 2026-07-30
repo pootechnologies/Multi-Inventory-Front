@@ -341,7 +341,8 @@ const CompanyProfile = () => {
                   value={formData.vat_number}
                   onChange={handleChange}
                   placeholder="VAT Number"
-                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+                  disabled={isSubmitting}
+                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
@@ -359,7 +360,8 @@ const CompanyProfile = () => {
                   value={formData.country}
                   onChange={handleChange}
                   placeholder="Country"
-                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+                  disabled={isSubmitting}
+                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
@@ -377,7 +379,8 @@ const CompanyProfile = () => {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="City"
-                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+                  disabled={isSubmitting}
+                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>
@@ -385,10 +388,8 @@ const CompanyProfile = () => {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">
                 {t("region")}
-          >
-            {t("region")}
-          </label>
-          <div className="group relative transition-all">
+              </label>
+              <div className="group relative transition-all">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
             <input
               type="text"
@@ -397,7 +398,8 @@ const CompanyProfile = () => {
               value={formData.region}
               onChange={handleChange}
               placeholder="Region"
-              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+              disabled={isSubmitting}
+              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
         </div>
@@ -415,7 +417,8 @@ const CompanyProfile = () => {
               value={formData.zone}
               onChange={handleChange}
               placeholder="Zone"
-              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+              disabled={isSubmitting}
+              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
         </div>
@@ -433,7 +436,8 @@ const CompanyProfile = () => {
               value={formData.sub_city}
               onChange={handleChange}
               placeholder="Sub City"
-              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+              disabled={isSubmitting}
+              className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
         </div>
@@ -443,16 +447,27 @@ const CompanyProfile = () => {
             {t("logo")}
           </label>
           <div className="space-y-4">
-            <div className="group relative transition-all">
-              <Upload className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
+            <div className="relative">
               <input
                 type="file"
                 id="logo"
                 name="logo"
                 onChange={handleChange}
                 accept="image/*"
-                className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium file:mr-12"
+                disabled={isSubmitting}
+                className="hidden"
               />
+              <label
+                htmlFor="logo"
+                className={`flex items-center justify-center gap-3 w-full h-14 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-emerald-500/50 transition-all cursor-pointer ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                <Upload className="h-5 w-5 text-gray-400" />
+                <span className="text-sm font-medium text-gray-600">
+                  {logoFile ? logoFile.name : (logoSrc ? 'Change Logo' : 'Upload Logo')}
+                </span>
+              </label>
             </div>
             {/* Logo Preview */}
             {(logoSrc || logoFile) && (

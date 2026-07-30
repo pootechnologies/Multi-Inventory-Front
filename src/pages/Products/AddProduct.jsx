@@ -18,6 +18,8 @@ import {
   Truck,
   AlignLeft,
   Plus,
+  Upload,
+  X,
 } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import AddSupplierModal from "./AddSupplierModal";
@@ -33,6 +35,8 @@ const AddProduct = () => {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const getCurrentUserEmail = () => {
     try {
@@ -47,24 +51,11 @@ const AddProduct = () => {
     return null;
   };
 
-  const getBusinessCategory = () => {
-    try {
-      const userInfo = localStorage.getItem("user_info");
-      if (userInfo) {
-        const parsed = JSON.parse(userInfo);
-        return parsed.business_category || null;
-      }
-    } catch (e) {
-      console.error("Error parsing business_category from localStorage", e);
-    }
-    return null;
-  };
-
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
-  const businessCategory = getBusinessCategory();
-  const isElectronics = businessCategory === "Electronics";
+  const businessCategory = localStorage.getItem("business_category");
+  const isElectronics = businessCategory?.toLowerCase() === "electronics";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -176,15 +167,13 @@ const AddProduct = () => {
     if (data.unit) formData.append("unit", data.unit);
     if (data.specification)
       formData.append("specification", data.specification);
+    if (selectedImage) formData.append("image", selectedImage);
 
     try {
       await axiosInstance.post(API_ENDPOINTS.PRODUCTS, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      reset();
-      setSelectedCategory(null);
-      setSelectedSupplier(null);
-      setIsBundle(false);
+      handleReset();
       toast.success("Product added successfully!");
     } catch (error) {
       console.error("There was an error adding the product:", error);
@@ -231,6 +220,23 @@ const AddProduct = () => {
     } catch (error) {
       console.error("Error fetching suppliers:", error);
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
   };
 
   return (
@@ -340,7 +346,10 @@ const AddProduct = () => {
             </div>
 
             {/* Specification */}
-            {isElectronics && (
+            {(() => {
+              console.log("Specification field check - isElectronics:", isElectronics);
+              return isElectronics;
+            })() && (
               <div className="space-y-2 md:col-span-2">
                 <label
                   htmlFor="specification"
@@ -652,6 +661,63 @@ const AddProduct = () => {
                   {errors.description.message}
                 </p>
               )}
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-2 md:col-span-2">
+              <label
+                htmlFor="image"
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+              >
+                {t("image")}
+              </label>
+              <div className="relative group">
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <div
+                  onClick={() => document.getElementById('image').click()}
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
+                    imagePreview
+                      ? 'border-emerald-500 bg-emerald-50'
+                      : 'border-muted-foreground/30 bg-muted/20 hover:border-emerald-500/50 hover:bg-emerald-50/50'
+                  }`}
+                >
+                  {imagePreview ? (
+                    <div className="relative">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="max-h-48 mx-auto rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveImage();
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">
+                        {t("upload_image")}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {t("click_to_upload")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

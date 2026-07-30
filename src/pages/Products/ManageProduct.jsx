@@ -45,21 +45,8 @@ const ManageProduct = () => {
     },
   });
 
-  const getBusinessCategory = () => {
-    try {
-      const userInfo = localStorage.getItem("user_info");
-      if (userInfo) {
-        const parsed = JSON.parse(userInfo);
-        return parsed.business_category || null;
-      }
-    } catch (e) {
-      console.error("Error parsing business_category from localStorage", e);
-    }
-    return null;
-  };
-
-  const businessCategory = getBusinessCategory();
-  const isElectronics = businessCategory === "Electronics";
+  const businessCategory = localStorage.getItem("business_category");
+  const isElectronics = businessCategory?.toLowerCase() === "electronics";
 
   const handleViewClick = (product) => {
     setSelectedProduct(product);

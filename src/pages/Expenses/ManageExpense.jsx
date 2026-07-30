@@ -96,7 +96,7 @@ const ManageExpense = () => {
 
   useEffect(() => {
     if (selectedExpense) {
-      setValue("expenseType", selectedExpense.expense_type);
+      setValue("expenseType", selectedExpense.expense);
       setValue("cost", selectedExpense.cost);
     }
   }, [selectedExpense, setValue]);
@@ -104,7 +104,7 @@ const ManageExpense = () => {
   useEffect(() => {
     // Extract unique expense types
     const uniqueExpenseTypes = Array.from(
-      new Set(expenses.map((expense) => expense.expense_type))
+      new Set(expenses.map((expense) => expense.expense))
     );
     setExpenseTypes(uniqueExpenseTypes);
   }, [expenses]);
@@ -171,13 +171,13 @@ const ManageExpense = () => {
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesSearch =
-      expense.expense_type
+      expense.expense
         ?.toLowerCase()
         ?.includes(searchQuery.toLowerCase()) ||
       expense.cost?.toString()?.includes(searchQuery);
     const matchesType =
       selectedExpenseType === "" ||
-      expense.expense_type === selectedExpenseType;
+      expense.expense === selectedExpenseType;
     return matchesSearch && matchesType;
   });
 
@@ -216,7 +216,7 @@ const ManageExpense = () => {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <ReceiptText className="w-3 h-3" /> {t("expense_type")}
                 </p>
-                <p className="font-semibold text-gray-900">{expense.expense_type}</p>
+                <p className="font-semibold text-gray-900">{expense.expense}</p>
               </div>
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
@@ -349,7 +349,7 @@ const ManageExpense = () => {
                   {t("expense_type")}
                 </label>
                 <div className="bg-gray-50 border border-gray-200 text-gray-500 text-sm rounded-xl block w-full p-3 font-medium">
-                  {expense?.expense_type}
+                  {expense?.expense}
                 </div>
               </div>
               <div>
@@ -511,7 +511,7 @@ const ManageExpense = () => {
                   displayExpenses.map((expense) => (
                     <TableRow key={expense.id} className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors">
                       <TableCell className="font-medium text-gray-500">#{expense.id}</TableCell>
-                      <TableCell className="font-semibold text-gray-900">{expense.expense_type}</TableCell>
+                      <TableCell className="font-semibold text-gray-900">{expense.expense}</TableCell>
                       <TableCell className="font-semibold text-emerald-600">{formatCurrency(expense.cost)} ETB</TableCell>
                       <TableCell className="text-gray-600 text-sm">{formatTimestamp(expense.created_at)}</TableCell>
                       <TableCell className="text-gray-600 text-sm font-medium">{expense.user}</TableCell>
@@ -570,7 +570,7 @@ const ManageExpense = () => {
                         {t("expense_type")}
                       </p>
                       <p className="font-bold text-gray-900 text-lg">
-                        {expense.expense_type}
+                        {expense.expense}
                       </p>
                     </div>
                     <DropdownMenu>

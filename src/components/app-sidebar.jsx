@@ -353,6 +353,9 @@ export function AppSidebar({ ...props }) {
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
+  
+  const businessCategory = localStorage.getItem("business_category");
+  const showLinkProduct = businessCategory?.toLowerCase() === "electronics" || businessCategory?.toLowerCase() === "stationaries";
 
   const hasPermission = (permission) => {
     if (!permission) return true;
@@ -372,6 +375,10 @@ export function AppSidebar({ ...props }) {
       }
 
       if (!showTenantsOption && item.title === "Manage Tenants") {
+        return null;
+      }
+
+      if (!showLinkProduct && item.title === "link_product") {
         return null;
       }
 

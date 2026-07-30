@@ -335,6 +335,7 @@ const AddCreditPage = () => {
                       placeholder={t("select_product")}
                       className="w-full react-select-container"
                       classNamePrefix="react-select"
+                      menuPortalTarget={document.body}
                       styles={{
                         control: (base) => ({
                           ...base,
@@ -349,7 +350,13 @@ const AddCreditPage = () => {
                           ...base,
                           borderRadius: "0.75rem",
                           overflow: "hidden",
+                          zIndex: 9999,
+                          position: "absolute"
                         }),
+                        menuPortal: (base) => ({
+                          ...base,
+                          zIndex: 9999
+                        })
                       }}
                     />
                   </div>

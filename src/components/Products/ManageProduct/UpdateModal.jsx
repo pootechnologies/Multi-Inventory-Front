@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { getImageBaseURL } from "@/utils/urlHelper";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { X, Pencil, Upload, Tags } from "lucide-react";
+import { X, Pencil, Upload, Tags, ZoomIn } from "lucide-react";
 import { t } from "i18next";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -24,6 +24,7 @@ const UpdateModal = ({
   const [newStock, setNewStock] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [isImageMaximized, setIsImageMaximized] = useState(false);
 
   const getCurrentUserEmail = () => {
     try {
@@ -336,12 +337,18 @@ const UpdateModal = ({
               <div className="sm:col-span-2">
                 <label className={labelClass}>{t("image") || "Image"}</label>
                 {selectedProduct.image && (
-                  <div className="mb-3">
-                    <img
-                      src={getImageUrl(selectedProduct.image)}
-                      alt={selectedProduct.name}
-                      className="w-full h-40 object-cover rounded-xl border border-gray-100"
-                    />
+                  <div className="mb-3 relative group cursor-pointer" onClick={() => setIsImageMaximized(true)}>
+                    <div className="relative w-32 h-32 mx-auto">
+                      <img
+                        src={getImageUrl(selectedProduct.image)}
+                        alt={selectedProduct.name}
+                        className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50"
+                      />
+                      <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <ZoomIn className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 text-center mt-2">Click to maximize</p>
                   </div>
                 )}
                 <div className="relative">
@@ -387,6 +394,28 @@ const UpdateModal = ({
           </form>
         </div>
       </div>
+
+      {/* Maximized Image Modal */}
+      {isImageMaximized && selectedProduct.image && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-center z-[10000] p-4"
+          onClick={() => setIsImageMaximized(false)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <button
+              onClick={() => setIsImageMaximized(false)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <img
+              src={getImageUrl(selectedProduct.image)}
+              alt={selectedProduct.name}
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -170,14 +170,54 @@ const AddProduct = () => {
     if (selectedImage) formData.append("image", selectedImage);
 
     try {
-      await axiosInstance.post(API_ENDPOINTS.PRODUCTS, formData, {
+      console.log("Submitting product data:", {
+        name: data.name,
+        category: selectedCategory?.id,
+        selling_price: data.selling_price,
+        stock: data.stock,
+        hasImage: !!selectedImage,
+        imageSize: selectedImage?.size,
+        imageType: selectedImage?.type,
+      });
+
+      const response = await axiosInstance.post(API_ENDPOINTS.PRODUCTS, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      handleReset();
+      
+      console.log("Product added successfully:", response.data);
+      
+      // Reset form and state
+      reset();
+      setSelectedCategory(null);
+      setSelectedSupplier(null);
+      setIsBundle(false);
+      setSelectedImage(null);
+      setImagePreview(null);
+      
       toast.success("Product added successfully!");
     } catch (error) {
       console.error("There was an error adding the product:", error);
-      toast.error(error.response?.data?.error || "Failed to add product");
+      console.error("Error response:", error.response);
+      console.error("Error data:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+      console.error("Error headers:", error.response?.headers);
+      
+      // Detailed error logging
+      if (error.response?.data) {
+        console.error("Backend error details:", error.response.data);
+        if (typeof error.response.data === 'string') {
+          console.error("Error string:", error.response.data);
+        }
+      }
+      
+      // Show specific error message if available
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.response?.data?.detail ||
+                          error.message ||
+                          "Failed to add product";
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

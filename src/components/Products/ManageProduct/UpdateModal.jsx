@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Select from "react-select";
-import { IMAGE_BASE_URL, API_ENDPOINTS } from "@/utils/apiConfig";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
+import { getImageBaseURL } from "@/utils/urlHelper";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { X, Pencil, Upload, Tags } from "lucide-react";
@@ -40,6 +41,14 @@ const UpdateModal = ({
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const businessCategory = localStorage.getItem("business_category");
+  const modalIsElectronics = businessCategory?.toLowerCase() === "electronics";
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${getImageBaseURL()}${imagePath}`;
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -199,7 +208,7 @@ const UpdateModal = ({
               </div>
 
               {/* Specification */}
-              {isElectronics && (
+              {modalIsElectronics && (
                 <div>
                   <label className={labelClass}>{t("specification")}</label>
                   <input
@@ -212,7 +221,7 @@ const UpdateModal = ({
               )}
 
               {/* Is Bundle */}
-              {isElectronics && (
+              {modalIsElectronics && (
                 <div>
                   <label className={labelClass}>{t("is_bundle")}</label>
                   <div className="flex items-center gap-3 h-11 px-3 bg-white border border-gray-200 rounded-xl">
@@ -329,7 +338,7 @@ const UpdateModal = ({
                 {selectedProduct.image && (
                   <div className="mb-3">
                     <img
-                      src={`${IMAGE_BASE_URL}${selectedProduct.image}`}
+                      src={getImageUrl(selectedProduct.image)}
                       alt={selectedProduct.name}
                       className="w-full h-40 object-cover rounded-xl border border-gray-100"
                     />

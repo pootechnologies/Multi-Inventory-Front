@@ -1,9 +1,9 @@
-export const API_BASE_URL = "https://inventory.pootechnologies.tech/api/inventory";
-export const API_BASE_URL_LOGIN = "https://inventory.pootechnologies.tech/";
-export const IMAGE_BASE_URL = "https://inventory.pootechnologies.tech/";
+export const API_BASE_URL = "https://inventory-api.pootechnologies.tech/api/inventory";
+export const API_BASE_URL_LOGIN = "https://inventory-api.pootechnologies.tech/";
+export const IMAGE_BASE_URL = "https://inventory-api.pootechnologies.tech/";
 export const API_BASE_RENDER_URL = "http://poo-drf.onrender.com/api";
-export const API_BASE_PROFILE = "https://inventory.pootechnologies.tech/auth";
-export const API_BASE_TENANT_URL = "https://inventory.pootechnologies.tech/";
+export const API_BASE_PROFILE = "https://inventory-api.pootechnologies.tech/auth";
+export const API_BASE_TENANT_URL = "https://inventory-api.pootechnologies.tech/";
 
 export const API_ENDPOINTS = {
   LOGIN: "/token/",

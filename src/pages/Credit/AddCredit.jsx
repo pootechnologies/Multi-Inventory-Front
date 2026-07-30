@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_BASE_URL, API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
+import { getImageBaseURL } from "@/utils/urlHelper";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
   MapPin,
   Building2,
   X,
+  ZoomIn,
 } from "lucide-react";
 import { formatCurrency } from "@/utils/numberFormaterStats";
 import { convertToWordsWithCurrency } from "@/utils/useNumberToWords";
@@ -47,6 +49,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import ConfirmOrderModal from "../Order/ConfirmOrderModal";
 
 import useCreditStore from "@/store/useCreditStore";
@@ -929,6 +938,8 @@ const AddCredit = () => {
   const currentUserEmail = getCurrentUserEmail();
   const showReceiptOption =
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const businessCategory = localStorage.getItem("business_category");
+  const isElectronics = businessCategory?.toLowerCase() === "electronics";
 
   // Set default receipt value based on user email
   useEffect(() => {
@@ -962,14 +973,61 @@ const AddCredit = () => {
         const response = await axiosInstance.get(
           `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
         );
-        setProducts(response.data.all_results || []);
+
+        if (isElectronics) {
+          // Process products with variants based on specification
+          const productsByName = response?.data?.all_results?.reduce(
+            (acc, product) => {
+              const existing = acc.find((p) => p.name === product.name);
+              if (!existing) {
+                acc.push({ ...product, variants: [] });
+              }
+              return acc;
+            },
+            []
+          );
+
+          const processedProducts = productsByName.map((product) => {
+            const variants = response?.data?.all_results?.filter(
+              (p) => p.name === product.name
+            );
+            const uniqueVariants = variants.reduce((acc, variant) => {
+              // Only add if this specification is not already in the accumulator
+              const spec = variant.specification || "Standard";
+              if (!acc.some((v) => (v.specification || "Standard") === spec)) {
+                acc.push({
+                  ...variant,
+                  variant_spec: variant.specification,
+                  variant_desc: variant.description,
+                });
+                console.log('Credit - Variant added to acc:', {
+                  id: variant.id,
+                  specification: variant.specification,
+                  image: variant.image,
+                  hasImage: !!variant.image
+                });
+              }
+              return acc;
+            }, []);
+            console.log('Credit - Unique variants for product', product.name, ':', uniqueVariants);
+
+            return {
+              ...product,
+              variants: uniqueVariants,
+            };
+          });
+
+          setProducts(processedProducts || []);
+        } else {
+          setProducts(response.data.all_results || []);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [isElectronics]);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -1031,6 +1089,15 @@ const AddCredit = () => {
       "disabledUnit",
       !selectedProduct || selectedProduct.unit == null,
     );
+
+    // Handle variants if electronics
+    if (isElectronics && selectedProduct?.variants?.length > 0) {
+      updateItem(index, "selectedVariant", selectedProduct.variants[0]);
+      updateItem(index, "unit_price", selectedProduct.variants[0].selling_price);
+      updateItem(index, "stock", selectedProduct.variants[0].stock);
+    } else {
+      updateItem(index, "selectedVariant", null);
+    }
   };
 
   const handleQuantityChange = (index, event) => {
@@ -1058,6 +1125,12 @@ const AddCredit = () => {
     );
   };
 
+  const handleVariantSelect = (index, variant) => {
+    updateItem(index, "selectedVariant", variant);
+    updateItem(index, "unit_price", variant.selling_price);
+    updateItem(index, "stock", variant.stock);
+  };
+
   const handleClearAll = () => {
     resetForm(); // Call the Zustand store's resetForm action
   };
@@ -1069,8 +1142,9 @@ const AddCredit = () => {
           const quantity = item.package
             ? item.package * item.selectedProduct.piece
             : item.quantity;
+          const product = item.selectedVariant || item.selectedProduct;
           const unitPrice =
-            item.unit_price || item.selectedProduct.selling_price;
+            item.unit_price || product.selling_price;
           return total + unitPrice * quantity;
         }
         return total;
@@ -1091,7 +1165,8 @@ const AddCredit = () => {
         const quantity = item.package
           ? item.package * item.selectedProduct.piece
           : item.quantity;
-        const unitPrice = item.unit_price || item.selectedProduct.selling_price;
+        const product = item.selectedVariant || item.selectedProduct;
+        const unitPrice = item.unit_price || product.selling_price;
         return total + unitPrice * quantity;
       }, 0);
 
@@ -1146,18 +1221,21 @@ const AddCredit = () => {
           (item) =>
             item.selectedProduct && (item.quantity > 0 || item.package > 0),
         )
-        .map((item) => ({
-          product: item.selectedProduct.id,
-          quantity: item.quantity,
-          package: item.package,
-          unit_price: item.unit_price || item.selectedProduct.selling_price,
-          unit: item.unit,
-          price:
-            (item.unit_price || item.selectedProduct.selling_price) *
-            (item.package
-              ? item.package * item.selectedProduct.piece
-              : item.quantity),
-        })),
+        .map((item) => {
+          const product = item.selectedVariant || item.selectedProduct;
+          return {
+            product: product.id,
+            quantity: item.quantity,
+            package: item.package,
+            unit_price: item.unit_price || product.selling_price,
+            unit: product.unit,
+            price:
+              (item.unit_price || product.selling_price) *
+              (item.package
+                ? item.package * (product.piece || 1)
+                : item.quantity),
+          };
+        }),
     };
 
     try {
@@ -1174,7 +1252,45 @@ const AddCredit = () => {
             const response = await axiosInstance.get(
               `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
             );
-            setProducts(response.data.all_results || []);
+
+            if (isElectronics) {
+              // Process products with variants based on specification
+              const productsByName = response?.data?.all_results?.reduce(
+                (acc, product) => {
+                  const existing = acc.find((p) => p.name === product.name);
+                  if (!existing) {
+                    acc.push({ ...product, variants: [] });
+                  }
+                  return acc;
+                },
+                []
+              );
+
+              const processedProducts = productsByName.map((product) => {
+                const variants = response?.data?.all_results?.filter(
+                  (p) => p.name === product.name
+                );
+                const uniqueVariants = variants.reduce((acc, variant) => {
+                  if (!acc.some((v) => v.specification === variant.specification)) {
+                    acc.push({
+                      ...variant,
+                      variant_spec: variant.specification,
+                      variant_desc: variant.description,
+                    });
+                  }
+                  return acc;
+                }, []);
+
+                return {
+                  ...product,
+                  variants: uniqueVariants,
+                };
+              });
+
+              setProducts(processedProducts || []);
+            } else {
+              setProducts(response.data.all_results || []);
+            }
           } catch (error) {
             console.error("Error fetching products:", error);
           }
@@ -1242,6 +1358,26 @@ const AddCredit = () => {
     setReceipt(selectedOption ? selectedOption.value : null);
   };
 
+  const getProductOptions = () => {
+    if (isElectronics) {
+      const uniqueProducts = products.reduce((acc, product) => {
+        if (!acc.some((p) => p.name === product.name)) {
+          acc.push({
+            label: product.name,
+            value: product,
+            hasVariants: product.variants && product.variants.length > 0,
+          });
+        }
+        return acc;
+      }, []);
+      return uniqueProducts;
+    }
+    return products.map((product) => ({
+      label: product.name,
+      value: product,
+    }));
+  };
+
   const handleToggle = () => {
     setShowCustomerDetails((prev) => !prev);
   };
@@ -1276,8 +1412,9 @@ const AddCredit = () => {
                       const quantity = item.package
                         ? item.package * item.selectedProduct.piece
                         : item.quantity;
+                      const product = item.selectedVariant || item.selectedProduct;
                       const unitPrice =
-                        item.unit_price || item.selectedProduct.selling_price;
+                        item.unit_price || product.selling_price;
                       const totalPrice = quantity * unitPrice;
 
                       return (
@@ -1286,9 +1423,16 @@ const AddCredit = () => {
                           className="w-full p-2 bg-white border border-gray-200 transition-all items-center"
                         >
                           <div className="flex justify-between items-start ">
-                            <p className="text-base font-semibold text-gray-900">
-                              {item.selectedProduct.name}
-                            </p>
+                            <div>
+                              <p className="text-base font-semibold text-gray-900">
+                                {item.selectedProduct.name}
+                              </p>
+                              {item.selectedVariant && (
+                                <p className="text-xs text-gray-500">
+                                  {item.selectedVariant.specification || "Standard"}
+                                </p>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-500">
                               Qty: {quantity} × {formatter.format(unitPrice)}
                             </p>
@@ -1554,10 +1698,7 @@ const AddCredit = () => {
                           onChange={(selectedOption) =>
                             handleProductChange(index, selectedOption)
                           }
-                          options={products.map((product) => ({
-                            label: product.name,
-                            value: product,
-                          }))}
+                          options={getProductOptions()}
                           placeholder={t("select_product")}
                           unstyled
                           classNames={{
@@ -1585,6 +1726,17 @@ const AddCredit = () => {
                           }}
                         />
                       </div>
+
+                      {/* Product Variants Display */}
+                      {isElectronics && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
+                        <ProductVariantsDisplay
+                          product={item.selectedProduct}
+                          selectedVariant={item.selectedVariant}
+                          onSelectVariant={(variant) =>
+                            handleVariantSelect(index, variant)
+                          }
+                        />
+                      )}
 
                       {item.selectedProduct && (
                         <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
@@ -2075,5 +2227,177 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ProductVariantsDisplay = ({
+  product,
+  selectedVariant,
+  onSelectVariant,
+}) => {
+  const [maximizedImage, setMaximizedImage] = useState(null);
+
+  if (!product || !product.variants || product.variants.length === 0)
+    return null;
+  
+  // Debug: Check if variants have images
+  console.log('AddCredit ProductVariantsDisplay - Product:', product.name);
+  console.log('AddCredit ProductVariantsDisplay - Variants:', product.variants.map(v => ({
+    id: v.id,
+    specification: v.specification,
+    hasImage: !!v.image,
+    imagePath: v.image
+  })));
+  
+  // Check if any variant has a specification
+  const hasSpecifications = product.variants.some(v => v.specification);
+  if (!hasSpecifications) return null;
+  
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${getImageBaseURL()}${imagePath}`;
+  };
+
+  return (
+    <>
+      <div className="mt-4">
+        <h4 className="mb-3 text-sm font-semibold text-gray-700">Available Variants:</h4>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          {product.variants.map((variant, idx) => {
+            const isSelected = selectedVariant?.id === variant.id;
+            return (
+              <div
+                key={idx}
+                className={`relative transition-all duration-200 ${
+                  isSelected
+                    ? "ring-2 ring-emerald-500 ring-offset-2 rounded-xl shadow-lg"
+                    : "hover:ring-2 hover:ring-emerald-300 hover:shadow-md"
+                }`}
+              >
+                <div 
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 cursor-pointer"
+                  onClick={() => onSelectVariant(variant)}
+                >
+                  {/* Product Image */}
+                  <div 
+                    className="relative group p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (variant.image) {
+                        setMaximizedImage(getImageUrl(variant.image));
+                      }
+                    }}
+                  >
+                    {variant.image ? (
+                      <div className="relative w-20 h-20 mx-auto">
+                        <img
+                          src={getImageUrl(variant.image)}
+                          alt={variant.specification || "Standard"}
+                          className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50"
+                          onError={(e) => {
+                            console.error('Image failed to load in AddCredit:', {
+                              imagePath: variant.image,
+                              generatedUrl: getImageUrl(variant.image),
+                              error: e
+                            });
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <ZoomIn className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 mx-auto flex items-center justify-center text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
+                        <Package className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Specification Info */}
+                  <div className="p-2">
+                    <div className="text-xs font-semibold text-gray-900 mb-1 truncate text-center">
+                      {variant.specification || "Standard"}
+                    </div>
+                    {variant.description && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button
+                            className="text-xs text-emerald-600 hover:text-emerald-700 font-medium mt-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            View details
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader>
+                            <DialogTitle className="text-lg font-bold text-gray-900">
+                              {variant.specification || "Standard"}
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="mt-4">
+                            {variant.image && (
+                              <div className="mb-4">
+                                <img
+                                  src={getImageUrl(variant.image)}
+                                  alt={variant.specification || "Standard"}
+                                  className="w-full h-48 object-contain rounded-lg bg-gray-50 border border-gray-200"
+                                />
+                              </div>
+                            )}
+                            <div
+                              className="text-sm text-gray-600 leading-relaxed"
+                              dangerouslySetInnerHTML={{
+                                __html: variant.description
+                                  ? '<p class="mb-2">' +
+                                    variant.description.replace(
+                                      /,\s*/g,
+                                      '</p><p class="mb-2">'
+                                    ) +
+                                    "</p>"
+                                  : "No description available.",
+                              }}
+                            />
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                  </div>
+                </div>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Maximized Image Modal */}
+      {maximizedImage && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-center z-[10000] p-4"
+          onClick={() => setMaximizedImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <button
+              onClick={() => setMaximizedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <img
+              src={maximizedImage}
+              alt="Maximized view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };

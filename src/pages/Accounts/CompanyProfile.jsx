@@ -322,7 +322,8 @@ const CompanyProfile = () => {
                   value={formData.tin_number}
                   onChange={handleChange}
                   placeholder="TIN Number"
-                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium"
+                  disabled={isSubmitting}
+                  className="w-full h-11 pl-12 pr-5 rounded-xl border border-gray-200 bg-white outline-none transition-all focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-gray-900 font-medium disabled:bg-gray-50 disabled:text-gray-400"
                 />
               </div>
             </div>

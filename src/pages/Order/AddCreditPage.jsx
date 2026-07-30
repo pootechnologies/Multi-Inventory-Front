@@ -4,11 +4,11 @@ import Select from "react-select";
 import { Button } from "@/components/ui/button";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import toast from "react-hot-toast";
-import { Trash, ArrowLeft, Plus, ShoppingCart, Package, Search } from "lucide-react";
+import { Trash, ArrowLeft, Plus, ShoppingCart, Package, Search, ZoomIn, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
-import ProductVariantsDisplay from "@/components/common/ProductVariantsDisplay";
+import { getImageBaseURL } from "@/utils/urlHelper";
 import { useParams, useNavigate } from "react-router-dom";
 
 const AddCreditPage = () => {
@@ -359,14 +359,14 @@ const AddCreditPage = () => {
                 {item.selectedProduct?.variants?.some(
                   (v) => v.specification
                 ) && (
-                    <ProductVariantsDisplay
-                      product={item.selectedProduct}
-                      selectedVariant={item.selectedVariant}
-                      onSelectVariant={(variant) =>
-                        handleVariantSelect(index, variant)
-                      }
-                    />
-                  )}
+                  <ProductVariantsDisplay
+                    product={item.selectedProduct}
+                    selectedVariant={item.selectedVariant}
+                    onSelectVariant={(variant) =>
+                      handleVariantSelect(index, variant)
+                    }
+                  />
+                )}
 
                 {/* Fields */}
                 {item.selectedProduct && (
@@ -510,6 +510,119 @@ const AddCreditPage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ProductVariantsDisplay = ({
+  product,
+  selectedVariant,
+  onSelectVariant,
+}) => {
+  const [maximizedImage, setMaximizedImage] = useState(null);
+
+  if (!product || !product.variants || product.variants.length === 0)
+    return null;
+  
+  // Check if any variant has a specification
+  const hasSpecifications = product.variants.some(v => v.specification);
+  if (!hasSpecifications) return null;
+  
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${getImageBaseURL()}${imagePath}`;
+  };
+
+  return (
+    <>
+      <div className="mt-4">
+        <h4 className="mb-3 text-sm font-semibold text-gray-700">Available Variants:</h4>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+          {product.variants.map((variant, idx) => {
+            const isSelected = selectedVariant?.id === variant.id;
+            return (
+              <div
+                key={idx}
+                className={`relative transition-all duration-200 ${
+                  isSelected
+                    ? "ring-2 ring-emerald-500 ring-offset-2 rounded-xl shadow-lg"
+                    : "hover:ring-2 hover:ring-emerald-300 hover:shadow-md"
+                }`}
+              >
+                <div 
+                  className="bg-white rounded-xl overflow-hidden border border-gray-200 cursor-pointer"
+                  onClick={() => onSelectVariant(variant)}
+                >
+                  {/* Product Image */}
+                  <div 
+                    className="relative group p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (variant.image) {
+                        setMaximizedImage(getImageUrl(variant.image));
+                      }
+                    }}
+                  >
+                    {variant.image ? (
+                      <div className="relative w-20 h-20 mx-auto">
+                        <img
+                          src={getImageUrl(variant.image)}
+                          alt={variant.specification || "Standard"}
+                          className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50"
+                        />
+                        <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <ZoomIn className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-20 mx-auto flex items-center justify-center text-gray-400 bg-gray-50 rounded-xl border border-gray-200">
+                        <Package className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Specification Info */}
+                  <div className="p-2">
+                    <div className="text-xs font-semibold text-gray-900 mb-1 truncate text-center">
+                      {variant.specification || "Standard"}
+                    </div>
+                  </div>
+                </div>
+                {isSelected && (
+                  <div className="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Maximized Image Modal */}
+      {maximizedImage && (
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex justify-center items-center z-[10000] p-4"
+          onClick={() => setMaximizedImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh]">
+            <button
+              onClick={() => setMaximizedImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <img
+              src={maximizedImage}
+              alt="Maximized view"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

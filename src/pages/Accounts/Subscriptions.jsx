@@ -397,12 +397,12 @@ export default function Subscriptions() {
             </div>
 
             <div className="space-y-3">
-              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+              {/* <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Hash className="w-3 h-3" /> ID
                 </p>
                 <p className="font-semibold text-gray-900">#{plan.id}</p>
-              </div>
+              </div> */}
 
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
@@ -760,9 +760,9 @@ export default function Subscriptions() {
               {filteredPlans.length > 0 && (
                 <TableHeader className="bg-gray-50/80">
                   <TableRow className="border-b-gray-100">
-                    <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
+                    {/* <TableHead className="w-[100px] font-bold text-gray-900 whitespace-nowrap">
                       # ID
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <Crown className="w-4 h-4 text-gray-400" />
@@ -815,9 +815,9 @@ export default function Subscriptions() {
                       key={plan.id}
                       className="border-b-gray-50 hover:bg-emerald-50/30 transition-colors"
                     >
-                      <TableCell className="font-medium text-gray-500">
+                      {/* <TableCell className="font-medium text-gray-500">
                         #{plan.id}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="font-semibold text-gray-900">
                         {plan.tenant}
                       </TableCell>

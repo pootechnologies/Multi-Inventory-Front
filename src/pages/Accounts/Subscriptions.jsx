@@ -1302,7 +1302,7 @@ export default function Subscriptions() {
                   } catch (err) {
                     console.error("Payment initiation failed:", err);
                   } finally {
-      F              setIsSubProcessing(false);
+                    setIsSubProcessing(false);
                   }
                 }}
               >

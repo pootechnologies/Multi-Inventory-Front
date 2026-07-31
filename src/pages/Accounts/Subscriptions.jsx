@@ -850,7 +850,7 @@ export default function Subscriptions() {
                         </span>
                       </TableCell>
                       <TableCell>
-                        {plan.payment_url && (
+                        {plan.payment_url && plan.status !== "paid_verified" && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1068,7 +1068,7 @@ export default function Subscriptions() {
                     </span>
                   </div>
 
-                  {plan.payment_url && (
+                  {plan.payment_url && plan.status !== "paid_verified" && (
                     <Button
                       size="sm"
                       variant="outline"

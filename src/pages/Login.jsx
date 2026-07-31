@@ -48,13 +48,25 @@ const LoginPage = () => {
     setForgotLoading(true);
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${API_BASE_URL_LOGIN}tenants/password/reset/`,
         { email: forgotEmail },
         { headers: { "Content-Type": "application/json" } }
       );
-      setForgotSuccess(true);
-      toast.success("Password reset link sent to your email!");
+      
+      // Check the response message to determine if email is registered
+      const message = response.data?.message || response.data?.detail || "";
+      
+      if (message.toLowerCase().includes("email is not registered") || 
+          message.toLowerCase().includes("not registered")) {
+        // Email is not registered - show error
+        setForgotError("This email is not registered. Please check your email or sign up for a new account.");
+        toast.error("Email not registered");
+      } else {
+        // Email is registered - show success
+        setForgotSuccess(true);
+        toast.success("Password reset link sent to your email!");
+      }
     } catch (error) {
       console.error("Error sending password reset:", error);
       setForgotError(error.response?.data?.detail || "Failed to send password reset link");

@@ -799,12 +799,14 @@ export default function Subscriptions() {
                         Status
                       </div>
                     </TableHead>
-                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <RefreshCw className="w-4 h-4 text-gray-400" />
-                        Retry
-                      </div>
-                    </TableHead>
+                    {!filteredPlans.every((p) => p.status === "paid_verified") && (
+                      <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <RefreshCw className="w-4 h-4 text-gray-400" />
+                          Retry
+                        </div>
+                      </TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
               )}

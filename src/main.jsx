@@ -7,19 +7,6 @@ import App from "./App.jsx";
 import QueryProvider from "./utils/queryClient";
 import { Toaster } from "react-hot-toast";
 import i18n from "../src/i18n";
-import { registerSW } from "virtual:pwa-register";
-
-// Register service worker for PWA
-registerSW({
-  onNeedRefresh() {
-    if (confirm("New content available. Reload?")) {
-      window.location.reload();
-    }
-  },
-  onOfflineReady() {
-    console.log("App is ready for offline use");
-  },
-});
 
 const Main = () => {
   return (

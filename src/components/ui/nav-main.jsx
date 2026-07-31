@@ -132,7 +132,7 @@ export function NavMain({ items }) {
               to={item.url}
               onClick={() => setOpenMobile(false)}
               className={`
-                group/lnk flex items-center gap-3 w-full px-3 py-1 rounded-xl text-sm font-medium
+                group/lnk flex items-center gap-3 w-full px-1 py-1 rounded-xl text-sm font-medium
                 transition-all duration-200 ease-out
                 ${
                   isSubActive(item.url)

@@ -52,6 +52,7 @@ import {
   ChevronRight,
   AlertTriangle,
   X,
+  RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -169,11 +170,20 @@ export default function Subscriptions() {
       const response = await axiosInstance.get(
         API_ENDPOINTS.TENANT_PAYMENT_CHECK,
       );
-      const sortedPlans = response.data.sort((a, b) => b.id - a.id);
+      // Handle response structure { "payments": [...] }
+      const paymentsData = response.data?.payments || response.data || [];
+      const sortedPlans = paymentsData.sort((a, b) => b.id - a.id);
       setPlans(sortedPlans);
       setFilteredPlans(sortedPlans);
+      
+      // If payments data is empty, fetch subscription plans to show cards
+      if (paymentsData.length === 0) {
+        fetchSubscriptionPlans();
+      }
     } catch (error) {
       console.error("There was an error fetching the data:", error);
+      // On error, try to fetch subscription plans
+      fetchSubscriptionPlans();
     } finally {
       setIsLoading(false);
     }
@@ -206,6 +216,7 @@ export default function Subscriptions() {
 
   useEffect(() => {
     fetchPlans();
+    fetchSubscriptionPlans();
     const handleScroll = () => {
       if (window.scrollY > 300) {
         setIsVisible(true);
@@ -230,12 +241,6 @@ export default function Subscriptions() {
     setFilteredPlans(result);
     setCurrentPage(1);
   }, [selectedOption, plans]);
-
-  useEffect(() => {
-    if (plans.length === 0 && !isLoading) {
-      fetchSubscriptionPlans();
-    }
-  }, [plans.length, isLoading]);
 
   useEffect(() => {
     if (selectedPlan) {
@@ -794,7 +799,12 @@ export default function Subscriptions() {
                         Status
                       </div>
                     </TableHead>
-                    {/* Actions header removed */}
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <RefreshCw className="w-4 h-4 text-gray-400" />
+                        Retry
+                      </div>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
               )}
@@ -839,11 +849,24 @@ export default function Subscriptions() {
                           {formatStatusForDisplay(plan.status)}
                         </span>
                       </TableCell>
+                      <TableCell>
+                        {plan.payment_url && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 px-3 text-xs font-medium rounded-lg border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 text-emerald-700 transition-all"
+                            onClick={() => window.open(plan.payment_url, "_blank")}
+                          >
+                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                            Retry
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center">
+                    <TableCell colSpan={8} className="h-32 text-center">
                       <div className="flex justify-center items-center gap-3 text-emerald-600">
                         <Spinner className="size-6" />
                         <span className="text-sm font-medium text-gray-400">
@@ -852,9 +875,9 @@ export default function Subscriptions() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ) : subscriptionPlans.length > 0 ? (
+                ) : plans.length === 0 && subscriptionPlans.length > 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="p-6">
+                    <TableCell colSpan={8} className="p-6">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {subscriptionPlans.map((plan) => {
                           const planName = (plan.name || "").toLowerCase();
@@ -938,10 +961,10 @@ export default function Subscriptions() {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={8}
                       className="h-24 text-center text-gray-500 font-medium"
                     >
-                      No payment records found.
+                      No subscription plans available.
                     </TableCell>
                   </TableRow>
                 )}
@@ -1044,6 +1067,18 @@ export default function Subscriptions() {
                       {formatStatusForDisplay(plan.status)}
                     </span>
                   </div>
+
+                  {plan.payment_url && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full h-10 text-sm font-medium rounded-xl border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 text-emerald-700 transition-all"
+                      onClick={() => window.open(plan.payment_url, "_blank")}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Retry Payment
+                    </Button>
+                  )}
                 </div>
               ))
             ) : isLoading ? (
@@ -1053,7 +1088,7 @@ export default function Subscriptions() {
                   Loading payment records...
                 </span>
               </div>
-            ) : subscriptionPlans.length > 0 ? (
+            ) : plans.length === 0 && subscriptionPlans.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {subscriptionPlans.map((plan) => {
                   const Icon =
@@ -1126,7 +1161,7 @@ export default function Subscriptions() {
               </div>
             ) : (
               <div className="bg-white rounded-2xl p-8 border border-gray-200 text-center text-gray-500 font-medium shadow-sm">
-                No payment records found.
+                No subscription plans available.
               </div>
             )}
           </div>

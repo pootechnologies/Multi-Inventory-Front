@@ -52,7 +52,6 @@ import {
   ChevronRight,
   AlertTriangle,
   X,
-  RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -173,8 +172,12 @@ export default function Subscriptions() {
       // Handle response structure { "payments": [...] }
       const paymentsData = response.data?.payments || response.data || [];
       const sortedPlans = paymentsData.sort((a, b) => b.id - a.id);
-      setPlans(sortedPlans);
-      setFilteredPlans(sortedPlans);
+      // Only include payments with paid_verified status (displayed as "Paid")
+      const paidPlans = sortedPlans.filter(
+        (plan) => plan.status === "paid_verified",
+      );
+      setPlans(paidPlans);
+      setFilteredPlans(paidPlans);
       
       // If payments data is empty, fetch subscription plans to show cards
       if (paymentsData.length === 0) {
@@ -799,16 +802,8 @@ export default function Subscriptions() {
                         Status
                       </div>
                     </TableHead>
-                    {!filteredPlans.every((p) => p.status === "paid_verified") && (
-                      <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <RefreshCw className="w-4 h-4 text-gray-400" />
-                          Retry
-                        </div>
-                      </TableHead>
-                    )}
-                  </TableRow>
-                </TableHeader>
+                </TableRow>
+              </TableHeader>
               )}
               <TableBody>
                 {displayPlans.length > 0 ? (
@@ -850,21 +845,8 @@ export default function Subscriptions() {
                         >
                           {formatStatusForDisplay(plan.status)}
                         </span>
-                      </TableCell>
-                      <TableCell>
-                        {plan.payment_url && plan.status !== "paid_verified" && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 px-3 text-xs font-medium rounded-lg border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 text-emerald-700 transition-all"
-                            onClick={() => window.open(plan.payment_url, "_blank")}
-                          >
-                            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                            Retry
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
+                    </TableCell>
+                  </TableRow>
                   ))
                 ) : isLoading ? (
                   <TableRow>
@@ -1070,18 +1052,7 @@ export default function Subscriptions() {
                     </span>
                   </div>
 
-                  {plan.payment_url && plan.status !== "paid_verified" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="w-full h-10 text-sm font-medium rounded-xl border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 text-emerald-700 transition-all"
-                      onClick={() => window.open(plan.payment_url, "_blank")}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Retry Payment
-                    </Button>
-                  )}
-                </div>
+                  </div>
               ))
             ) : isLoading ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">

@@ -133,6 +133,7 @@ const planFeatures = [
 export default function Subscriptions() {
   const [plans, setPlans] = useState([]);
   const [filteredPlans, setFilteredPlans] = useState([]);
+  const [hasPendingPayments, setHasPendingPayments] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -172,6 +173,11 @@ export default function Subscriptions() {
       // Handle response structure { "payments": [...] }
       const paymentsData = response.data?.payments || response.data || [];
       const sortedPlans = paymentsData.sort((a, b) => b.id - a.id);
+      const pendingPlans = sortedPlans.filter(
+        (plan) =>
+          plan.status === "pending" || plan.status === "failed",
+      );
+      setHasPendingPayments(pendingPlans.length > 0);
       // Only include payments with paid_verified status (displayed as "Paid")
       const paidPlans = sortedPlans.filter(
         (plan) => plan.status === "paid_verified",
@@ -185,6 +191,7 @@ export default function Subscriptions() {
       }
     } catch (error) {
       console.error("There was an error fetching the data:", error);
+      setHasPendingPayments(false);
       // On error, try to fetch subscription plans
       fetchSubscriptionPlans();
     } finally {
@@ -749,12 +756,14 @@ export default function Subscriptions() {
                 />
               </div> */}
             </div>
-            <div className="text-sm font-medium text-gray-500 hidden sm:block">
-              Total Plans:{" "}
-              <span className="text-gray-900 font-bold ml-1">
-                {filteredPlans.length}
-              </span>
-            </div>
+            {!hasPendingPayments && (
+              <div className="text-sm font-medium text-gray-500 hidden sm:block">
+                Total Plans:{" "}
+                <span className="text-gray-900 font-bold ml-1">
+                  {filteredPlans.length}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Desktop Table View */}

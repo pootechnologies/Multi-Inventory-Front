@@ -115,20 +115,20 @@ const planFeatures = [
 ];
 
 
-  const getCurrentUserEmail = () => {
-    try {
-      const userInfo = localStorage.getItem("user_info");
-      if (userInfo) {
-        const parsed = JSON.parse(userInfo);
-        return parsed.email || null;
-      }
-    } catch (e) {
-      console.error("Error parsing user_info from localStorage: ", e);
+const getCurrentUserEmail = () => {
+  try {
+    const userInfo = localStorage.getItem("user_info");
+    if (userInfo) {
+      const parsed = JSON.parse(userInfo);
+      return parsed.email || null;
     }
-    return null;
-  };
+  } catch (e) {
+    console.error("Error parsing user_info from localStorage: ", e);
+  }
+  return null;
+};
 
-  const currentUserEmail = getCurrentUserEmail();
+const currentUserEmail = getCurrentUserEmail();
 
 export default function Subscriptions() {
   const [plans, setPlans] = useState([]);
@@ -184,7 +184,7 @@ export default function Subscriptions() {
       );
       setPlans(paidPlans);
       setFilteredPlans(paidPlans);
-      
+
       // If payments data is empty, fetch subscription plans to show cards
       if (paymentsData.length === 0) {
         fetchSubscriptionPlans();
@@ -206,7 +206,7 @@ export default function Subscriptions() {
         `${API_BASE_TENANT_URL}${API_ENDPOINTS.TENANT_SUBSCRIPTIONS}`,
       );
       let plans = response.data?.results || [];
-      
+
       // Filter plans based on email
       if (currentUserEmail === "tokiyogeneraltrading@gmail.com") {
         // Show only Tokiyo plan
@@ -215,7 +215,7 @@ export default function Subscriptions() {
         // Hide Tokiyo plan for other users
         plans = plans.filter(plan => !plan.name.toLowerCase().includes("tokiyo"));
       }
-      
+
       setSubscriptionPlans(plans);
     } catch (error) {
       console.error("There was an error fetching subscription plans:", error);
@@ -260,6 +260,17 @@ export default function Subscriptions() {
       setValue("is_active", selectedPlan.subscriptionPlan?.is_active);
     }
   }, [selectedPlan, setValue]);
+
+  const formatPrice = (price) => {
+    if (price == null || price === "") return price;
+    const num = Number(price);
+    if (isNaN(num)) return price;
+    return num.toLocaleString("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  };
 
   const getPlanFeatures = (planName) => {
     const match = planFeatures.find(
@@ -425,7 +436,7 @@ export default function Subscriptions() {
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <Crown className="w-3 h-3" /> Plan Name
                 </p>
-                <p className="font-semibold text-gray-900">
+                <p className="font-black text-gray-900 text-lg">
                   {plan.subscriptionPlan?.name}
                 </p>
               </div>
@@ -435,7 +446,7 @@ export default function Subscriptions() {
                   <DollarSign className="w-3 h-3" /> Price
                 </p>
                 <p className="font-semibold text-gray-900">
-                  ${plan.subscriptionPlan?.price}
+                  ${formatPrice(plan.subscriptionPlan?.price)}
                 </p>
               </div>
 
@@ -811,8 +822,8 @@ export default function Subscriptions() {
                         Status
                       </div>
                     </TableHead>
-                </TableRow>
-              </TableHeader>
+                  </TableRow>
+                </TableHeader>
               )}
               <TableBody>
                 {displayPlans.length > 0 ? (
@@ -827,22 +838,21 @@ export default function Subscriptions() {
                       <TableCell className="font-semibold text-gray-900">
                         {plan.tenant}
                       </TableCell>
-                      <TableCell className="font-semibold text-gray-900">
-                        {plan.subscriptionPlan?.name}
-                      </TableCell>
-                      <TableCell className="font-semibold text-gray-900">
-                        ${plan.subscriptionPlan?.price}
+            <TableCell className="font-black text-gray-900 text-lg">
+              {plan.subscriptionPlan?.name}
+            </TableCell>
+                       <TableCell className="font-semibold text-gray-900">
+                        ${formatPrice(plan.subscriptionPlan?.price)}
                       </TableCell>
                       <TableCell className="font-semibold text-gray-900">
                         {plan.subscriptionPlan?.duration_days} days
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                            plan.subscriptionPlan?.is_active
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${plan.subscriptionPlan?.is_active
                               ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
                               : "bg-red-100 text-red-700 border border-red-200"
-                          }`}
+                            }`}
                         >
                           <Check className="h-3 w-3" />
                           {plan.subscriptionPlan?.is_active ? "Yes" : "No"}
@@ -854,8 +864,8 @@ export default function Subscriptions() {
                         >
                           {formatStatusForDisplay(plan.status)}
                         </span>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : isLoading ? (
                   <TableRow>
@@ -876,7 +886,7 @@ export default function Subscriptions() {
                           const planName = (plan.name || "").toLowerCase();
                           const Icon =
                             planName.includes("pro") ||
-                            planName.includes("enterprise")
+                              planName.includes("enterprise")
                               ? Crown
                               : Zap;
                           return (
@@ -885,67 +895,71 @@ export default function Subscriptions() {
                               className="border shadow-sm rounded-xl hover:shadow-md transition-all duration-200 bg-white"
                             >
                               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-                              <CardHeader className="pt-5 pb-3 px-5">
-                                <div className="flex items-center justify-between">
-                                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-md">
-                                    <Icon className="h-4 w-4 text-white" />
-                                  </div>
-                                  {plan.is_active && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                      <Check className="h-3 w-3" />
-                                      Active
-                                    </span>
-                                  )}
-                                </div>
-                                <CardTitle className="text-base font-bold mt-3 tracking-tight">
+                               <CardHeader className="pt-5 pb-3 px-5">
+                                 <div className="flex items-center justify-between">
+                                   <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-md">
+                                     <Icon className="h-4 w-4 text-white" />
+                                   </div>
+                                   {plan.is_active && (
+                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                       <Check className="h-3 w-3" />
+                                       Active
+                                     </span>
+                                   )}
+                                 </div>
+                                <CardTitle className="text-2xl font-black mt-2 tracking-tight text-center">
                                   {plan.name}
                                 </CardTitle>
-                                <CardDescription className="text-sm">
-                                  <div className="flex flex-col items-center gap-1">
-                                    <DollarSign className="h-5 w-5 text-gray-400" />
-                                    <span className="text-xl font-bold text-gray-900">
-                                      {plan.price}
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                      br/year
-                                    </span>
-                                  </div>
-                                </CardDescription>
-                              </CardHeader>
-                              <CardContent className="px-5 pb-5">
-                                <div className="space-y-2 mb-4">
-                                  {getPlanFeatures(plan.name).map(
-                                    (feature, idx) => (
-                                      <div
-                                        key={idx}
-                                        className="flex items-center gap-2 text-xs text-gray-600"
-                                      >
-                                        <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                        <span>{feature}</span>
-                                      </div>
-                                    ),
-                                  )}
-                                  <div className="flex items-center gap-2 text-xs text-gray-600">
-                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                    <span>
-                                      Valid for {plan.duration_days} days
-                                    </span>
-                                  </div>
-                                </div>
-                                <Button
-                                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2"
-                                  disabled={!plan.is_active}
-                                  onClick={() => {
-                                    setSelectedSubPlan(plan);
-                                    setIsSubDialogOpen(true);
-                                  }}
-                                >
-                                  {plan.is_active
-                                    ? "Subscribe Now"
-                                    : "Unavailable"}
-                                </Button>
-                              </CardContent>
-                            </Card>
+                                 <CardDescription className="text-sm">
+                                   <div className="flex flex-col items-center gap-1">
+                                     <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+                                       Starting at
+                                     </span>
+                                     <div className="flex items-baseline gap-1">
+                                       <span className="text-3xl font-black text-gray-900">
+                                         {formatPrice(plan.price)}
+                                       </span>
+                                       <span className="text-lg font-semibold text-gray-600">
+                                         br/year
+                                       </span>
+                                     </div>
+                                   </div>
+                                 </CardDescription>
+                               </CardHeader>
+                               <CardContent className="px-5 pb-5 flex-1 flex flex-col">
+                                 <div className="space-y-2 mb-4">
+                                   {getPlanFeatures(plan.name).map(
+                                     (feature, idx) => (
+                                       <div
+                                         key={idx}
+                                         className="flex items-center gap-2 text-xs text-gray-600"
+                                       >
+                                         <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                         <span>{feature}</span>
+                                       </div>
+                                     ),
+                                   )}
+                                   <div className="flex items-center gap-2 text-xs text-gray-600">
+                                     <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                     <span>
+                                       Valid for {plan.duration_days} days
+                                     </span>
+                                   </div>
+                                 </div>
+                                 <Button
+                                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2 mt-auto"
+                                   disabled={!plan.is_active}
+                                   onClick={() => {
+                                     setSelectedSubPlan(plan);
+                                     setIsSubDialogOpen(true);
+                                   }}
+                                 >
+                                   {plan.is_active
+                                     ? "Subscribe Now"
+                                     : "Unavailable"}
+                                 </Button>
+                               </CardContent>
+                             </Card>
                           );
                         })}
                       </div>
@@ -1010,7 +1024,7 @@ export default function Subscriptions() {
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                       Plan Name
                     </p>
-                    <p className="text-gray-900 text-[15px] font-bold">
+                    <p className="text-gray-900 text-lg font-black">
                       {plan.subscriptionPlan?.name}
                     </p>
                   </div>
@@ -1020,8 +1034,8 @@ export default function Subscriptions() {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Price
                       </p>
-                      <p className="text-gray-900 text-[15px] font-bold">
-                        ${plan.subscriptionPlan?.price}
+                       <p className="text-gray-900 text-[15px] font-bold">
+                        ${formatPrice(plan.subscriptionPlan?.price)}
                       </p>
                     </div>
                     <div>
@@ -1039,11 +1053,10 @@ export default function Subscriptions() {
                       Active
                     </p>
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        plan.subscriptionPlan?.is_active
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${plan.subscriptionPlan?.is_active
                           ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
                           : "bg-red-100 text-red-700 border border-red-200"
-                      }`}
+                        }`}
                     >
                       <Check className="h-3 w-3" />
                       {plan.subscriptionPlan?.is_active ? "Yes" : "No"}
@@ -1061,7 +1074,7 @@ export default function Subscriptions() {
                     </span>
                   </div>
 
-                  </div>
+                </div>
               ))
             ) : isLoading ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
@@ -1097,16 +1110,22 @@ export default function Subscriptions() {
                             </span>
                           )}
                         </div>
-                        <CardTitle className="text-base font-bold mt-3 tracking-tight">
+                        <CardTitle className="text-2xl font-black mt-2 tracking-tight text-center">
                           {plan.name}
                         </CardTitle>
                         <CardDescription className="text-sm">
                           <div className="flex flex-col items-center gap-1">
-                            <DollarSign className="h-5 w-5 text-gray-400" />
-                            <span className="text-xl font-bold text-gray-900">
-                              {plan.price}
+                            <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+                              Starting at
                             </span>
-                            <span className="text-muted-foreground">/year</span>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-3xl font-black text-gray-900">
+                                {formatPrice(plan.price)}
+                              </span>
+                              <span className="text-lg font-semibold text-gray-600">
+                                br/year
+                              </span>
+                            </div>
                           </div>
                         </CardDescription>
                       </CardHeader>
@@ -1115,13 +1134,13 @@ export default function Subscriptions() {
                           {getPlanFeatures(plan.name).map((feature, idx) => (
                             <div
                               key={idx}
-                              className="flex items-center gap-2 text-xs text-gray-600"
+                              className="flex items-center  gap-2 text-xs text-gray-600 text-center"
                             >
                               <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
                               <span>{feature}</span>
                             </div>
                           ))}
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
+                          <div className="flex items-center gap-2 text-xs text-gray-600 text-center">
                             <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
                             <span>Valid for {plan.duration_days} days</span>
                           </div>
@@ -1249,7 +1268,7 @@ export default function Subscriptions() {
               <div className="flex items-center justify-between">
                 <span className="text-gray-600">Plan Price</span>
                 <span className="text-2xl font-bold text-gray-900">
-                  ${selectedSubPlan?.price}
+                  ${formatPrice(selectedSubPlan?.price)}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-2">

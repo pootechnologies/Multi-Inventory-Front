@@ -124,7 +124,7 @@ const planFeatures = [
         return parsed.email || null;
       }
     } catch (e) {
-      console.error("Error parsing user_info from localStorage", e);
+      console.error("Error parsing user_info from localStorage: ", e);
     }
     return null;
   };

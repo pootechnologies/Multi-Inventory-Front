@@ -1,26 +1,18 @@
-name: Build Po'o Inventory
+name: Build Po'o Inventory Windows
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        include:
-          - platform: ubuntu-latest
-            target: deb
-          - platform: windows-latest
-            target: msi
-
-    runs-on: ${{ matrix.platform }}
+  build-windows:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -28,30 +20,14 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Linux dependencies
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            libwebkit2gtk-4.1-dev \
-            build-essential \
-            curl \
-            wget \
-            file \
-            libxdo-dev \
-            libssl-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev
-
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Build Tauri app
-        run: npm run tauri build -- --bundles ${{ matrix.target }}
+      - name: Build Tauri MSI
+        run: npm run tauri build
 
-      - name: Upload installer
+      - name: Upload Windows MSI
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.target }}-installer
-          path: |
-            src-tauri/target/release/bundle/
+          name: poo-inventory-windows-msi
+          path: src-tauri/target/release/bundle/msi/

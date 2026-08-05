@@ -454,7 +454,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`${IMAGE_BASE_URL}${companyData?.logo}`}
+                  src={`${companyData?.logo}`}
                 />
                 <View
                   style={{

@@ -484,7 +484,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`http://leulsegedplc.inventory-api.pootechnologies.tech/media/company/images.jpg`}
+                  src={`https://leulsegedplc.inventory-api.pootechnologies.tech/media/company/images.jpg`}
                 />
                 <View
                   style={{

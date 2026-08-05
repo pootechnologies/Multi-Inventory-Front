@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_BASE_URL, API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
 import { getImageBaseURL } from "@/utils/urlHelper";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
@@ -1034,7 +1035,8 @@ const AddCredit = () => {
     const fetchCompanyData = async () => {
       try {
         const response = await axiosInstance.get(API_ENDPOINTS.COMPANY);
-        setCompanyData(response.data[0]);
+        const data = response.data[0];
+        setCompanyData(processCompanyDataLogo(data));
       } catch (error) {
         console.error("Error fetching company data:", error);
       }

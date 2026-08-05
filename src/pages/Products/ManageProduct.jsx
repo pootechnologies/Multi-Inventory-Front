@@ -47,6 +47,7 @@ const ManageProduct = () => {
 
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
+  const isShop = businessCategory?.toLowerCase() === "shop";
 
   const handleViewClick = (product) => {
     setSelectedProduct(product);
@@ -222,8 +223,9 @@ const ManageProduct = () => {
         searchTerm={searchTerm}
         isLoadingProducts={isLoading}
         isElectronics={isElectronics}
+        isShop={isShop}
       />
-      {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} />}
+      {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} isShop={isShop} />}
       {isConfirmDeleteOpen && (
         <ConfirmDeleteModal
           onConfirm={deleteProduct}
@@ -241,6 +243,7 @@ const ManageProduct = () => {
           fileName={fileName}
           setValue={setValue}
           isElectronics={isElectronics}
+          isShop={isShop}
         />
       )}
         </div>

@@ -15,6 +15,7 @@ import {
 } from "@react-pdf/renderer";
 import { API_BASE_URL, API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
 import { convertToWordsWithCurrency } from "@/utils/useNumberToWords";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import ethioFont from "../../assets/ethioFont.ttf";
@@ -380,11 +381,9 @@ const Performa = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
-
         const companyResponse = await axiosInstance.get(API_ENDPOINTS.COMPANY);
-
-        setCompanyData(companyResponse.data[0]);
+        const data = companyResponse.data[0];
+        setCompanyData(processCompanyDataLogo(data));
 
         const customersResponse = await axiosInstance.get(`${API_ENDPOINTS.CUSTOMERS}?include_all=True`);
 

@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button";
 import { t } from "i18next";
 import useUserRoleStore from "@/store/useUserRoleStore";
 
-const Modal = ({ product, onClose }) => {
+const Modal = ({ product, onClose, isShop }) => {
   // store to get user role
   const { user } = useUserRoleStore();
   const role = user?.role || null;
+  
+  const businessCategory = localStorage.getItem("business_category");
+  const modalIsElectronics = businessCategory?.toLowerCase() === "electronics";
+  const modalIsShop = isShop || businessCategory?.toLowerCase() === "shop";
 
   if (!product) return null;
 
@@ -59,6 +63,15 @@ const Modal = ({ product, onClose }) => {
               </p>
               <p className="font-semibold text-gray-900">{product.category_name || "N/A"}</p>
             </div>
+
+            {(modalIsElectronics || modalIsShop) && (
+              <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+                  {t("specification")}
+                </p>
+                <p className="font-semibold text-gray-900">{product.specification || "N/A"}</p>
+              </div>
+            )}
 
             <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">

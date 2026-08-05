@@ -940,6 +940,7 @@ const AddCredit = () => {
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
+  const isShop = businessCategory?.toLowerCase() === "shop";
 
   // Set default receipt value based on user email
   useEffect(() => {
@@ -974,7 +975,7 @@ const AddCredit = () => {
           `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
         );
 
-        if (isElectronics) {
+        if (isElectronics || isShop) {
           // Process products with variants based on specification
           const productsByName = response?.data?.all_results?.reduce(
             (acc, product) => {
@@ -1027,7 +1028,7 @@ const AddCredit = () => {
     };
 
     fetchProducts();
-  }, [isElectronics]);
+  }, [isElectronics, isShop]);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -1090,8 +1091,8 @@ const AddCredit = () => {
       !selectedProduct || selectedProduct.unit == null,
     );
 
-    // Handle variants if electronics
-    if (isElectronics && selectedProduct?.variants?.length > 0) {
+    // Handle variants if electronics or shop
+    if ((isElectronics || isShop) && selectedProduct?.variants?.length > 0) {
       updateItem(index, "selectedVariant", selectedProduct.variants[0]);
       updateItem(index, "unit_price", selectedProduct.variants[0].selling_price);
       updateItem(index, "stock", selectedProduct.variants[0].stock);
@@ -1253,7 +1254,7 @@ const AddCredit = () => {
               `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
             );
 
-            if (isElectronics) {
+            if (isElectronics || isShop) {
               // Process products with variants based on specification
               const productsByName = response?.data?.all_results?.reduce(
                 (acc, product) => {
@@ -1359,7 +1360,7 @@ const AddCredit = () => {
   };
 
   const getProductOptions = () => {
-    if (isElectronics) {
+    if (isElectronics || isShop) {
       const uniqueProducts = products.reduce((acc, product) => {
         if (!acc.some((p) => p.name === product.name)) {
           acc.push({
@@ -1728,7 +1729,7 @@ const AddCredit = () => {
                       </div>
 
                       {/* Product Variants Display */}
-                      {isElectronics && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
+                      {(isElectronics || isShop) && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
                         <ProductVariantsDisplay
                           product={item.selectedProduct}
                           selectedVariant={item.selectedVariant}

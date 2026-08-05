@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/utils/axiosInstance";
 import toast from "react-hot-toast";
-import { API_BASE_URL, API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
+import { API_BASE_URL, API_ENDPOINTS } from "@/utils/apiConfig";
 import {
   useQuery,
   useMutation,

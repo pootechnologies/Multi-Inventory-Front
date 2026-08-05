@@ -49,6 +49,7 @@ const ProductTable = ({
   searchTerm,
   isLoadingProducts,
   isElectronics,
+  isShop,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -358,7 +359,7 @@ const ProductTable = ({
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 {t("category_name")}
               </TableHead>
-              {isElectronics && (
+              {(isElectronics || isShop) && (
                 <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                   {t("specification")}
                 </TableHead>
@@ -414,7 +415,7 @@ const ProductTable = ({
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {product.category_name || "N/A"}
                     </TableCell>
-                    {isElectronics && (
+                    {(isElectronics || isShop) && (
                       <TableCell className="text-gray-600 text-sm font-medium">
                         {product.specification || "N/A"}
                       </TableCell>
@@ -520,7 +521,7 @@ const ProductTable = ({
                               {product.supplier_name || "N/A"}
                             </p>
                           </div>
-                          {isElectronics && (
+                          {(isElectronics || isShop) && (
                             <div>
                               <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
                                 {t("specification")}
@@ -748,7 +749,7 @@ const ProductTable = ({
                       {product.category_name || "N/A"}
                     </span>
                   </div>
-                  {isElectronics && (
+                  {(isElectronics || isShop) && (
                     <div className="flex justify-between">
                       <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
                         {t("specification")}

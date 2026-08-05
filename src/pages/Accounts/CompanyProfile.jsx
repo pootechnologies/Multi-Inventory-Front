@@ -37,17 +37,22 @@ const CompanyProfile = () => {
         setFetchedData(data);
         // Check if logo is a full URL or relative path
         if (data.logo) {
+          let logoUrl;
           if (data.logo.startsWith('http')) {
+            logoUrl = data.logo;
             setLogoSrc(data.logo);
           } else {
             // If it's a relative path, construct full URL
             const schemaName = localStorage.getItem("schema_name");
             if (schemaName && schemaName !== "public") {
-              setLogoSrc(`https://${schemaName}.inventory.pootechnologies.tech/${data.logo}`);
+              logoUrl = `https://${schemaName}.inventory.pootechnologies.tech/${data.logo}`;
+              setLogoSrc(logoUrl);
             } else {
+              logoUrl = data.logo;
               setLogoSrc(data.logo);
             }
           }
+          localStorage.setItem("company_logo", logoUrl);
         }
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -135,17 +140,22 @@ const CompanyProfile = () => {
             setFetchedData(updatedData);
             // Check if logo is a full URL or relative path
             if (updatedData.logo) {
+              let logoUrl;
               if (updatedData.logo.startsWith('http')) {
+                logoUrl = updatedData.logo;
                 setLogoSrc(updatedData.logo);
               } else {
                 // If it's a relative path, construct full URL
                 const schemaName = localStorage.getItem("schema_name");
                 if (schemaName && schemaName !== "public") {
-                  setLogoSrc(`https://${schemaName}.inventory.pootechnologies.tech/${updatedData.logo}`);
+                  logoUrl = `https://${schemaName}.inventory.pootechnologies.tech/${updatedData.logo}`;
+                  setLogoSrc(logoUrl);
                 } else {
+                  logoUrl = updatedData.logo;
                   setLogoSrc(updatedData.logo);
                 }
               }
+              localStorage.setItem("company_logo", logoUrl);
             }
           } catch (error) {
             console.error("Error fetching updated company data:", error);

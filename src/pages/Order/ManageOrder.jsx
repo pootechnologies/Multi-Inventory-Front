@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/utils/axiosInstance";
 import toast from "react-hot-toast";
 import { API_BASE_URL, API_ENDPOINTS } from "@/utils/apiConfig";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import {
   useQuery,
   useMutation,
@@ -484,7 +485,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`https://leulsegedplc.inventory-api.pootechnologies.tech/media/company/images.jpg`}
+                  src={`${companyData?.logo}`}
                 />
                 <View
                   style={{
@@ -1373,8 +1374,8 @@ function ManageOrder() {
     const fetchCompanyData = async () => {
       try {
         const response = await axiosInstance.get(API_ENDPOINTS.COMPANY);
-
-        setCompanyData(response.data[0]);
+        const data = response.data[0];
+        setCompanyData(processCompanyDataLogo(data));
       } catch (error) {
         console.error("Error fetching company data:", error);
       }

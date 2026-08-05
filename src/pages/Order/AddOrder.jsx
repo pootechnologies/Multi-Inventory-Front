@@ -930,6 +930,7 @@ const AddOrder = () => {
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
+  const isShop = businessCategory?.toLowerCase() === "shop";
 
   // Set default receipt value based on user email
   useEffect(() => {
@@ -964,7 +965,7 @@ const AddOrder = () => {
           `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
         );
         
-        if (isElectronics) {
+        if (isElectronics || isShop) {
           // Process products with variants based on specification
           const productsByName = response?.data?.all_results?.reduce(
             (acc, product) => {
@@ -1005,7 +1006,7 @@ const AddOrder = () => {
     };
 
     fetchProducts();
-  }, [isElectronics]);
+  }, [isElectronics, isShop]);
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -1064,8 +1065,8 @@ const AddOrder = () => {
     updateItem(index, "unit", selectedProduct ? selectedProduct.unit : "");
     updateItem(index, "stock", selectedProduct ? selectedProduct.stock : 0);
     
-    // Handle variants if electronics
-    if (isElectronics && selectedProduct?.variants?.length > 0) {
+    // Handle variants if electronics or shop
+    if ((isElectronics || isShop) && selectedProduct?.variants?.length > 0) {
       updateItem(index, "selectedVariant", selectedProduct.variants[0]);
       updateItem(index, "unit_price", selectedProduct.variants[0].selling_price);
       updateItem(index, "stock", selectedProduct.variants[0].stock);
@@ -1219,7 +1220,7 @@ const AddOrder = () => {
               `${API_ENDPOINTS.PRODUCTS}?include_all=True`,
             );
             
-            if (isElectronics) {
+            if (isElectronics || isShop) {
               // Process products with variants based on specification
               const productsByName = response?.data?.all_results?.reduce(
                 (acc, product) => {
@@ -1320,7 +1321,7 @@ const AddOrder = () => {
   };
 
   const getProductOptions = () => {
-    if (isElectronics) {
+    if (isElectronics || isShop) {
       const uniqueProducts = products.reduce((acc, product) => {
         if (!acc.some((p) => p.name === product.name)) {
           acc.push({
@@ -1683,7 +1684,7 @@ const AddOrder = () => {
                       </div>
 
                       {/* Product Variants Display */}
-                      {isElectronics && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
+                      {(isElectronics || isShop) && item.selectedProduct?.variants && item.selectedProduct.variants.length > 0 && (
                         <ProductVariantsDisplay
                           product={item.selectedProduct}
                           selectedVariant={item.selectedVariant}

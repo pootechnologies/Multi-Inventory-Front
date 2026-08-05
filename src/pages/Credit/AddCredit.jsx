@@ -455,7 +455,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`${IMAGE_BASE_URL}${companyData?.logo}`}
+                  src={`${companyData?.logo}`}
                 />
                 <View
                   style={{
@@ -712,7 +712,7 @@ const MyDoc = ({
                           1 +
                           (chunkIndex > 0
                             ? itemsPerFirstPage +
-                              (chunkIndex - 1) * itemsPerPage
+                            (chunkIndex - 1) * itemsPerPage
                             : 0)}
                       </Text>
                     </View>
@@ -1527,28 +1527,26 @@ const AddCredit = () => {
                     value={
                       selectedCustomer
                         ? {
-                            label: selectedCustomer.name,
-                            value: selectedCustomer,
-                          }
+                          label: selectedCustomer.name,
+                          value: selectedCustomer,
+                        }
                         : null
                     }
                     unstyled
                     classNames={{
                       control: ({ isFocused }) =>
-                        `flex h-11 w-full bg-muted/20 border ${
-                          isFocused
-                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                            : "border-muted-foreground/20"
+                        `flex h-11 w-full bg-muted/20 border ${isFocused
+                          ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                          : "border-muted-foreground/20"
                         } rounded-xl transition-all text-sm py-1 px-2`,
                       menu: () =>
                         "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                       option: ({ isFocused, isSelected }) =>
-                        `px-4 py-2 cursor-pointer transition-colors ${
-                          isSelected
-                            ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                            : isFocused
-                              ? "bg-muted/50 text-gray-900 dark:text-white"
-                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                        `px-4 py-2 cursor-pointer transition-colors ${isSelected
+                          ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                          : isFocused
+                            ? "bg-muted/50 text-gray-900 dark:text-white"
+                            : "hover:bg-muted/50 text-gray-900 dark:text-white"
                         }`,
                       placeholder: () => "text-muted-foreground",
                       singleValue: () => "text-gray-900 dark:text-white",
@@ -1649,20 +1647,18 @@ const AddCredit = () => {
                       unstyled
                       classNames={{
                         control: ({ isFocused }) =>
-                          `flex h-11 w-full bg-muted/20 border ${
-                            isFocused
-                              ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                              : "border-muted-foreground/20"
+                          `flex h-11 w-full bg-muted/20 border ${isFocused
+                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                            : "border-muted-foreground/20"
                           } rounded-xl transition-all text-sm py-1 px-2`,
                         menu: () =>
                           "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                         option: ({ isFocused, isSelected }) =>
-                          `px-4 py-2 cursor-pointer transition-colors ${
-                            isSelected
-                              ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                              : isFocused
-                                ? "bg-muted/50 text-gray-900 dark:text-white"
-                                : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                          `px-4 py-2 cursor-pointer transition-colors ${isSelected
+                            ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                            : isFocused
+                              ? "bg-muted/50 text-gray-900 dark:text-white"
+                              : "hover:bg-muted/50 text-gray-900 dark:text-white"
                           }`,
                         placeholder: () => "text-muted-foreground",
                         singleValue: () => "text-gray-900 dark:text-white",
@@ -1691,9 +1687,9 @@ const AddCredit = () => {
                           value={
                             item.selectedProduct
                               ? {
-                                  label: item.selectedProduct.name,
-                                  value: item.selectedProduct,
-                                }
+                                label: item.selectedProduct.name,
+                                value: item.selectedProduct,
+                              }
                               : null
                           }
                           onChange={(selectedOption) =>
@@ -1704,20 +1700,18 @@ const AddCredit = () => {
                           unstyled
                           classNames={{
                             control: ({ isFocused }) =>
-                              `flex h-11 w-full bg-muted/20 border ${
-                                isFocused
-                                  ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                                  : "border-muted-foreground/20"
+                              `flex h-11 w-full bg-muted/20 border ${isFocused
+                                ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                                : "border-muted-foreground/20"
                               } rounded-xl transition-all text-sm py-1 px-2`,
                             menu: () =>
                               "mt-1 bg-white dark:bg-gray-900 border border-muted rounded-xl shadow-lg overflow-hidden z-50",
                             option: ({ isFocused, isSelected }) =>
-                              `px-4 py-2 cursor-pointer transition-colors ${
-                                isSelected
-                                  ? "bg-emerald-500/10 text-emerald-600 font-medium"
-                                  : isFocused
-                                    ? "bg-muted/50 text-gray-900 dark:text-white"
-                                    : "hover:bg-muted/50 text-gray-900 dark:text-white"
+                              `px-4 py-2 cursor-pointer transition-colors ${isSelected
+                                ? "bg-emerald-500/10 text-emerald-600 font-medium"
+                                : isFocused
+                                  ? "bg-muted/50 text-gray-900 dark:text-white"
+                                  : "hover:bg-muted/50 text-gray-900 dark:text-white"
                               }`,
                             placeholder: () => "text-muted-foreground",
                             singleValue: () => "text-gray-900 dark:text-white",
@@ -1805,11 +1799,10 @@ const AddCredit = () => {
                               </label>
 
                               <span
-                                className={`text-md ${
-                                  item.stock > 0
+                                className={`text-md ${item.stock > 0
                                     ? "text-yellow-600"
                                     : "text-red-600"
-                                }`}
+                                  }`}
                               >
                                 Stock available: {item.stock}
                               </span>
@@ -2086,11 +2079,10 @@ const CustomerModal = ({ isOpen, onClose, onSubmit }) => {
                       required: true,
                       onChange: (e) => setIsEmpty(e.target.value.trim() === ""),
                     })}
-                    className={`w-full pl-10 h-11 bg-white border ${
-                      errors.name || isEmpty
+                    className={`w-full pl-10 h-11 bg-white border ${errors.name || isEmpty
                         ? "border-red-500 focus:ring-red-500/20"
                         : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                    } rounded-xl transition-all outline-none text-sm font-medium`}
+                      } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
                 {(errors.name || isEmpty) && (
@@ -2240,7 +2232,7 @@ const ProductVariantsDisplay = ({
 
   if (!product || !product.variants || product.variants.length === 0)
     return null;
-  
+
   // Debug: Check if variants have images
   console.log('AddCredit ProductVariantsDisplay - Product:', product.name);
   console.log('AddCredit ProductVariantsDisplay - Variants:', product.variants.map(v => ({
@@ -2249,11 +2241,11 @@ const ProductVariantsDisplay = ({
     hasImage: !!v.image,
     imagePath: v.image
   })));
-  
+
   // Check if any variant has a specification
   const hasSpecifications = product.variants.some(v => v.specification);
   if (!hasSpecifications) return null;
-  
+
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
     if (imagePath.startsWith('http')) return imagePath;
@@ -2270,18 +2262,17 @@ const ProductVariantsDisplay = ({
             return (
               <div
                 key={idx}
-                className={`relative transition-all duration-200 ${
-                  isSelected
+                className={`relative transition-all duration-200 ${isSelected
                     ? "ring-2 ring-emerald-500 ring-offset-2 rounded-xl shadow-lg"
                     : "hover:ring-2 hover:ring-emerald-300 hover:shadow-md"
-                }`}
+                  }`}
               >
-                <div 
+                <div
                   className="bg-white rounded-xl overflow-hidden border border-gray-200 cursor-pointer"
                   onClick={() => onSelectVariant(variant)}
                 >
                   {/* Product Image */}
-                  <div 
+                  <div
                     className="relative group p-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -2314,7 +2305,7 @@ const ProductVariantsDisplay = ({
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Specification Info */}
                   <div className="p-2">
                     <div className="text-xs font-semibold text-gray-900 mb-1 truncate text-center">
@@ -2351,11 +2342,11 @@ const ProductVariantsDisplay = ({
                               dangerouslySetInnerHTML={{
                                 __html: variant.description
                                   ? '<p class="mb-2">' +
-                                    variant.description.replace(
-                                      /,\s*/g,
-                                      '</p><p class="mb-2">'
-                                    ) +
-                                    "</p>"
+                                  variant.description.replace(
+                                    /,\s*/g,
+                                    '</p><p class="mb-2">'
+                                  ) +
+                                  "</p>"
                                   : "No description available.",
                               }}
                             />

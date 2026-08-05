@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
+import { processLogoUrl } from "@/utils/imageurlchanger";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { t } from "i18next";
@@ -37,21 +38,8 @@ const CompanyProfile = () => {
         setFetchedData(data);
         // Check if logo is a full URL or relative path
         if (data.logo) {
-          let logoUrl;
-          if (data.logo.startsWith('http')) {
-            logoUrl = data.logo;
-            setLogoSrc(data.logo);
-          } else {
-            // If it's a relative path, construct full URL
-            const schemaName = localStorage.getItem("schema_name");
-            if (schemaName && schemaName !== "public") {
-              logoUrl = `https://${schemaName}.inventory.pootechnologies.tech/${data.logo}`;
-              setLogoSrc(logoUrl);
-            } else {
-              logoUrl = data.logo;
-              setLogoSrc(data.logo);
-            }
-          }
+          const logoUrl = processLogoUrl(data.logo);
+          setLogoSrc(logoUrl);
           localStorage.setItem("company_logo", logoUrl);
         }
       } catch (error) {
@@ -140,21 +128,8 @@ const CompanyProfile = () => {
             setFetchedData(updatedData);
             // Check if logo is a full URL or relative path
             if (updatedData.logo) {
-              let logoUrl;
-              if (updatedData.logo.startsWith('http')) {
-                logoUrl = updatedData.logo;
-                setLogoSrc(updatedData.logo);
-              } else {
-                // If it's a relative path, construct full URL
-                const schemaName = localStorage.getItem("schema_name");
-                if (schemaName && schemaName !== "public") {
-                  logoUrl = `https://${schemaName}.inventory.pootechnologies.tech/${updatedData.logo}`;
-                  setLogoSrc(logoUrl);
-                } else {
-                  logoUrl = updatedData.logo;
-                  setLogoSrc(updatedData.logo);
-                }
-              }
+              const logoUrl = processLogoUrl(updatedData.logo);
+              setLogoSrc(logoUrl);
               localStorage.setItem("company_logo", logoUrl);
             }
           } catch (error) {
@@ -499,10 +474,10 @@ const CompanyProfile = () => {
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">Current Logo</p>
-                  <p className="text-xs text-gray-500">{logoFile ? logoFile.name : logoSrc}</p>
-                </div>
+                  {/* <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Current Logo</p>
+                    <p className="text-xs text-gray-500">{logoFile ? logoFile.name : logoSrc}</p>
+                  </div> */}
               </div>
             )}
           </div>

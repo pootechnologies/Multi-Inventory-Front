@@ -56,6 +56,7 @@ const AddProduct = () => {
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
+  const isShop = businessCategory?.toLowerCase() === "shop";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -387,8 +388,8 @@ const AddProduct = () => {
 
             {/* Specification */}
             {(() => {
-              console.log("Specification field check - isElectronics:", isElectronics);
-              return isElectronics;
+              console.log("Specification field check - isElectronics:", isElectronics, "isShop:", isShop);
+              return isElectronics || isShop;
             })() && (
               <div className="space-y-2 md:col-span-2">
                 <label

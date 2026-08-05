@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS, API_BASE_URL, IMAGE_BASE_URL } from "@/utils/apiConfig";
 import { formatCurrency } from "@/utils/numberFormaterStats";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import { t } from "i18next";
 import {
   Breadcrumb,
@@ -216,7 +217,7 @@ const SupplierReportPdfDocument = ({
           {companyData?.logo && (
             <Image
               style={{ width: 80, height: 60 }}
-              src={`${IMAGE_BASE_URL}${companyData.logo}`}
+              src={`${companyData.logo}`}
             />
           )}
         </View>
@@ -506,7 +507,8 @@ const SupplierReport = () => {
       try {
         const response = await axiosInstance.get(API_ENDPOINTS.COMPANY);
         if (response.data && response.data.length > 0) {
-          setCompanyData(response.data[0]);
+          const data = response.data[0];
+          setCompanyData(processCompanyDataLogo(data));
         }
       } catch (error) {
         console.error("Error fetching company data:", error);

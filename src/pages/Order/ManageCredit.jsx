@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/utils/axiosInstance";
 import toast from "react-hot-toast";
 import { API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import {
   useQuery,
   useMutation,
@@ -1371,8 +1372,8 @@ function ManageCredit() {
     const fetchCompanyData = async () => {
       try {
         const response = await axiosInstance.get(API_ENDPOINTS.COMPANY);
-
-        setCompanyData(response.data[0]);
+        const data = response.data[0];
+        setCompanyData(processCompanyDataLogo(data));
       } catch (error) {
         console.error("Error fetching company data:", error);
       }

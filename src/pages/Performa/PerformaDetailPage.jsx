@@ -635,7 +635,7 @@ const PerformaDetailPage = () => {
                 >
                   <Image
                     style={{ width: 100, height: 80 }}
-                    src={`${IMAGE_BASE_URL}${companyData?.logo}`}
+                    src={`${companyData?.logo}`}
                   />
                   <View
                     style={{

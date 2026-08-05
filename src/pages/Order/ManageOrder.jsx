@@ -482,7 +482,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`${IMAGE_BASE_URL}${companyData?.logo}`}
+                  src={`${companyData?.logo}`}
                 />
                 <View
                   style={{
@@ -600,11 +600,9 @@ const MyDoc = ({
                     </Text>
                     <Text
                       style={{ fontFamily: "ethio", fontSize: 8 }}
-                    >{`አድራሻ:- ${companyData?.region ?? ""} ዞን:-${
-                      companyData?.zone ?? ""
-                    } ከተማ:-${companyData?.city ?? ""} ክ/ከተማ:- ${
-                      companyData?.sub_city ?? ""
-                    }`}</Text>
+                    >{`አድራሻ:- ${companyData?.region ?? ""} ዞን:-${companyData?.zone ?? ""
+                      } ከተማ:-${companyData?.city ?? ""} ክ/ከተማ:- ${companyData?.sub_city ?? ""
+                      }`}</Text>
                     <Text style={{ fontFamily: "ethio", fontSize: 8 }}>
                       Addr.Reg Zone City Subcity
                     </Text>
@@ -629,9 +627,8 @@ const MyDoc = ({
                   </View>
 
                   <View>
-                    <Text style={{ fontFamily: "ethio", fontSize: 8 }}>{`ለ፦ ${
-                      customer?.name ?? ""
-                    }`}</Text>
+                    <Text style={{ fontFamily: "ethio", fontSize: 8 }}>{`ለ፦ ${customer?.name ?? ""
+                      }`}</Text>
                     <Text style={{ fontFamily: "ethio", fontSize: 8 }}>To</Text>
                     <Text
                       style={{ fontFamily: "ethio", fontSize: 8 }}
@@ -728,7 +725,7 @@ const MyDoc = ({
                           1 +
                           (chunkIndex > 0
                             ? itemsPerFirstPage +
-                              (chunkIndex - 1) * itemsPerPage
+                            (chunkIndex - 1) * itemsPerPage
                             : 0)}
                       </Text>
                     </View>

@@ -18,6 +18,7 @@ const UpdateModal = ({
   fileName,
   setValue,
   isElectronics,
+  isShop,
 }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +45,7 @@ const UpdateModal = ({
     currentUserEmail === "tokiyogeneraltrading@gmail.com";
   const businessCategory = localStorage.getItem("business_category");
   const modalIsElectronics = businessCategory?.toLowerCase() === "electronics";
+  const modalIsShop = businessCategory?.toLowerCase() === "shop";
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
@@ -209,7 +211,7 @@ const UpdateModal = ({
               </div>
 
               {/* Specification */}
-              {modalIsElectronics && (
+              {(modalIsElectronics || modalIsShop) && (
                 <div>
                   <label className={labelClass}>{t("specification")}</label>
                   <input

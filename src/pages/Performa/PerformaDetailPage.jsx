@@ -34,6 +34,7 @@ import {
 } from "@react-pdf/renderer";
 import { API_BASE_URL, API_ENDPOINTS, IMAGE_BASE_URL } from "@/utils/apiConfig";
 import { convertToWordsWithCurrency } from "@/utils/useNumberToWords";
+import { processCompanyDataLogo } from "@/utils/imageurlchanger";
 import { formatCurrency } from "@/utils/numberFormaterStats";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { t } from "i18next";
@@ -504,8 +505,9 @@ const PerformaDetailPage = () => {
       try {
         const response = await axiosInstance.get(API_ENDPOINTS.COMPANY);
         const data = response.data[0];
-        setCompanyData(data);
-        setLogoSrc(data.logo);
+        const processedData = processCompanyDataLogo(data);
+        setCompanyData(processedData);
+        setLogoSrc(processedData.logo);
       } catch (error) {
         console.error("Error fetching company data:", error);
       }

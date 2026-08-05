@@ -355,7 +355,7 @@ export function AppSidebar({ ...props }) {
   const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
   
   const businessCategory = localStorage.getItem("business_category");
-  const showLinkProduct = businessCategory?.toLowerCase() === "electronics" || businessCategory?.toLowerCase() === "stationaries";
+  const showLinkProduct = businessCategory?.toLowerCase() !== "shop";
 
   const hasPermission = (permission) => {
     if (!permission) return true;

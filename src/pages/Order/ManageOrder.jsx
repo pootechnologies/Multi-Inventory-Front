@@ -429,6 +429,8 @@ const MyDoc = ({
   const hasReceipt = order?.receipt === "Receipt";
   const itemsPerFirstPage = hasReceipt ? 15 : 25;
   const itemsPerPage = 30;
+  
+  console.log(companyData?.logo)
 
   const itemChunks = [];
   if (order.items.length > 0) {
@@ -482,7 +484,7 @@ const MyDoc = ({
               >
                 <Image
                   style={{ width: 80, height: 60 }}
-                  src={`${companyData?.logo}`}
+                  src={`http://leulsegedplc.inventory-api.pootechnologies.tech/media/company/images.jpg`}
                 />
                 <View
                   style={{

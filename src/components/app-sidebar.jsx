@@ -355,7 +355,7 @@ export function AppSidebar({ ...props }) {
   const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
   
   const businessCategory = localStorage.getItem("business_category");
-  const showLinkProduct = businessCategory?.toLowerCase() !== "shop";
+  const showLinkProduct = businessCategory?.toLowerCase() === "electronics" || businessCategory?.toLowerCase() === "stationary";
 
   const hasPermission = (permission) => {
     if (!permission) return true;
@@ -375,10 +375,6 @@ export function AppSidebar({ ...props }) {
       }
 
       if (!showTenantsOption && item.title === "Manage Tenants") {
-        return null;
-      }
-
-      if (!showLinkProduct && item.title === "link_product") {
         return null;
       }
 

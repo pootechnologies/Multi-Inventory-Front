@@ -5,10 +5,11 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import ErrorBoundary from "./utils/ErrorBoundary";
 import MainLayout from "./components/mainLayout/layout";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import PaymentReminder from "./components/PaymentReminder";
 
 // ── Eagerly loaded (critical path) ───────────────────────────────────────────
 import LoginPage from "./pages/Login";
@@ -89,7 +90,27 @@ function App() {
     return null;
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleSubscriptionExpired = () => {
+      setShowPaymentReminder(true);
+    };
+
+    window.addEventListener('subscriptionExpired', handleSubscriptionExpired);
+
+    return () => {
+      window.removeEventListener('subscriptionExpired', handleSubscriptionExpired);
+    };
+  }, []);
+
+  // Hide payment reminder when on subscription page
+  useEffect(() => {
+    if (location.pathname === '/subscription') {
+      setShowPaymentReminder(false);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -121,6 +142,7 @@ function App() {
   return (
     <ErrorBoundary>
       <PWAInstallPrompt />
+      {showPaymentReminder && <PaymentReminder />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/password/reset" element={<PasswordResetPage />} />

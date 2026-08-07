@@ -15,7 +15,7 @@ export default defineConfig({
       includeAssets: ["favicon.svg", "apple-touch-icon.png"],
       manifest: {
         name: "Po'o Inventory",
-        short_name: "Inventory",
+        short_name: "Po'o Inventory",
         description: "Multi-Inventory Management System",
         theme_color: "#059669",
         background_color: "#ffffff",

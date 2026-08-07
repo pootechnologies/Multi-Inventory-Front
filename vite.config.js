@@ -8,6 +8,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+        type: "module"
+      },
       includeAssets: ["favicon.svg", "apple-touch-icon.png"],
       manifest: {
         name: "Po'o Inventory",

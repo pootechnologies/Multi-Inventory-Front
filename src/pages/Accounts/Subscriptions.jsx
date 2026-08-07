@@ -62,17 +62,22 @@ const planFeatures = [
     name: "Basic",
     subtitle: "For Small-sized businesses",
     features: [
-      "Sales Management System",
-      "Real-time Inventory Tracking & Dashboard",
-      "Product Catalog (Manual + Excel Export)",
-      "Stock Movement & Transfers",
-      "Low-stock Alerts",
-      "Customer Management (profiles & order history)",
-      "Credit Management",
-      "Role-Based Access Control",
-      "Reports & Analytics (sales, inventory changes, trends)",
-      "Mobile-friendly, Cloud Hosting & Regular Backups",
-      "Hosting + Regular Support + Continuous System updates",
+      " Sales Management System",
+
+      "Real - time Inventory Tracking & Dashboard",
+
+      "Product Catalog(Manual + Excel Import and Export)",
+
+      "Stock Movement",
+
+      "Low - stock Alerts",
+
+      "Customer Management(profiles & order history)",
+
+      "Role - Based Access Control",
+
+      "Mobile - friendly, Cloud Hosting & Regular Backups",
+      "Regular Support + Continuous System updates"
     ],
   },
   {
@@ -82,6 +87,10 @@ const planFeatures = [
       "All features from the Basic Plan",
       "Multi-branch Management",
       "Multi-warehouse Management",
+      "Credit Management",
+      "Linking Product",
+      "Reports & Analytics (sales, inventory changes, trends)"
+
     ],
   },
   {
@@ -89,13 +98,11 @@ const planFeatures = [
     subtitle: "Large enterprises, multi-branch organizations and distributors",
     features: [
       "All features from the Pro Plan",
-      "Batch / Serial Number & Expiry Date Tracking",
+      "Large enterprises, multi-branch organizations and distributors",
       "Supplier & Purchase Order Management",
       "Performa Management",
-      "Automated Reorder Rules & Advanced Alerting",
       "Custom Analytics Dashboards & KPI Reports",
-      "Integration with POS",
-      "Dedicated Account Manager",
+      "Integration with POS"
     ],
   },
   {
@@ -838,10 +845,10 @@ export default function Subscriptions() {
                       <TableCell className="font-semibold text-gray-900">
                         {plan.tenant}
                       </TableCell>
-            <TableCell className="font-black text-gray-900 text-lg">
-              {plan.subscriptionPlan?.name}
-            </TableCell>
-                       <TableCell className="font-semibold text-gray-900">
+                      <TableCell className="font-black text-gray-900 text-lg">
+                        {plan.subscriptionPlan?.name}
+                      </TableCell>
+                      <TableCell className="font-semibold text-gray-900">
                         ${formatPrice(plan.subscriptionPlan?.price)}
                       </TableCell>
                       <TableCell className="font-semibold text-gray-900">
@@ -850,8 +857,8 @@ export default function Subscriptions() {
                       <TableCell>
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${plan.subscriptionPlan?.is_active
-                              ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                              : "bg-red-100 text-red-700 border border-red-200"
+                            ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                            : "bg-red-100 text-red-700 border border-red-200"
                             }`}
                         >
                           <Check className="h-3 w-3" />
@@ -895,71 +902,71 @@ export default function Subscriptions() {
                               className="border shadow-sm rounded-xl hover:shadow-md transition-all duration-200 bg-white"
                             >
                               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-                               <CardHeader className="pt-5 pb-3 px-5">
-                                 <div className="flex items-center justify-between">
-                                   <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-md">
-                                     <Icon className="h-4 w-4 text-white" />
-                                   </div>
-                                   {plan.is_active && (
-                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                       <Check className="h-3 w-3" />
-                                       Active
-                                     </span>
-                                   )}
-                                 </div>
+                              <CardHeader className="pt-5 pb-3 px-5">
+                                <div className="flex items-center justify-between">
+                                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg shadow-md">
+                                    <Icon className="h-4 w-4 text-white" />
+                                  </div>
+                                  {plan.is_active && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                      <Check className="h-3 w-3" />
+                                      Active
+                                    </span>
+                                  )}
+                                </div>
                                 <CardTitle className="text-2xl font-black mt-2 tracking-tight text-center">
                                   {plan.name}
                                 </CardTitle>
-                                 <CardDescription className="text-sm">
-                                   <div className="flex flex-col items-center gap-1">
-                                     <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
-                                       Starting at
-                                     </span>
-                                     <div className="flex items-baseline gap-1">
-                                       <span className="text-3xl font-black text-gray-900">
-                                         {formatPrice(plan.price)}
-                                       </span>
-                                       <span className="text-lg font-semibold text-gray-600">
-                                         br/year
-                                       </span>
-                                     </div>
-                                   </div>
-                                 </CardDescription>
-                               </CardHeader>
-                               <CardContent className="px-5 pb-5 flex-1 flex flex-col">
-                                 <div className="space-y-2 mb-4">
-                                   {getPlanFeatures(plan.name).map(
-                                     (feature, idx) => (
-                                       <div
-                                         key={idx}
-                                         className="flex items-center gap-2 text-xs text-gray-600"
-                                       >
-                                         <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                         <span>{feature}</span>
-                                       </div>
-                                     ),
-                                   )}
-                                   <div className="flex items-center gap-2 text-xs text-gray-600">
-                                     <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-                                     <span>
-                                       Valid for {plan.duration_days} days
-                                     </span>
-                                   </div>
-                                 </div>
-                                 <Button
-                                   className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2 mt-auto"
-                                   disabled={!plan.is_active}
-                                   onClick={() => {
-                                     setSelectedSubPlan(plan);
-                                     setIsSubDialogOpen(true);
-                                   }}
-                                 >
-                                   {plan.is_active
-                                     ? "Subscribe Now"
-                                     : "Unavailable"}
-                                 </Button>
-                               </CardContent>
-                             </Card>
+                                <CardDescription className="text-sm">
+                                  <div className="flex flex-col items-center gap-1">
+                                    <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+                                      Starting at
+                                    </span>
+                                    <div className="flex items-baseline gap-1">
+                                      <span className="text-3xl font-black text-gray-900">
+                                        {formatPrice(plan.price)}
+                                      </span>
+                                      <span className="text-lg font-semibold text-gray-600">
+                                        br/year
+                                      </span>
+                                    </div>
+                                  </div>
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent className="px-5 pb-5 flex-1 flex flex-col">
+                                <div className="space-y-2 mb-4">
+                                  {getPlanFeatures(plan.name).map(
+                                    (feature, idx) => (
+                                      <div
+                                        key={idx}
+                                        className="flex items-center gap-2 text-xs text-gray-600"
+                                      >
+                                        <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                        <span>{feature}</span>
+                                      </div>
+                                    ),
+                                  )}
+                                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                                    <Check className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                    <span>
+                                      Valid for {plan.duration_days} days
+                                    </span>
+                                  </div>
+                                </div>
+                                <Button
+                                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg shadow-md shadow-emerald-600/20 transition-all text-sm py-2 mt-auto"
+                                  disabled={!plan.is_active}
+                                  onClick={() => {
+                                    setSelectedSubPlan(plan);
+                                    setIsSubDialogOpen(true);
+                                  }}
+                                >
+                                  {plan.is_active
+                                    ? "Subscribe Now"
+                                    : "Unavailable"}
+                                </Button>
+                              </CardContent>
+                            </Card>
                           );
                         })}
                       </div>
@@ -1034,7 +1041,7 @@ export default function Subscriptions() {
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                         Price
                       </p>
-                       <p className="text-gray-900 text-[15px] font-bold">
+                      <p className="text-gray-900 text-[15px] font-bold">
                         ${formatPrice(plan.subscriptionPlan?.price)}
                       </p>
                     </div>
@@ -1054,8 +1061,8 @@ export default function Subscriptions() {
                     </p>
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${plan.subscriptionPlan?.is_active
-                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                          : "bg-red-100 text-red-700 border border-red-200"
+                        ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                        : "bg-red-100 text-red-700 border border-red-200"
                         }`}
                     >
                       <Check className="h-3 w-3" />

@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 // Request interceptor: Add auth token and cache-busting for GET requests
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Update base URL dynamically on each request
+    // Uphdate base URL dynamically on each request
     config.baseURL = getBaseURL();
     
     const accessToken = localStorage.getItem("access_token");
@@ -89,6 +89,12 @@ axiosInstance.interceptors.response.use(
       error.response?.data?.detail === "You do not have permission to perform this action."
     ) {
       toast.error("You do not have permission to perform this action.");
+    }
+    // Check for subscription expired (402 Payment Required)
+    if (error.response?.status === 402) {
+      // Dispatch custom event to show payment reminder
+      window.dispatchEvent(new CustomEvent('subscriptionExpired'));
+      return Promise.reject(error);
     }
     // For other errors, just pass them through
     return Promise.reject(error);

@@ -59,8 +59,9 @@ const FilterOrders = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
+  const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
 
   const {
     data: orderItems = [],

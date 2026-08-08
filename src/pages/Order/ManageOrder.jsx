@@ -1315,8 +1315,9 @@ function ManageOrder() {
   };
 
   const currentUserEmail = getCurrentUserEmail();
+  const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
   const showReceiptDropdown = true;
 
   // Add this function to toggle the view mode

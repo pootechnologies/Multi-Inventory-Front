@@ -350,8 +350,9 @@ export function AppSidebar({ ...props }) {
   };
 
   const currentUserEmail = getCurrentUserEmail();
+  const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
   const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
   
   const businessCategory = localStorage.getItem("business_category");

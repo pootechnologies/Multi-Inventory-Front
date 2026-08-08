@@ -35,7 +35,8 @@ const BottomNavigation = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
-  const showReceiptOption = currentUserEmail === "tokiyogeneraltrading@gmail.com";
+  const schemaName = localStorage.getItem("schema_name");
+  const showReceiptOption = currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
 
   const hasPermission = (permission) => {
     if (!permission) return true;

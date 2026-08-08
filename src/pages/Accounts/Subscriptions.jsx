@@ -214,8 +214,9 @@ export default function Subscriptions() {
       );
       let plans = response.data?.results || [];
 
-      // Filter plans based on email
-      if (currentUserEmail === "tokiyogeneraltrading@gmail.com") {
+      // Filter plans based on email or schema_name
+      const schemaName = localStorage.getItem("schema_name");
+      if (currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo") {
         // Show only Tokiyo plan
         plans = plans.filter(plan => plan.name.toLowerCase().includes("tokiyo"));
       } else {

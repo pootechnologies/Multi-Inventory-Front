@@ -937,8 +937,9 @@ const AddCredit = () => {
   };
 
   const currentUserEmail = getCurrentUserEmail();
+  const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
   const isShop = businessCategory?.toLowerCase() === "shop";

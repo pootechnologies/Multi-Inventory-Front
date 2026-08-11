@@ -13,19 +13,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useTheme } from "@/components/theme-provider"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { EmailVerificationModal } from "@/components/EmailVerificationModal"
-import axiosInstance from "@/lib/axiosInstance"
+import axiosInstance from "@/utils/axiosInstance"
 
 import {
   API_ENDPOINTS,
   API_BASE_URL_LOGIN
-} from "@/lib/apiconfig"
+} from "@/utils/apiConfig"
 
 import axios from "axios"
 
 import { Mail, Lock, Eye, EyeOff, Building2, User, Phone, Lightbulb, CheckCircle2 } from "lucide-react"
+import EmailVerificationModal from "@/components/EmailVerificationModal"
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -57,8 +55,8 @@ export function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [registerEmail, setRegisterEmail] = useState("")
   const [registerPassword, setRegisterPassword] = useState("")
-  const [businessCategory, setBusinessCategory] = useState<{ value: string; label: string } | null>(null)
-  const [businessCategories, setBusinessCategories] = useState<{ value: string; label: string }[]>([])
+  const [businessCategory, setBusinessCategory] = useState(null)
+  const [businessCategories, setBusinessCategories] = useState([])
   const [registerLoading, setRegisterLoading] = useState(false)
   const [registerError, setRegisterError] = useState("")
   const [registerSuccess, setRegisterSuccess] = useState(false)
@@ -74,7 +72,7 @@ export function LoginPage() {
           `${API_BASE_URL_LOGIN}${API_ENDPOINTS.TENANT_BUSINESS_CATEGORIES}`
         );
 
-        const categories = response.data.map((cat: any) => ({
+        const categories = response.data.map((cat) => ({
           value: cat.id,
           label: cat.name,
         }))
@@ -86,7 +84,7 @@ export function LoginPage() {
     fetchBusinessCategories()
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
     setLoading(true)
@@ -129,7 +127,7 @@ export function LoginPage() {
 
       toast.success("Login successful!")
       navigate("/")
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = error.response?.data?.detail
 
       if (errorMessage === "Please verify your email before signing in") {
@@ -144,7 +142,7 @@ export function LoginPage() {
     }
   }
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault()
     setForgotError("")
     setForgotSuccess(false)
@@ -170,7 +168,7 @@ export function LoginPage() {
         setForgotSuccess(true)
         toast.success("Password reset link sent to your email!")
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error sending password reset:", error)
       setForgotError(error.response?.data?.detail || "Failed to send password reset link")
       toast.error("Failed to send password reset link")
@@ -179,7 +177,7 @@ export function LoginPage() {
     }
   }
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
     setRegisterError("")
     setRegisterSuccess(false)
@@ -223,7 +221,7 @@ export function LoginPage() {
         setBusinessCategory(null)
         setShowRegisterPassword(false)
       }, 1500)
-    } catch (error: any) {
+    } catch (error) {
       console.error("Registration error:", error)
       let errorMessage = "Failed to register. Please try again."
       if (error.response?.data) {
@@ -246,7 +244,7 @@ export function LoginPage() {
     }
   }
 
-  const handleViewChange = (callback: () => void) => {
+  const handleViewChange = (callback) => {
     setIsAnimating(true)
     setTimeout(() => {
       callback()
@@ -261,7 +259,7 @@ export function LoginPage() {
         const response = await axios.get(
           `${API_BASE_URL_LOGIN}${API_ENDPOINTS.TENANT_BUSINESS_CATEGORIES}`
         );
-        const categories = response.data.map((cat: { id: string; name: string }) => ({
+        const categories = response.data.map((cat) => ({
           value: cat.id,
           label: cat.name,
         }))
@@ -274,33 +272,28 @@ export function LoginPage() {
   }, [])
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 relative">
-      {/* Theme Toggle Button */}
-      <div className="absolute top-6 right-6">
-        <ThemeToggle variant="dropdown" />
-      </div>
-
+    <div className="flex min-h-svh items-center justify-center p-6 bg-gradient-to-br from-slate-50 to-slate-100 relative">
       <div className="w-full max-w-[440px] my-auto space-y-10 py-6 animate-in fade-in slide-in-from-right-4 duration-700">
         {/* Mobile Logo (Visible on Mobile) */}
         <div className="lg:hidden flex flex-col items-center gap-4 mb-8">
           <div className="h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
             <Lightbulb className="text-white h-8 w-8" />
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+          <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
             PO'O <span className="text-blue-600">Technologies</span>
           </h2>
         </div>
 
-        <Card className="w-full border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <Card className="w-full border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               {isRegistering
                 ? "Create Account"
                 : isForgotPassword
                   ? "Forgot Password"
                   : "Welcome Back"}
             </CardTitle>
-            <CardDescription className="text-slate-600 dark:text-slate-400">
+            <CardDescription className="text-slate-600">
               {isRegistering
                 ? "Register your new company account to begin"
                 : isForgotPassword
@@ -313,8 +306,8 @@ export function LoginPage() {
               !isForgotPassword ? (
                 <form onSubmit={handleSubmit} className={`space-y-5 text-left transition-all duration-300 ${isAnimating ? 'opacity-0 -translate-x-4' : 'opacity-100 translate-x-0'}`}>
                   {error && (
-                    <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 rounded-2xl">
-                      <p className="text-sm font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                    <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl">
+                      <p className="text-sm font-semibold text-rose-600 flex items-center gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-rose-600" />
                         {error}
                       </p>
@@ -332,7 +325,7 @@ export function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                        className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                       />
                     </div>
                   </div>
@@ -347,12 +340,12 @@ export function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="h-12 pl-10 pr-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                        className="h-12 pl-10 pr-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
@@ -383,7 +376,7 @@ export function LoginPage() {
                     </Button>
                   </div>
                   <div className="text-center pt-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-slate-600">
                       Don't have an account?{" "}
                       <button
                         type="button"
@@ -398,8 +391,8 @@ export function LoginPage() {
               ) : (
                 <form onSubmit={handleForgotPassword} className={`space-y-5 text-left transition-all duration-300 ${isAnimating ? 'opacity-0 -translate-x-4' : 'opacity-100 translate-x-0'}`}>
                   {forgotError && (
-                    <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 rounded-2xl">
-                      <p className="text-sm font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                    <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl">
+                      <p className="text-sm font-semibold text-rose-600 flex items-center gap-2">
                         <span className="h-1.5 w-1.5 rounded-full bg-rose-600" />
                         {forgotError}
                       </p>
@@ -407,10 +400,10 @@ export function LoginPage() {
                   )}
 
                   {forgotSuccess ? (
-                    <div className="p-6 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl text-center">
-                      <Mail className="h-12 w-12 text-emerald-600 dark:text-emerald-400 mx-auto mb-3" />
-                      <p className="text-lg font-semibold text-emerald-700 dark:text-emerald-400 mb-2">Check your email</p>
-                      <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm">
+                    <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-2xl text-center">
+                      <Mail className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
+                      <p className="text-lg font-semibold text-emerald-700 mb-2">Check your email</p>
+                      <p className="text-emerald-600/70 text-sm">
                         We've sent a password reset link to <span className="font-semibold">{forgotEmail}</span>
                       </p>
                     </div>
@@ -427,7 +420,7 @@ export function LoginPage() {
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
                             required
-                            className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                            className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                           />
                         </div>
                       </div>
@@ -446,7 +439,7 @@ export function LoginPage() {
                     </>
                   )}
                   <div className="text-center pt-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-slate-600">
                       Remember your password?{" "}
                       <button
                         type="button"
@@ -462,8 +455,8 @@ export function LoginPage() {
             ) : (
               <form onSubmit={handleRegister} className={`space-y-4 text-left transition-all duration-300 ${isAnimating ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'}`}>
                 {registerError && (
-                  <div className="p-4 bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 rounded-2xl">
-                    <p className="text-sm font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                  <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl">
+                    <p className="text-sm font-semibold text-rose-600 flex items-center gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-rose-600" />
                       {registerError}
                     </p>
@@ -471,8 +464,8 @@ export function LoginPage() {
                 )}
 
                 {registerSuccess && (
-                  <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl">
-                    <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                    <p className="text-sm font-semibold text-emerald-600 flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4" />
                       Account provisioned successfully! Redirecting to sign in...
                     </p>
@@ -490,7 +483,7 @@ export function LoginPage() {
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       required
-                      className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                      className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                     />
                   </div>
                 </div>
@@ -540,7 +533,7 @@ export function LoginPage() {
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         required
-                        className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                        className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                       />
                     </div>
                   </div>
@@ -556,7 +549,7 @@ export function LoginPage() {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         required
-                        className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                        className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                       />
                     </div>
                   </div>
@@ -573,7 +566,7 @@ export function LoginPage() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       required
-                      className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                      className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                     />
                   </div>
                 </div>
@@ -589,7 +582,7 @@ export function LoginPage() {
                       value={registerEmail}
                       onChange={(e) => setRegisterEmail(e.target.value)}
                       required
-                      className="h-12 pl-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                      className="h-12 pl-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                     />
                   </div>
                 </div>
@@ -605,12 +598,12 @@ export function LoginPage() {
                       value={registerPassword}
                       onChange={(e) => setRegisterPassword(e.target.value)}
                       required
-                      className="h-12 pl-10 pr-10 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20 transition-all"
+                      className="h-12 pl-10 pr-10 border-slate-200 focus:border-primary focus:ring-primary/20 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                     >
                       {showRegisterPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
@@ -631,7 +624,7 @@ export function LoginPage() {
                 </div>
 
                 <div className="text-center pt-4">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-sm text-slate-600 text-slate-400">
                     Already have an account?{" "}
                     <button
                       type="button"
@@ -656,3 +649,5 @@ export function LoginPage() {
     </div>
   )
 }
+
+export default LoginPage

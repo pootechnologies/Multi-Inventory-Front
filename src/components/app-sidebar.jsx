@@ -131,8 +131,16 @@ const data = {
       url: "#",
       icon: Package,
       items: [
-        { title: "link_product", url: "/link_product" },
-        { title: "manage_linked_product", url: "/manage_linked_product" },
+        {
+          title: "link_product",
+          url: "/link_product",
+          permission: "inventory.add_bundle",
+        },
+        {
+          title: "manage_linked_product",
+          url: "/manage_linked_product",
+          permission: "inventory.view_bundle",
+        },
       ],
     },
     {

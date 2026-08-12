@@ -26,6 +26,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { usePlan } from "@/contexts/PlanProvider";
 
 const data = {
   user: {
@@ -311,6 +312,21 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
+  const { planData } = usePlan();
+  console.log(planData)
+  
+  // Check if user has Basic plan
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
+                      planData?.status === "basic" || 
+                      planData?.status === "no_payment";
+  
+  // Check if user has Pro plan
+  const isProPlan = planData?.planName?.toLowerCase() === "pro";
+  
+  // Check if user has Premium or Tokiyo plan
+  const isPremiumOrTokiyo = planData?.planName?.toLowerCase() === "premium" || 
+                          planData?.planName?.toLowerCase() === "tokiyo";
+  
   let tenantPermissions = [];
   try {
     const stored = localStorage.getItem("tenant_permissions");
@@ -351,8 +367,8 @@ export function AppSidebar({ ...props }) {
 
   const currentUserEmail = getCurrentUserEmail();
   const schemaName = localStorage.getItem("schema_name");
-  const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
+    const showReceiptOption =
+      currentUserEmail === "tokiyogeneraltrading@gmail.com" || "semeredinfedlu@gmail.com" ||  schemaName === "tokyo";
   const showTenantsOption = currentUserEmail === "pootechnologies1@gmail.com";
   
   const businessCategory = localStorage.getItem("business_category");
@@ -368,16 +384,45 @@ export function AppSidebar({ ...props }) {
     .map((item) => {
       if (isSales && item.title === "Settings") return null;
 
-      if (
-        !showReceiptOption &&
-        (item.title === "performa" || item.title === "purchase")
-      ) {
+      // Hide performa and purchase for Basic plan and Pro plan (unless showReceiptOption)
+      // But show them for Premium and Tokiyo plans
+      const shouldHideReceiptFeatures = !showReceiptOption && !isPremiumOrTokiyo;
+      if (shouldHideReceiptFeatures && (item.title === "performa" || item.title === "purchase")) {
         return null;
       }
 
       if (!showTenantsOption && item.title === "Manage Tenants") {
         return null;
       }
+
+      // Hide items based on plan
+      if (isBasicPlan) {
+        // Basic plan: hide Link Product, Credit, Reports, Logs, Purchase, Performa
+        const basicRestrictedItems = [
+          "link_product",
+          "place_credit", 
+          "manage_credit",
+          "reports",
+          "logs",
+          "purchase",
+          "performa"
+        ];
+        if (basicRestrictedItems.includes(item.title)) {
+          return null;
+        }
+      } else if (isProPlan) {
+        // Pro plan: hide Reports, Logs, Purchase, Performa (but show Credit and Link Product)
+        const proRestrictedItems = [
+          "reports",
+          "logs",
+          "purchase",
+          "performa"
+        ];
+        if (proRestrictedItems.includes(item.title)) {
+          return null;
+        }
+      }
+      // Premium and Tokiyo plans: no restrictions (all features shown)
 
       if (item.items) {
         const filteredItems = item.items.filter((sub) =>

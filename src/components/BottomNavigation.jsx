@@ -1,11 +1,25 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { ShoppingCart, CreditCard, Package, X, ChevronRight, FileText, Receipt } from 'lucide-react';
+import { usePlan } from '@/contexts/PlanProvider';
 
 const BottomNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedItem, setExpandedItem] = useState(null);
+  const { planData } = usePlan();
+  
+  // Check if user has Basic plan
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
+                      planData?.status === "basic" || 
+                      planData?.status === "no_payment";
+  
+  // Check if user has Pro plan
+  const isProPlan = planData?.planName?.toLowerCase() === "pro";
+  
+  // Check if user has Premium or Tokiyo plan
+  const isPremiumOrTokiyo = planData?.planName?.toLowerCase() === "premium" || 
+                          planData?.planName?.toLowerCase() === "tokiyo";
 
   let tenantPermissions = [];
   try {
@@ -36,7 +50,7 @@ const BottomNavigation = () => {
 
   const currentUserEmail = getCurrentUserEmail();
   const schemaName = localStorage.getItem("schema_name");
-  const showReceiptOption = currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
+  const showReceiptOption = currentUserEmail === "tokiyogeneraltrading@gmail.com" || "semeredinfedlu@gmail.com" || schemaName === "tokyo";
 
   const hasPermission = (permission) => {
     if (!permission) return true;
@@ -94,9 +108,29 @@ const BottomNavigation = () => {
 
   const navItems = allNavItems
     .filter(item => {
-      if (!showReceiptOption && (item.id === 'performa' || item.id === 'purchase')) {
+      // Hide performa and purchase for Basic plan and Pro plan (unless showReceiptOption)
+      // But show them for Premium and Tokiyo plans
+      const shouldHideReceiptFeatures = !showReceiptOption && !isPremiumOrTokiyo;
+      if (shouldHideReceiptFeatures && (item.id === 'performa' || item.id === 'purchase')) {
         return false;
       }
+      
+      // Hide items based on plan
+      if (isBasicPlan) {
+        // Basic plan: hide Credit, Performa, Purchase
+        const basicRestrictedItems = ['credit', 'performa', 'purchase'];
+        if (basicRestrictedItems.includes(item.id)) {
+          return false;
+        }
+      } else if (isProPlan) {
+        // Pro plan: hide Performa, Purchase (but show Credit)
+        const proRestrictedItems = ['performa', 'purchase'];
+        if (proRestrictedItems.includes(item.id)) {
+          return false;
+        }
+      }
+      // Premium and Tokiyo plans: no restrictions (all features shown)
+      
       return true;
     })
     .map(item => {

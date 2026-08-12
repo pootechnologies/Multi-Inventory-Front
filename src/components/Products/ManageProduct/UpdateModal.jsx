@@ -19,6 +19,7 @@ const UpdateModal = ({
   setValue,
   isElectronics,
   isShop,
+  showBundle,
 }) => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,10 +44,11 @@ const UpdateModal = ({
   const currentUserEmail = getCurrentUserEmail();
   const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || "semeredinfedlu@gmail.com" || schemaName === "tokyo";
   const businessCategory = localStorage.getItem("business_category");
   const modalIsElectronics = businessCategory?.toLowerCase() === "electronics";
   const modalIsShop = businessCategory?.toLowerCase() === "shop";
+  const shouldShowBundle = (modalIsElectronics || modalIsShop) && showBundle;
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
@@ -225,7 +227,7 @@ const UpdateModal = ({
               )}
 
               {/* Is Bundle */}
-              {modalIsElectronics && (
+              {shouldShowBundle && (
                 <div>
                   <label className={labelClass}>{t("is_bundle")}</label>
                   <div className="flex items-center gap-3 h-11 px-3 bg-white border border-gray-200 rounded-xl">

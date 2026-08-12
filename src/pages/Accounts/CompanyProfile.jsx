@@ -154,7 +154,7 @@ const CompanyProfile = () => {
             <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
               <Building className="h-6 w-6" />
             </div>
-            {t("company_profile")} <h1 className="text-lg font-normal">Po'o Inventory v2</h1>
+            {t("company_profile")}
           </h2>
         </div>
 

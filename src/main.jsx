@@ -1,7 +1,10 @@
 // import "./utils/fetcherunAuth"; // Import the fetch wrapper to override the global fetch
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
+import { registerSW } from "virtual:pwa-register";
+
 import "./index.css";
 import App from "./App.jsx";
 import QueryProvider from "./utils/queryClient";
@@ -29,18 +32,23 @@ createRoot(document.getElementById("root")).render(
 );
 
 // Register Service Worker for PWA
-import { registerSW } from 'virtual:pwa-register'
+registerSW({
+  immediate: true,
 
-const updateSW = registerSW({
-  onNeedRefresh() {
-    // Show a prompt to the user to refresh
-    if (confirm('New content available, reload to update?')) {
-      updateSW(true)
+  onOfflineReady() {
+    // App is ready to work offline
+  },
+
+  onRegisteredSW(_swUrl, registration) {
+    if (registration) {
+      // Check for a new service worker every hour
+      setInterval(() => {
+        registration.update();
+      }, 60 * 60 * 1000);
     }
   },
-  onOfflineReady() {
-    console.log('App is ready to work offline')
-  },
-})
 
-console.log('Service Worker registered for PWA')
+  onRegisterError(_error) {
+    // Service worker registration failed
+  },
+});

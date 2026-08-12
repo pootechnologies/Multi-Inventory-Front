@@ -54,7 +54,7 @@ export default defineConfig({
 
         // Cache Vite-generated static assets
         globPatterns: [
-          "**/*.{js,css,html,ico,png,svg,woff2,woff}",
+          "**/*.{js,css,ico,png,svg,woff2,woff}",
         ],
 
         runtimeCaching: [

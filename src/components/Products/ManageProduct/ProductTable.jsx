@@ -76,7 +76,7 @@ const ProductTable = ({
   const currentUserEmail = getCurrentUserEmail();
   const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || "semeredinfedlu@gmail.com" || schemaName === "tokyo";
 
   const handleCategoryChange = (option) => {
     setSelectedCategory(option ? option.value : "");

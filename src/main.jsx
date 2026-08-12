@@ -5,13 +5,16 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import QueryProvider from "./utils/queryClient";
+import { PlanProvider } from "./contexts/PlanProvider";
 import { Toaster } from "react-hot-toast";
 import i18n from "../src/i18n";
 
 const Main = () => {
   return (
     <QueryProvider>
-      <App />
+      <PlanProvider>
+        <App />
+      </PlanProvider>
     </QueryProvider>
   );
 };

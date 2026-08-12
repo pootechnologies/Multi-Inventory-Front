@@ -25,8 +25,10 @@ import AddCategoryModal from "./AddCategoryModal";
 import AddSupplierModal from "./AddSupplierModal";
 import { t } from "i18next";
 import axiosInstance from "@/utils/axiosInstance";
+import { usePlan } from "@/contexts/PlanProvider";
 
 const AddProduct = () => {
+  const { planData } = usePlan();
   const [categories, setCategories] = useState([]);
   const [isBundle, setIsBundle] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
@@ -37,6 +39,14 @@ const AddProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  
+  // Check if user has Basic plan
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
+                      planData?.status === "basic" || 
+                      planData?.status === "no_payment";
+  
+  // Show Is Bundle for Pro, Premium, and Tokiyo plans (not Basic)
+  const showBundle = !isBasicPlan;
 
   const getCurrentUserEmail = () => {
     try {
@@ -54,7 +64,7 @@ const AddProduct = () => {
   const currentUserEmail = getCurrentUserEmail();
   const schemaName = localStorage.getItem("schema_name");
   const showReceiptOption =
-    currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo";
+    currentUserEmail === "tokiyogeneraltrading@gmail.com" || "semeredinfedlu@gmail.com" || schemaName === "tokyo";
   const businessCategory = localStorage.getItem("business_category");
   const isElectronics = businessCategory?.toLowerCase() === "electronics";
   const isShop = businessCategory?.toLowerCase() === "shop";
@@ -591,7 +601,7 @@ const AddProduct = () => {
             )}
 
             {/* Is Bundle */}
-            {isElectronics ? (
+            {isElectronics && showBundle ? (
               <div className="space-y-2 md:col-span-2">
                 <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-xl border border-muted-foreground/20">
                   <input

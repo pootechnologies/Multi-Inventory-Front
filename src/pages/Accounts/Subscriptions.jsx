@@ -216,7 +216,7 @@ export default function Subscriptions() {
 
       // Filter plans based on email or schema_name
       const schemaName = localStorage.getItem("schema_name");
-      if (currentUserEmail === "tokiyogeneraltrading@gmail.com" || schemaName === "tokyo") {
+      if (currentUserEmail === "tokiyogeneraltrading@gmail.com" || currentUserEmail === "semeredinfedlu@gmail.com" || schemaName === "tokyo") {
         // Show only Tokiyo plan
         plans = plans.filter(plan => plan.name.toLowerCase().includes("tokiyo"));
       } else {

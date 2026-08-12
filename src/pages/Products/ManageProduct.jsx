@@ -10,8 +10,10 @@ import ConfirmDeleteModal from "@/components/Products/ManageProduct/ConfirmDelet
 import UpdateModal from "@/components/Products/ManageProduct/UpdateModal";
 import { Package, ChevronUp } from "lucide-react";
 import { t } from "i18next";
+import { usePlan } from "@/contexts/PlanProvider";
 
 const ManageProduct = () => {
+  const { planData } = usePlan();
   const [page, setPage] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +25,14 @@ const ManageProduct = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { register, handleSubmit, setValue } = useForm();
   const queryClient = useQueryClient();
+  
+  // Check if user has Basic plan
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
+                      planData?.status === "basic" || 
+                      planData?.status === "no_payment";
+  
+  // Show Is Bundle for Pro, Premium, and Tokiyo plans (not Basic)
+  const showBundle = !isBasicPlan;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["products", page, searchTerm],
@@ -244,6 +254,7 @@ const ManageProduct = () => {
           setValue={setValue}
           isElectronics={isElectronics}
           isShop={isShop}
+          showBundle={showBundle}
         />
       )}
         </div>

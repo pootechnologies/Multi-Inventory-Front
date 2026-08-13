@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
   TENANT_BUSINESS_CATEGORIES: "tenants/business-categories/",
   PRODUCTS: "/products",
   IMPORT_PRODUCTS: "/import/products/",
+  EXPORT_PRODUCTS: "/export/products/",
   PRODUCT_LOG: "/product_log/",
   CATEGORIES: "/category",
   CUSTOMERS: "/customers",

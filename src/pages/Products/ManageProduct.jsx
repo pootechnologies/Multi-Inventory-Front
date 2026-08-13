@@ -9,7 +9,7 @@ import ProductTable from "@/components/Products/ManageProduct/ProductTable";
 import Modal from "@/components/Products/ManageProduct/Modal";
 import ConfirmDeleteModal from "@/components/Products/ManageProduct/ConfirmDeleteModal";
 import UpdateModal from "@/components/Products/ManageProduct/UpdateModal";
-import { Package, ChevronUp, Upload } from "lucide-react";
+import { Package, ChevronUp, Download } from "lucide-react";
 import { t } from "i18next";
 import { usePlan } from "@/contexts/PlanProvider";
 
@@ -47,6 +47,8 @@ const ManageProduct = () => {
     },
     onError: () => toast.error("Failed to load products"),
   });
+
+  const totalCount = data?.count || 0;
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -255,7 +257,7 @@ const ManageProduct = () => {
               onClick={handleExportProducts}
               className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
             >
-              <Upload className="h-4 w-4 shrink-0" />
+              <Download className="h-4 w-4 shrink-0" />
               {t("export_products", "Export Products")}
             </Button>
           </div>
@@ -273,6 +275,9 @@ const ManageProduct = () => {
             isLoadingProducts={isLoading}
             isElectronics={isElectronics}
             isShop={isShop}
+            totalCount={totalCount}
+            currentPage={page}
+            onPageChange={setPage}
           />
           {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} isShop={isShop} />}
           {isConfirmDeleteOpen && (

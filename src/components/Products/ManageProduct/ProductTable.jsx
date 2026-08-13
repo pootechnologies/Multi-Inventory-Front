@@ -50,15 +50,16 @@ const ProductTable = ({
   isLoadingProducts,
   isElectronics,
   isShop,
+  totalCount,
+  currentPage,
+  onPageChange,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [companyData, setCompanyData] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [expandedCards, setExpandedCards] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const itemsPerPage = 10;
 
   const getCurrentUserEmail = () => {
     try {
@@ -80,7 +81,7 @@ const ProductTable = ({
 
   const handleCategoryChange = (option) => {
     setSelectedCategory(option ? option.value : "");
-    setCurrentPage(1);
+    onPageChange(1);
   };
 
   const categoryOptions = categories.map((category) => ({
@@ -99,6 +100,8 @@ const ProductTable = ({
       : true;
     return matchesCategory && matchesSearchTerm;
   });
+
+  const displayProducts = filteredProducts;
 
   const totalAmount = allProducts.reduce(
     (acc, product) => acc + product.buying_price * product.stock,
@@ -268,13 +271,7 @@ const ProductTable = ({
     saveAs(blob, fileName);
   };
 
-  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
-  const displayProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
-  const totalPages = pageCount;
+  const totalPages = Math.ceil(totalCount / 10); // Assuming 10 items per page from API
 
   return (
     <div className="space-y-6">
@@ -853,7 +850,7 @@ const ProductTable = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
               className="gap-2 rounded-lg"
             >
@@ -876,7 +873,7 @@ const ProductTable = ({
                       variant={currentPage === pageNum ? "default" : "ghost"}
                       size="icon"
                       className="h-8 w-8 rounded-lg"
-                      onClick={() => setCurrentPage(pageNum)}
+                      onClick={() => onPageChange(pageNum)}
                     >
                       {pageNum}
                     </Button>
@@ -888,9 +885,7 @@ const ProductTable = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
               className="gap-2 rounded-lg"
             >

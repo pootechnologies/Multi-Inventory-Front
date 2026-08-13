@@ -434,24 +434,22 @@ const AddProduct = () => {
               </div>
               {t("add_products")}
             </h2>
-            <div>
-              <input
-                type="file"
-                id="importExcel"
-                accept=".xlsx, .xls"
-                onChange={handleImportExcel}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => document.getElementById('importExcel').click()}
-                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
-              >
-                <Upload className="h-4 w-4" />
-                {t("import_products", "Import Products")}
-              </Button>
-            </div>
+            <input
+              type="file"
+              id="importExcel"
+              accept=".xlsx, .xls"
+              onChange={handleImportExcel}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => document.getElementById('importExcel').click()}
+              className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+            >
+              <Download className="h-4 w-4 shrink-0" />
+              {t("import_products", "Import Products")}
+            </Button>
           </div>
         </div>
 
@@ -1161,7 +1159,7 @@ const AddProduct = () => {
                 onClick={exportToExcel}
                 className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4 shrink-0" />
                 Save to Excel
               </Button>
               <Button

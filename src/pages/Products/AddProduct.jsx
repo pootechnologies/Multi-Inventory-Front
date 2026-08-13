@@ -20,12 +20,15 @@ import {
   Plus,
   Upload,
   X,
+  AlertTriangle,
+  Download,
 } from "lucide-react";
 import AddCategoryModal from "./AddCategoryModal";
 import AddSupplierModal from "./AddSupplierModal";
 import { t } from "i18next";
 import axiosInstance from "@/utils/axiosInstance";
 import { usePlan } from "@/contexts/PlanProvider";
+import * as XLSX from 'xlsx';
 
 const AddProduct = () => {
   const { planData } = usePlan();
@@ -39,6 +42,11 @@ const AddProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importedData, setImportedData] = useState([]);
+  const [editingCell, setEditingCell] = useState(null); // { rowIndex, field }
+  const [isConfirmImportOpen, setIsConfirmImportOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   
   // Check if user has Basic plan
   const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
@@ -291,16 +299,160 @@ const AddProduct = () => {
     setImagePreview(null);
   };
 
+  const handleImportExcel = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Close modal first and reset all states
+      setIsImportModalOpen(false);
+      setImportedData([]);
+      setEditingCell(null);
+      
+      // Small delay to ensure state updates are processed
+      setTimeout(() => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          // Get headers from first row
+          const headers = jsonData[0];
+          
+          // Convert to array of objects using headers
+          const products = jsonData.slice(1).map(row => {
+            const product = {};
+            headers.forEach((header, index) => {
+              product[header] = row[index];
+            });
+            return product;
+          });
+          
+          console.log('Imported Excel Data:', products);
+          setImportedData(products);
+          setIsImportModalOpen(true);
+        };
+        reader.readAsArrayBuffer(file);
+      }, 100);
+    }
+    
+    // Reset file input value to allow selecting the same file again
+    e.target.value = '';
+  };
+
+  const closeImportModal = () => {
+    setIsImportModalOpen(false);
+    setImportedData([]);
+    setEditingCell(null);
+  };
+
+  const handleCellEdit = (rowIndex, field, value) => {
+    const updatedData = [...importedData];
+    updatedData[rowIndex][field] = value;
+    setImportedData(updatedData);
+  };
+
+  const handleCellClick = (rowIndex, field) => {
+    setEditingCell({ rowIndex, field });
+  };
+
+  const handleImportClick = () => {
+    setIsConfirmImportOpen(true);
+  };
+
+  const closeConfirmImport = () => {
+    setIsConfirmImportOpen(false);
+  };
+
+  const importProducts = async () => {
+    setIsImporting(true);
+    try {
+      // Convert edited data back to Excel file
+      const worksheet = XLSX.utils.json_to_sheet(importedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+      
+      // Generate Excel file as blob
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      
+      // Create FormData and append the file
+      const formData = new FormData();
+      formData.append('file', blob, 'products_import.xlsx');
+      
+      const response = await axiosInstance.post(API_ENDPOINTS.IMPORT_PRODUCTS, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      toast.success(`${importedData.length} products imported successfully!`);
+      closeImportModal();
+      closeConfirmImport();
+      
+      // Optionally refresh categories or other data if needed
+    } catch (error) {
+      console.error("There was an error importing the products:", error);
+      toast.error(
+        error.response?.data?.error || error.response?.data?.message || "Failed to import products!"
+      );
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const exportToExcel = () => {
+    if (importedData.length === 0) {
+      toast.error("No data to export");
+      return;
+    }
+
+    // Create worksheet from data
+    const worksheet = XLSX.utils.json_to_sheet(importedData);
+    
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+    
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const filename = `products_import_${timestamp}.xlsx`;
+    
+    // Download file
+    XLSX.writeFile(workbook, filename);
+    
+    toast.success("Excel file exported successfully!");
+  };
+
   return (
     <div className="flex-1 p-4 md:p-8 max-w-6xl mx-auto">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-muted shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
-            <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
-              <PackagePlus className="h-6 w-6" />
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
+              <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-lg">
+                <PackagePlus className="h-6 w-6" />
+              </div>
+              {t("add_products")}
+            </h2>
+            <div>
+              <input
+                type="file"
+                id="importExcel"
+                accept=".xlsx, .xls"
+                onChange={handleImportExcel}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('importExcel').click()}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                {t("import_products", "Import Products")}
+              </Button>
             </div>
-            {t("add_products")}
-          </h2>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8">
@@ -805,6 +957,274 @@ const AddProduct = () => {
         onClose={closeSupplierModal}
         onSupplierAdded={handleSupplierAdded}
       />
+      
+      {/* Import Preview Modal */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 h-screen w-screen">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+            <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-4 border-b border-emerald-500/10 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-emerald-600 flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Import Products Preview
+              </h3>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={closeImportModal}
+                className="h-8 w-8 rounded-lg hover:bg-muted"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="p-6 overflow-auto flex-1">
+              {importedData.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-muted/50">
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">ID</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Name</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Category</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Buying Price</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Selling Price</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Unit</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Stock</th>
+                        <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground border-b">Supplier</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importedData.map((product, index) => (
+                        <tr key={index} className="border-b hover:bg-muted/30">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-500">{product.id || '-'}</td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'name' ? (
+                              <Input
+                                type="text"
+                                value={product.name || ''}
+                                onChange={(e) => handleCellEdit(index, 'name', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'name')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.name || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'category' ? (
+                              <Input
+                                type="text"
+                                value={product.category || ''}
+                                onChange={(e) => handleCellEdit(index, 'category', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'category')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.category || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'buying_price' ? (
+                              <Input
+                                type="number"
+                                value={product.buying_price || ''}
+                                onChange={(e) => handleCellEdit(index, 'buying_price', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'buying_price')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.buying_price || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'selling_price' ? (
+                              <Input
+                                type="number"
+                                value={product.selling_price || ''}
+                                onChange={(e) => handleCellEdit(index, 'selling_price', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'selling_price')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.selling_price || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'unit' ? (
+                              <Input
+                                type="text"
+                                value={product.unit || ''}
+                                onChange={(e) => handleCellEdit(index, 'unit', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'unit')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.unit || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'stock' ? (
+                              <Input
+                                type="number"
+                                value={product.stock || ''}
+                                onChange={(e) => handleCellEdit(index, 'stock', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'stock')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.stock || '-'}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            {editingCell?.rowIndex === index && editingCell?.field === 'supplier' ? (
+                              <Input
+                                type="text"
+                                value={product.supplier || ''}
+                                onChange={(e) => handleCellEdit(index, 'supplier', e.target.value)}
+                                onBlur={() => setEditingCell(null)}
+                                onKeyDown={(e) => e.key === 'Enter' && setEditingCell(null)}
+                                className="h-8 text-sm"
+                                autoFocus
+                              />
+                            ) : (
+                              <div
+                                onClick={() => handleCellClick(index, 'supplier')}
+                                className="cursor-pointer hover:bg-muted/50 p-1 rounded"
+                              >
+                                {product.supplier || '-'}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-8">No data to display</p>
+              )}
+            </div>
+            <div className="px-6 py-4 border-t border-muted flex flex-col sm:flex-row justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeImportModal}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors w-full sm:w-auto"
+              >
+                Close
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={exportToExcel}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                <Download className="h-4 w-4" />
+                Save to Excel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleImportClick}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-6 font-medium transition-colors w-full sm:w-auto"
+              >
+                Import {importedData.length} Products
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Confirm Import Modal */}
+      {isConfirmImportOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[10000] p-4 h-screen w-screen" onClick={() => !isImporting && closeConfirmImport()}>
+          <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm shadow-2xl relative text-center p-8 animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <button onClick={() => !isImporting && closeConfirmImport()} disabled={isImporting} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="mx-auto w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6 border-8 border-emerald-50/50">
+              <Upload className="h-8 w-8" />
+            </div>
+
+            <h2 className="mb-3 font-bold text-2xl text-emerald-600">
+              Confirm Import
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-8 px-2 text-sm leading-relaxed">
+              Do you really want to import {importedData.length} products? This action cannot be undone.
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:space-x-3">
+              <Button
+                variant="outline"
+                onClick={closeConfirmImport}
+                disabled={isImporting}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl w-full sm:w-32 h-11"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={importProducts}
+                disabled={isImporting}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl w-full sm:w-32 shadow-lg shadow-emerald-600/20 h-11 min-w-[120px] transition-all active:scale-95"
+              >
+                {isImporting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Importing...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Upload className="w-4 h-4" />
+                    Yes
+                  </div>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

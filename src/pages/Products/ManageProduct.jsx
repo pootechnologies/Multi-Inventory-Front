@@ -4,11 +4,12 @@ import toast from "react-hot-toast";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/utils/axiosInstance"; // <-- Import your instance
+import { Button } from "@/components/ui/button";
 import ProductTable from "@/components/Products/ManageProduct/ProductTable";
 import Modal from "@/components/Products/ManageProduct/Modal";
 import ConfirmDeleteModal from "@/components/Products/ManageProduct/ConfirmDeleteModal";
 import UpdateModal from "@/components/Products/ManageProduct/UpdateModal";
-import { Package, ChevronUp } from "lucide-react";
+import { Package, ChevronUp, Upload } from "lucide-react";
 import { t } from "i18next";
 import { usePlan } from "@/contexts/PlanProvider";
 
@@ -25,12 +26,12 @@ const ManageProduct = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { register, handleSubmit, setValue } = useForm();
   const queryClient = useQueryClient();
-  
+
   // Check if user has Basic plan
-  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
-                      planData?.status === "basic" || 
-                      planData?.status === "no_payment";
-  
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" ||
+    planData?.status === "basic" ||
+    planData?.status === "no_payment";
+
   // Show Is Bundle for Pro, Premium, and Tokiyo plans (not Basic)
   const showBundle = !isBasicPlan;
 
@@ -181,6 +182,33 @@ const ManageProduct = () => {
     setPage(1);
   };
 
+  const handleExportProducts = async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.EXPORT_PRODUCTS, {
+        responseType: 'blob',
+      });
+      
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const date = new Date().toLocaleDateString();
+      link.download = `products_export_${date}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success("Products exported successfully!");
+    } catch (error) {
+      console.error("Error exporting products:", error);
+      toast.error("Failed to export products!");
+    }
+  };
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -214,49 +242,60 @@ const ManageProduct = () => {
 
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent px-6 py-6 border-b border-emerald-500/10">
-          <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
-            <div className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-600/20">
-              <Package className="h-6 w-6" />
-            </div>
-            {t("manage_products")}
-          </h2>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <h2 className="flex items-center gap-3 text-2xl font-bold text-emerald-600">
+              <div className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-600/20">
+                <Package className="h-6 w-6" />
+              </div>
+              {t("manage_products")}
+            </h2>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleExportProducts}
+              className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+            >
+              <Upload className="h-4 w-4 shrink-0" />
+              {t("export_products", "Export Products")}
+            </Button>
+          </div>
         </div>
 
         <div className="p-4 sm:p-6 space-y-6">
-      <ProductTable
-        products={data?.results || []}
-        categories={categories || []}
-        onViewClick={handleViewClick}
-        onUpdateClick={handleUpdateClick}
-        onDeleteClick={handleDeleteClick}
-        onSearch={handleSearch}
-        searchTerm={searchTerm}
-        isLoadingProducts={isLoading}
-        isElectronics={isElectronics}
-        isShop={isShop}
-      />
-      {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} isShop={isShop} />}
-      {isConfirmDeleteOpen && (
-        <ConfirmDeleteModal
-          onConfirm={deleteProduct}
-          onCancel={closeConfirmDelete}
-        />
-      )}
-      {isUpdateModalOpen && (
-        <UpdateModal
-          onClose={() => setIsUpdateModalOpen(false)}
-          onSubmit={handleUpdateSubmit}
-          selectedProduct={selectedProduct}
-          register={register}
-          handleSubmit={handleSubmit}
-          handleFileChange={handleFileChange}
-          fileName={fileName}
-          setValue={setValue}
-          isElectronics={isElectronics}
-          isShop={isShop}
-          showBundle={showBundle}
-        />
-      )}
+          <ProductTable
+            products={data?.results || []}
+            categories={categories || []}
+            onViewClick={handleViewClick}
+            onUpdateClick={handleUpdateClick}
+            onDeleteClick={handleDeleteClick}
+            onSearch={handleSearch}
+            searchTerm={searchTerm}
+            isLoadingProducts={isLoading}
+            isElectronics={isElectronics}
+            isShop={isShop}
+          />
+          {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} isShop={isShop} />}
+          {isConfirmDeleteOpen && (
+            <ConfirmDeleteModal
+              onConfirm={deleteProduct}
+              onCancel={closeConfirmDelete}
+            />
+          )}
+          {isUpdateModalOpen && (
+            <UpdateModal
+              onClose={() => setIsUpdateModalOpen(false)}
+              onSubmit={handleUpdateSubmit}
+              selectedProduct={selectedProduct}
+              register={register}
+              handleSubmit={handleSubmit}
+              handleFileChange={handleFileChange}
+              fileName={fileName}
+              setValue={setValue}
+              isElectronics={isElectronics}
+              isShop={isShop}
+              showBundle={showBundle}
+            />
+          )}
         </div>
       </div>
     </div>

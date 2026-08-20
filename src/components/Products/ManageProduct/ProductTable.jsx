@@ -28,6 +28,8 @@ import {
   Package,
   FileSpreadsheet,
   Image as ImageIcon,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import Select from "react-select";
 import {
@@ -60,6 +62,15 @@ const ProductTable = ({
   const [expandedCards, setExpandedCards] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isTableView, setIsTableView] = useState(() => {
+    const saved = localStorage.getItem("products_isTableView");
+    return saved === "true";
+  });
+
+  const handleSetIsTableView = (value) => {
+    setIsTableView(value);
+    localStorage.setItem("products_isTableView", value);
+  };
 
   const getCurrentUserEmail = () => {
     try {
@@ -93,7 +104,7 @@ const ProductTable = ({
 
   const filteredProducts = sortedProducts.filter((product) => {
     const matchesCategory = selectedCategory
-      ? product.category_name === selectedCategory
+      ? (product.category === selectedCategory || product.category_name === selectedCategory)
       : true;
     const matchesSearchTerm = searchTerm
       ? product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -289,9 +300,10 @@ const ProductTable = ({
               />
             </div>
           </div>
-          <div className="w-full sm:max-w-xs">
-            <Select
-              options={categoryOptions}
+          <div className="w-full sm:max-w-xs flex items-center gap-2">
+            <div className="flex-1">
+              <Select
+                options={categoryOptions}
               isClearable
               placeholder={t("all_category") || "Select category..."}
               className="w-full react-select-container"
@@ -321,6 +333,32 @@ const ProductTable = ({
                 }),
               }}
             />
+            </div>
+            
+            <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
+              <button
+                onClick={() => handleSetIsTableView(false)}
+                className={`p-2 rounded-lg transition-all ${
+                  !isTableView 
+                    ? "bg-white text-emerald-600 shadow-sm" 
+                    : "text-muted-foreground hover:text-gray-900"
+                }`}
+                title="Card View"
+              >
+                <LayoutGrid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleSetIsTableView(true)}
+                className={`p-2 rounded-lg transition-all ${
+                  isTableView 
+                    ? "bg-white text-emerald-600 shadow-sm" 
+                    : "text-muted-foreground hover:text-gray-900"
+                }`}
+                title="Table View"
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -330,15 +368,11 @@ const ProductTable = ({
               {formatCurrency(totalAmount)}
             </span>
           </div>
-          {/* <Button onClick={exportToExcel} className="rounded-xl shadow-lg shadow-emerald-600/20 bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
-            <FileSpreadsheet className="h-4 w-4" />
-            {t("export_report")}
-          </Button> */}
         </div>
       </div>
 
-      {/* Desktop Table View */}
-      <div className="hidden md:block border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm">
+      {/* Desktop & Toggled Table View */}
+      <div className={`${isTableView ? "block" : "hidden md:block"} border border-gray-100 rounded-2xl bg-white shadow-sm overflow-x-auto`}>
         <Table>
           <TableHeader className="bg-gray-50/80">
             <TableRow className="border-b-gray-100">
@@ -613,7 +647,7 @@ const ProductTable = ({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-4">
+      <div className={`${isTableView ? "hidden" : "md:hidden space-y-4"}`}>
         {displayProducts.length > 0 ? (
           displayProducts.map((product) => (
             <div
@@ -858,7 +892,7 @@ const ProductTable = ({
               {t("previous")}
             </Button>
             <div className="flex items-center gap-1 mx-2">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
                 let pageNum = i + 1;
                 if (totalPages > 5) {
                   if (currentPage > 3) {

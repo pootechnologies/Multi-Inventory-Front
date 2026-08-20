@@ -1192,7 +1192,7 @@ export default function Subscriptions() {
                   Previous
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
                     let pageNum = i + 1;
                     if (totalPages > 5) {
                       if (currentPage > 3) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,6 @@ import {
   AlertTriangle,
   Download,
 } from "lucide-react";
-import AddCategoryModal from "./AddCategoryModal";
 import AddSupplierModal from "./AddSupplierModal";
 import { t } from "i18next";
 import axiosInstance from "@/utils/axiosInstance";
@@ -37,7 +37,6 @@ const AddProduct = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -80,15 +79,20 @@ const AddProduct = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axiosInstance.get(API_ENDPOINTS.CATEGORIES);
+        const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS}?include_all=True`);
+        const productsList = response.data.all_results || response.data.results || response.data || [];
+        
+        // Extract unique category names
+        const uniqueCategories = [...new Set(productsList.map(product => product.category).filter(Boolean))];
+        
         setCategories(
-          response.data.map((category) => ({
-            id: category.id,
-            label: category.name,
-          })),
+          uniqueCategories.map(categoryName => ({
+            value: categoryName,
+            label: categoryName,
+          }))
         );
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching products for categories:", error);
       }
     };
     const fetchSuppliers = async () => {
@@ -171,7 +175,7 @@ const AddProduct = () => {
     setIsSubmitting(true);
     const formData = new FormData();
     if (data.name) formData.append("name", data.name);
-    if (selectedCategory?.id) formData.append("category", selectedCategory.id);
+    if (selectedCategory?.value) formData.append("category", selectedCategory.value);
     if (data.buying_price && data.buying_price > 0) {
       formData.append("buying_price", data.buying_price);
     }
@@ -192,7 +196,7 @@ const AddProduct = () => {
     try {
       console.log("Submitting product data:", {
         name: data.name,
-        category: selectedCategory?.id,
+        category: selectedCategory?.value,
         selling_price: data.selling_price,
         stock: data.stock,
         hasImage: !!selectedImage,
@@ -243,25 +247,6 @@ const AddProduct = () => {
     }
   };
 
-  const openCategoryModal = () => {
-    setIsCategoryModalOpen(true);
-  };
-  const closeCategoryModal = () => {
-    setIsCategoryModalOpen(false);
-  };
-  const handleCategoryAdded = async () => {
-    try {
-      const response = await axiosInstance.get(API_ENDPOINTS.CATEGORIES);
-      setCategories(
-        response.data.map((category) => ({
-          id: category.id,
-          label: category.name,
-        })),
-      );
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
   const openSupplierModal = () => {
     setIsSupplierModalOpen(true);
   };
@@ -493,14 +478,14 @@ const AddProduct = () => {
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
                     <Tags className="h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
                   </div>
-                  <Select
+                  <CreatableSelect
                     id="category"
                     isClearable
                     placeholder={t("select_category", "Select Category")}
                     options={categories}
                     value={selectedCategory}
                     onChange={(selectedOption) => {
-                      setValue("category", selectedOption?.id);
+                      setValue("category", selectedOption?.value);
                       setSelectedCategory(selectedOption);
                       clearErrors("category");
                     }}
@@ -531,14 +516,6 @@ const AddProduct = () => {
                     }}
                   />
                 </div>
-                <Button
-                  type="button"
-                  onClick={openCategoryModal}
-                  variant="outline"
-                  className="h-11 bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap"
-                >
-                  {t("add_category", "Add Category")}
-                </Button>
               </div>
               {errors.category && (
                 <p className="text-red-500 text-xs mt-1 ml-1">
@@ -945,11 +922,6 @@ const AddProduct = () => {
         </form>
       </div>
 
-      <AddCategoryModal
-        isOpen={isCategoryModalOpen}
-        onClose={closeCategoryModal}
-        onCategoryAdded={handleCategoryAdded}
-      />
       <AddSupplierModal
         isOpen={isSupplierModalOpen}
         onClose={closeSupplierModal}

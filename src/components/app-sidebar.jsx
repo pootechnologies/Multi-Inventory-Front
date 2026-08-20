@@ -155,23 +155,23 @@ const data = {
         },
       ],
     },
-    {
-      title: "categories",
-      url: "#",
-      icon: Tag,
-      items: [
-        {
-          title: "add_categories",
-          url: "/add_category",
-          permission: "inventory.add_category",
-        },
-        {
-          title: "manage_categories",
-          url: "/manage_category",
-          permission: "inventory.view_category",
-        },
-      ],
-    },
+    // {
+    //   title: "categories",
+    //   url: "#",
+    //   icon: Tag,
+    //   items: [
+    //     {
+    //       title: "add_categories",
+    //       url: "/add_category",
+    //       permission: "inventory.add_category",
+    //     },
+    //     {
+    //       title: "manage_categories",
+    //       url: "/manage_category",
+    //       permission: "inventory.view_category",
+    //     },
+    //   ],
+    // },
     {
       title: "suppliers",
       url: "#",

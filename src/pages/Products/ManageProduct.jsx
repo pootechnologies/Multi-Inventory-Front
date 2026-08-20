@@ -51,10 +51,12 @@ const ManageProduct = () => {
   const totalCount = data?.count || 0;
 
   const { data: categories } = useQuery({
-    queryKey: ["categories"],
+    queryKey: ["categories_from_products"],
     queryFn: async () => {
-      const response = await axiosInstance.get(API_ENDPOINTS.CATEGORIES);
-      return response.data;
+      const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS}?include_all=True`);
+      const productsList = response.data.all_results || response.data.results || response.data || [];
+      const uniqueCategories = [...new Set(productsList.map(p => p.category).filter(Boolean))];
+      return uniqueCategories.map(name => ({ name }));
     },
   });
 

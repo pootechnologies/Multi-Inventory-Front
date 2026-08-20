@@ -36,7 +36,9 @@ import {
   ChevronUp,
   ChevronDown,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LayoutGrid,
+  List
 } from "lucide-react";
 
 const ManageCategory = () => {
@@ -48,6 +50,15 @@ const ManageCategory = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isTableView, setIsTableView] = useState(() => {
+    const saved = localStorage.getItem("category_isTableView");
+    return saved === "true";
+  });
+
+  const handleSetIsTableView = (value) => {
+    setIsTableView(value);
+    localStorage.setItem("category_isTableView", value);
+  };
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -451,8 +462,8 @@ const ManageCategory = () => {
         <div className="p-4 sm:p-6 space-y-6">
           {/* Filter Toolbar - Select Only */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="w-full max-w-md">
-              <div className="relative group">
+            <div className="w-full max-w-md flex items-center gap-2">
+              <div className="relative group flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors pointer-events-none z-10" />
                 <Select
                   options={categoryOptions}
@@ -482,14 +493,38 @@ const ManageCategory = () => {
                   }}
                 />
               </div>
+              <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
+                <button
+                  onClick={() => handleSetIsTableView(false)}
+                  className={`p-2 rounded-lg transition-all ${
+                    !isTableView 
+                      ? "bg-white text-emerald-600 shadow-sm" 
+                      : "text-muted-foreground hover:text-gray-900"
+                  }`}
+                  title="Card View"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleSetIsTableView(true)}
+                  className={`p-2 rounded-lg transition-all ${
+                    isTableView 
+                      ? "bg-white text-emerald-600 shadow-sm" 
+                      : "text-muted-foreground hover:text-gray-900"
+                  }`}
+                  title="Table View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
             </div>
             <div className="text-sm font-medium text-gray-500 hidden sm:block">
               Total Categories: <span className="text-gray-900 font-bold ml-1">{filteredCategories.length}</span>
             </div>
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden md:block border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm">
+          {/* Desktop & Toggled Table View */}
+          <div className={`${isTableView ? "block" : "hidden md:block"} border border-gray-100 rounded-2xl bg-white shadow-sm overflow-x-auto`}>
             <Table>
               <TableHeader className="bg-gray-50/80">
                 <TableRow className="border-b-gray-100">
@@ -566,7 +601,7 @@ const ManageCategory = () => {
           </div>
 
           {/* Mobile Card View */}
-          <div className="md:hidden space-y-4">
+          <div className={`${isTableView ? "hidden" : "md:hidden space-y-4"}`}>
             {displayCategories.length > 0 ? (
               displayCategories.map((category) => (
                 <div key={category.id} className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col gap-4">
@@ -642,7 +677,7 @@ const ManageCategory = () => {
                   {t("previous")}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
                     let pageNum = i + 1;
                     if (totalPages > 5) {
                       if (currentPage > 3) {

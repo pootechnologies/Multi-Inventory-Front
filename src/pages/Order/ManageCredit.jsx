@@ -1575,7 +1575,7 @@ function ManageCredit() {
   }, []);
 
   const filteredOrders = sortedOrders?.filter((order) => {
-    const customerName = String(order?.customer || "N/A").toLowerCase();
+    const customerName = String(order?.customer_name || "N/A").toLowerCase();
     const searchTermLower = searchTerm.toLowerCase();
     const customerNameFilter = String(filters.customerName || "").toLowerCase();
 

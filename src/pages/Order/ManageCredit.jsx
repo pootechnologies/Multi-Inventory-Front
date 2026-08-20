@@ -58,6 +58,8 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronLeft,
+  LayoutGrid,
+  List,
   ChevronRight,
   ShoppingCart,
   Search,
@@ -1291,6 +1293,15 @@ function ManageCredit() {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isSimplifiedView, setIsSimplifiedView] = useState(true);
+  const [isTableView, setIsTableView] = useState(() => {
+    const saved = localStorage.getItem("credit_isTableView");
+    return saved === "true";
+  });
+  
+  const handleSetIsTableView = (value) => {
+    setIsTableView(value);
+    localStorage.setItem("credit_isTableView", value);
+  };
   const [orderFourDegit, setOrderFourDegit] = useState();
   const [showDownloadConfirmation, setShowDownloadConfirmation] =
     useState(false);
@@ -1799,7 +1810,7 @@ function ManageCredit() {
                 />
               </div>
             </div>
-            <div className="flex space-x-3 self-end sm:self-auto">
+            <div className="flex space-x-3 self-end sm:self-auto items-center">
               <Button
                 variant="outline"
                 onClick={toggleView}
@@ -1807,11 +1818,35 @@ function ManageCredit() {
               >
                 {isSimplifiedView ? t("detailed") : t("simplified")}
               </Button>
+              <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
+                <button
+                  onClick={() => handleSetIsTableView(false)}
+                  className={`p-2 rounded-lg transition-all ${
+                    !isTableView 
+                      ? "bg-white text-emerald-600 shadow-sm" 
+                      : "text-muted-foreground hover:text-gray-900"
+                  }`}
+                  title="Card View"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleSetIsTableView(true)}
+                  className={`p-2 rounded-lg transition-all ${
+                    isTableView 
+                      ? "bg-white text-emerald-600 shadow-sm" 
+                      : "text-muted-foreground hover:text-gray-900"
+                  }`}
+                  title="Table View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden md:block border border-gray-100 rounded-2xl overflow-hidden bg-white shadow-sm">
+          {/* Desktop & Toggled Table View */}
+          <div className={`${isTableView ? "block" : "hidden md:block"} border border-gray-100 rounded-2xl bg-white shadow-sm overflow-x-auto`}>
             <Table>
               <TableHeader className="bg-gray-50/80">
                 <TableRow className="border-b-gray-100">
@@ -2111,7 +2146,7 @@ function ManageCredit() {
           </div>
 
           {/* Mobile View - Cards */}
-          <div className="md:hidden space-y-4">
+          <div className={`${isTableView ? "hidden" : "md:hidden space-y-4"}`}>
             {isLoadingOrders ? (
               <div className="bg-white rounded-2xl p-10 border border-gray-200 text-center shadow-sm flex flex-col items-center gap-3">
                 <Spinner className="size-7 text-emerald-600" />
@@ -2364,7 +2399,7 @@ function ManageCredit() {
                   {t("previous")}
                 </Button>
                 <div className="flex items-center gap-1 mx-2">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  {Array.from({ length: Math.min(3, totalPages) }, (_, i) => {
                     let pageNum = i + 1;
                     if (totalPages > 5) {
                       if (page > 3) {

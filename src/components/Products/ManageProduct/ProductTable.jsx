@@ -100,6 +100,11 @@ const ProductTable = ({
     label: category.name,
   }));
 
+  const productOptions = allProducts.map((product) => ({
+    value: product.name,
+    label: product.name,
+  }));
+
   const sortedProducts = [...products].sort((a, b) => b.id - a.id);
 
   const filteredProducts = sortedProducts.filter((product) => {
@@ -292,11 +297,30 @@ const ProductTable = ({
           <div className="w-full sm:max-w-xs">
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors pointer-events-none z-10" />
-              <input
-                type="search"
-                placeholder={t("search_by_product")}
-                className="w-full h-11 pl-10 pr-3 bg-background border border-border rounded-xl text-sm outline-none focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all"
-                onChange={(e) => onSearch(e.target.value)}
+              <Select
+                isClearable
+                options={productOptions}
+                placeholder={t("search_by_product") || "Search product name"}
+                onChange={(selectedOption) => onSearch(selectedOption ? selectedOption.value : "")}
+                value={searchTerm ? { label: searchTerm, value: searchTerm } : null}
+                className="w-full react-select-container"
+                classNamePrefix="react-select"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    height: "2.75rem",
+                    paddingLeft: "2.5rem",
+                    borderRadius: "0.75rem",
+                    borderColor: "hsl(var(--border))",
+                    backgroundColor: "hsl(var(--background))",
+                    "&:hover": { borderColor: "hsl(var(--primary))" },
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    borderRadius: "0.75rem",
+                    overflow: "hidden",
+                  }),
+                }}
               />
             </div>
           </div>

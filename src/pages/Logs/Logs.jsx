@@ -7,10 +7,10 @@ import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/utils/apiConfig";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  ChevronLeft, 
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
   ChevronRight,
   Activity,
   User,
@@ -92,7 +92,7 @@ const Logs = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -167,12 +167,11 @@ const Logs = () => {
                         </div>
                       </TableCell>
                       <TableCell className="px-4">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold border ${
-                          log.action === "Create" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                          log.action === "Update" ? "bg-blue-50 text-blue-700 border-blue-100" :
-                          log.action === "Delete" ? "bg-red-50 text-red-700 border-red-100" :
-                          "bg-gray-50 text-gray-700 border-gray-100"
-                        }`}>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold border ${log.action === "Create" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                            log.action === "Update" ? "bg-blue-50 text-blue-700 border-blue-100" :
+                              log.action === "Delete" ? "bg-red-50 text-red-700 border-red-100" :
+                                "bg-gray-50 text-gray-700 border-gray-100"
+                          }`}>
                           {log.action}
                         </span>
                       </TableCell>
@@ -216,12 +215,11 @@ const Logs = () => {
                       <Clock className="w-3 h-3" /> {formatTimestamp(log.timestamp)}
                     </p>
                   </div>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold border ${
-                    log.action === "Create" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                    log.action === "Update" ? "bg-blue-50 text-blue-700 border-blue-100" :
-                    log.action === "Delete" ? "bg-red-50 text-red-700 border-red-100" :
-                    "bg-gray-50 text-gray-700 border-gray-100"
-                  }`}>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold border ${log.action === "Create" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                      log.action === "Update" ? "bg-blue-50 text-blue-700 border-blue-100" :
+                        log.action === "Delete" ? "bg-red-50 text-red-700 border-red-100" :
+                          "bg-gray-50 text-gray-700 border-gray-100"
+                    }`}>
                     {log.action}
                   </span>
                 </div>

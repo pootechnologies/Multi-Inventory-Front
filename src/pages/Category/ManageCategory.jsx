@@ -400,9 +400,8 @@ const ManageCategory = () => {
                       required: true,
                       onChange: (e) => setIsEmpty(e.target.value.trim() === "")
                     })}
-                    className={`w-full pl-10 h-11 bg-white border ${
-                      isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                    } rounded-xl transition-all outline-none text-sm font-medium`}
+                    className={`w-full pl-10 h-11 bg-white border ${isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
                 {isEmpty && (
@@ -443,7 +442,7 @@ const ManageCategory = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -496,22 +495,20 @@ const ManageCategory = () => {
               <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
                 <button
                   onClick={() => handleSetIsTableView(false)}
-                  className={`p-2 rounded-lg transition-all ${
-                    !isTableView 
-                      ? "bg-white text-emerald-600 shadow-sm" 
+                  className={`p-2 rounded-lg transition-all ${!isTableView
+                      ? "bg-white text-emerald-600 shadow-sm"
                       : "text-muted-foreground hover:text-gray-900"
-                  }`}
+                    }`}
                   title="Card View"
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleSetIsTableView(true)}
-                  className={`p-2 rounded-lg transition-all ${
-                    isTableView 
-                      ? "bg-white text-emerald-600 shadow-sm" 
+                  className={`p-2 rounded-lg transition-all ${isTableView
+                      ? "bg-white text-emerald-600 shadow-sm"
                       : "text-muted-foreground hover:text-gray-900"
-                  }`}
+                    }`}
                   title="Table View"
                 >
                   <List className="w-4 h-4" />

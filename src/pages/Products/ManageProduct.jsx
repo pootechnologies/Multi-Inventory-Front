@@ -9,7 +9,7 @@ import ProductTable from "@/components/Products/ManageProduct/ProductTable";
 import Modal from "@/components/Products/ManageProduct/Modal";
 import ConfirmDeleteModal from "@/components/Products/ManageProduct/ConfirmDeleteModal";
 import UpdateModal from "@/components/Products/ManageProduct/UpdateModal";
-import { Package, ChevronUp, Download } from "lucide-react";
+import { Package, ChevronUp, Download, Trash2 } from "lucide-react";
 import { t } from "i18next";
 import { usePlan } from "@/contexts/PlanProvider";
 
@@ -21,6 +21,7 @@ const ManageProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isConfirmDeleteAllOpen, setIsConfirmDeleteAllOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -91,6 +92,26 @@ const ManageProduct = () => {
 
   const closeConfirmDelete = () => {
     setIsConfirmDeleteOpen(false);
+  };
+
+  const closeConfirmDeleteAll = () => {
+    setIsConfirmDeleteAllOpen(false);
+  };
+
+  const handleDeleteAllClick = () => {
+    setIsConfirmDeleteAllOpen(true);
+  };
+
+  const deleteAllProducts = async () => {
+    try {
+      await axiosInstance.delete(API_ENDPOINTS.DELETE_ALL_PRODUCTS);
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("All products deleted successfully!");
+      closeConfirmDeleteAll();
+    } catch (error) {
+      toast.error("Failed to delete all products!");
+      closeConfirmDeleteAll();
+    }
   };
 
   const deleteProduct = async () => {
@@ -263,6 +284,16 @@ const ManageProduct = () => {
               </div>
               {t("manage_products")}
             </h2>
+            <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleDeleteAllClick}
+              className="bg-white dark:bg-gray-800 border-red-500/30 text-red-600 hover:bg-red-50 rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+            >
+              <Trash2 className="h-4 w-4 shrink-0" />
+              {t("delete_all", "Delete All")}
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -272,6 +303,7 @@ const ManageProduct = () => {
               <Download className="h-4 w-4 shrink-0" />
               {t("export_products", "Export Products")}
             </Button>
+            </div>
           </div>
         </div>
 
@@ -300,6 +332,14 @@ const ManageProduct = () => {
             <ConfirmDeleteModal
               onConfirm={deleteProduct}
               onCancel={closeConfirmDelete}
+            />
+          )}
+          {isConfirmDeleteAllOpen && (
+            <ConfirmDeleteModal
+              onConfirm={deleteAllProducts}
+              onCancel={closeConfirmDeleteAll}
+              title={t("delete_all_products", "Delete All Products?")}
+              description={t("delete_all_description", "Do you really want to delete all products? This action cannot be undone.")}
             />
           )}
           {isUpdateModalOpen && (

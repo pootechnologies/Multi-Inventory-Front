@@ -1782,7 +1782,7 @@ function ManageOrder() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6  md:left-auto bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-50"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -1853,8 +1853,8 @@ function ManageOrder() {
                 <button
                   onClick={() => handleSetIsTableView(false)}
                   className={`p-2 rounded-lg transition-all ${!isTableView
-                      ? "bg-white text-emerald-600 shadow-sm"
-                      : "text-muted-foreground hover:text-gray-900"
+                    ? "bg-white text-emerald-600 shadow-sm"
+                    : "text-muted-foreground hover:text-gray-900"
                     }`}
                   title="Card View"
                 >
@@ -1863,8 +1863,8 @@ function ManageOrder() {
                 <button
                   onClick={() => handleSetIsTableView(true)}
                   className={`p-2 rounded-lg transition-all ${isTableView
-                      ? "bg-white text-emerald-600 shadow-sm"
-                      : "text-muted-foreground hover:text-gray-900"
+                    ? "bg-white text-emerald-600 shadow-sm"
+                    : "text-muted-foreground hover:text-gray-900"
                     }`}
                   title="Table View"
                 >

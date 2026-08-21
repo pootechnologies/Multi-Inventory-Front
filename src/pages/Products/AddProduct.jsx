@@ -393,19 +393,37 @@ const AddProduct = () => {
 
     // Create worksheet from data
     const worksheet = XLSX.utils.json_to_sheet(importedData);
-    
+
     // Create workbook
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-    
+
     // Generate filename with timestamp
     const timestamp = new Date().toISOString().slice(0, 10);
     const filename = `products_import_${timestamp}.xlsx`;
-    
+
     // Download file
     XLSX.writeFile(workbook, filename);
-    
+
     toast.success("Excel file exported successfully!");
+  };
+
+  const downloadTemplate = () => {
+    // Create template with headers only
+    const headers = ['name', 'category', 'buying_price', 'selling_price', 'unit', 'stock', 'supplier'];
+    const templateData = [headers];
+
+    // Create worksheet from headers
+    const worksheet = XLSX.utils.aoa_to_sheet(templateData);
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+    // Download file
+    XLSX.writeFile(workbook, 'products_template.xlsx');
+
+    toast.success("Template downloaded successfully!");
   };
 
   return (
@@ -426,15 +444,26 @@ const AddProduct = () => {
               onChange={handleImportExcel}
               className="hidden"
             />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => document.getElementById('importExcel').click()}
-              className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
-            >
-              <Download className="h-4 w-4 shrink-0" />
-              {t("import_products", "Import Products")}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={downloadTemplate}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+              >
+                <Download className="h-4 w-4 shrink-0" />
+                Template
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('importExcel').click()}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4 shrink-0" />
+                {t("import_products", "Import Products")}
+              </Button>
+            </div>
           </div>
         </div>
 

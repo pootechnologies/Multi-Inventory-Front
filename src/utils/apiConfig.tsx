@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   TENANT_PAY: "chapa-initiate",
   TENANT_BUSINESS_CATEGORIES: "tenants/business-categories/",
   PRODUCTS: "/products",
+  DELETE_ALL_PRODUCTS: "/products/delete-all/",
   IMPORT_PRODUCTS: "/import/products/",
   EXPORT_PRODUCTS: "/export/products/",
   PRODUCT_LOG: "/product_log/",

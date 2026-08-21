@@ -201,11 +201,11 @@ const ManageProduct = () => {
       const response = await axiosInstance.get(API_ENDPOINTS.EXPORT_PRODUCTS, {
         responseType: 'blob',
       });
-      
+
       const blob = new Blob([response.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-      
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -215,7 +215,7 @@ const ManageProduct = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast.success("Products exported successfully!");
     } catch (error) {
       console.error("Error exporting products:", error);
@@ -248,7 +248,7 @@ const ManageProduct = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>

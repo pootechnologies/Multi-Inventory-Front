@@ -1316,6 +1316,24 @@ function ManageCredit() {
     setPage(1);
   };
 
+  // Debounce function
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  // Debounced page size change handler
+  const debouncedPageSizeChange = debounce((value) => {
+    handlePageSizeChange(value);
+  }, 500);
+
   const getCurrentUserEmail = () => {
     try {
       const userInfo = localStorage.getItem("user_info");
@@ -1757,7 +1775,7 @@ function ManageCredit() {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-6 left-6 md:left-auto md:right-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-50"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -2404,7 +2422,7 @@ function ManageCredit() {
                   }}
                   onInputChange={(inputValue) => {
                     if (inputValue && !isNaN(inputValue) && Number(inputValue) > 0) {
-                      handlePageSizeChange(Number(inputValue));
+                      debouncedPageSizeChange(Number(inputValue));
                     }
                   }}
                   options={[

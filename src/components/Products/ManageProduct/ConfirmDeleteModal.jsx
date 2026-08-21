@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, X, Trash2 } from "lucide-react";
 import { t } from "i18next";
 
-const ConfirmDeleteModal = ({ onConfirm, onCancel }) => {
+const ConfirmDeleteModal = ({ onConfirm, onCancel, title, description }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleConfirm = async () => {
@@ -37,10 +37,10 @@ const ConfirmDeleteModal = ({ onConfirm, onCancel }) => {
         </div>
 
         <h2 className="mb-3 font-bold text-2xl text-red-600">
-          {t("are_you_sure") || "Are you sure?"}
+          {title || t("are_you_sure") || "Are you sure?"}
         </h2>
         <p className="text-gray-500 mb-8 px-2 text-sm leading-relaxed">
-          {t("sure_discription") || "Do you really want to delete this product? This action cannot be undone."}
+          {description || t("sure_discription") || "Do you really want to delete this product? This action cannot be undone."}
         </p>
 
         <div className="flex justify-center space-x-3">

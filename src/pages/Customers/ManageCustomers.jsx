@@ -349,9 +349,8 @@ const ManageCustomer = () => {
                         required: true,
                         onChange: (e) => setIsEmpty(e.target.value.trim() === "")
                       })}
-                      className={`w-full pl-10 h-11 bg-white border ${
-                        errors.name || isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                      } rounded-xl transition-all outline-none text-sm font-medium`}
+                      className={`w-full pl-10 h-11 bg-white border ${errors.name || isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                        } rounded-xl transition-all outline-none text-sm font-medium`}
                     />
                   </div>
                   {(errors.name || isEmpty) && (
@@ -612,9 +611,8 @@ const ManageCustomer = () => {
                         required: true,
                         onChange: (e) => setIsEmpty(e.target.value.trim() === "")
                       })}
-                      className={`w-full pl-10 h-11 bg-white border ${
-                        errors.name || isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                      } rounded-xl transition-all outline-none text-sm font-medium`}
+                      className={`w-full pl-10 h-11 bg-white border ${errors.name || isEmpty ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                        } rounded-xl transition-all outline-none text-sm font-medium`}
                     />
                   </div>
                   {(errors.name || isEmpty) && (
@@ -761,7 +759,7 @@ const ManageCustomer = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>

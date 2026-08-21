@@ -541,7 +541,7 @@ const ManageSubscriptions = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -666,11 +666,10 @@ const ManageSubscriptions = () => {
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                            subscription.is_active
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${subscription.is_active
                               ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
                               : "bg-red-100 text-red-700 border border-red-200"
-                          }`}
+                            }`}
                         >
                           <Check className="h-3 w-3" />
                           {subscription.is_active ? "Active" : "Inactive"}
@@ -817,11 +816,10 @@ const ManageSubscriptions = () => {
                       Status
                     </p>
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        subscription.is_active
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${subscription.is_active
                           ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
                           : "bg-red-100 text-red-700 border border-red-200"
-                      }`}
+                        }`}
                     >
                       <Check className="h-3 w-3" />
                       {subscription.is_active ? "Active" : "Inactive"}

@@ -1,12 +1,8 @@
-import { useState, useEffect } from "react";
-import Select from "react-select";
-import { API_ENDPOINTS } from "@/utils/apiConfig";
+import { useState } from "react";
 import { getImageBaseURL } from "@/utils/urlHelper";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { X, Pencil, Upload, Tags, ZoomIn } from "lucide-react";
 import { t } from "i18next";
-import axiosInstance from "@/utils/axiosInstance";
 
 const UpdateModal = ({
   onClose,
@@ -21,8 +17,6 @@ const UpdateModal = ({
   isShop,
   showBundle,
 }) => {
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [newStock, setNewStock] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
@@ -56,20 +50,6 @@ const UpdateModal = ({
     return `${getImageBaseURL()}${imagePath}`;
   };
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axiosInstance.get(API_ENDPOINTS.CATEGORIES);
-        const sortedCategories = response.data.sort((a, b) => b.id - a.id);
-        setCategories(sortedCategories);
-      } catch (error) {
-        console.error("There was an error fetching the categories:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   const handleFormSubmit = async (data) => {
     const finalData = { ...data };
@@ -150,67 +130,15 @@ const UpdateModal = ({
                 )}
               </div>
 
-              {/* Category Select */}
+              {/* Category Input */}
               <div>
                 <label className={labelClass}>{t("category")}</label>
-                {isLoading ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <Spinner className="size-4" /> Loading categories...
-                  </div>
-                ) : (
-                  <Select
-                    options={categories.map((cat) => ({
-                      value: cat.id,
-                      label: cat.name,
-                    }))}
-                    isClearable
-                    placeholder={t("select_category")}
-                    className="w-full react-select-container"
-                    classNamePrefix="react-select"
-                    defaultValue={
-                      categories.find(
-                        (cat) =>
-                          String(cat.id) === String(selectedProduct.category),
-                      )
-                        ? {
-                            value: categories.find(
-                              (cat) =>
-                                String(cat.id) ===
-                                String(selectedProduct.category),
-                            ).id,
-                            label: categories.find(
-                              (cat) =>
-                                String(cat.id) ===
-                                String(selectedProduct.category),
-                            ).name,
-                          }
-                        : null
-                    }
-                    onChange={(option) => {
-                      if (setValue) {
-                        setValue("category", option ? option.value : "");
-                      }
-                    }}
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        height: "2.75rem",
-                        paddingLeft: "0.5rem",
-                        borderRadius: "0.75rem",
-                        borderColor: "hsl(var(--border))",
-                        backgroundColor: "hsl(var(--background))",
-                        "&:hover": {
-                          borderColor: "hsl(var(--primary))",
-                        },
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        borderRadius: "0.75rem",
-                        overflow: "hidden",
-                      }),
-                    }}
-                  />
-                )}
+                <input
+                  type="text"
+                  defaultValue={selectedProduct.category}
+                  {...register("category")}
+                  className={inputClass}
+                />
               </div>
 
               {/* Specification */}

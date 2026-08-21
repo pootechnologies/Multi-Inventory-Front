@@ -370,7 +370,7 @@ export const ExportPage = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -392,7 +392,7 @@ export const ExportPage = () => {
               <Filter className="w-4 h-4 text-emerald-600" />
               {t("filter_by_date")}
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
               <div className="space-y-1.5">
                 <Label htmlFor="start-date" className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t("start_date")}</Label>
@@ -468,9 +468,9 @@ export const ExportPage = () => {
 
             <div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button 
-                  onClick={clearFilters} 
-                  variant="outline" 
+                <Button
+                  onClick={clearFilters}
+                  variant="outline"
                   className="h-11 rounded-xl border-gray-200 text-gray-600 hover:bg-gray-50 font-medium px-4 w-full sm:w-auto"
                 >
                   {t("clear_filter")}
@@ -482,7 +482,7 @@ export const ExportPage = () => {
                 >
                   Apply Dates
                 </Button>
-                <Button 
+                <Button
                   className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 px-6 font-medium transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto"
                   onClick={handleExport}
                 >
@@ -555,13 +555,12 @@ export const ExportPage = () => {
                     <TableCell className="text-right font-medium text-gray-600 px-4">{formatCurrency(item.vat)}</TableCell>
                     <TableCell className="text-right font-bold text-gray-900 px-4">{formatCurrency(item.total_amount)}</TableCell>
                     <TableCell className="px-4">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
-                        item.payment_status === "Paid" 
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200/50" 
-                          : item.payment_status === "Pending" 
-                            ? "bg-amber-50 text-amber-700 border-amber-200/50" 
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${item.payment_status === "Paid"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200/50"
+                          : item.payment_status === "Pending"
+                            ? "bg-amber-50 text-amber-700 border-amber-200/50"
                             : "bg-red-50 text-red-700 border-red-200/50"
-                      }`}>
+                        }`}>
                         {item.payment_status || "-"}
                       </span>
                     </TableCell>

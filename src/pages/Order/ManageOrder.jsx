@@ -47,6 +47,7 @@ import OrderPaymentStatusModal from "./OrderPaymentStatusModal";
 import OrderDetailModal from "./OrderDetailModal";
 import DownloadConfirmationModal from "./DownloadConfirmationModal";
 import Select from "react-select";
+import Creatable from "react-select/creatable";
 import {
   MoreVertical,
   FileText,
@@ -432,7 +433,7 @@ const MyDoc = ({
   const hasReceipt = order?.receipt === "Receipt";
   const itemsPerFirstPage = hasReceipt ? 15 : 25;
   const itemsPerPage = 30;
-  
+
   console.log(companyData?.logo)
 
   const itemChunks = [];
@@ -1299,7 +1300,7 @@ function ManageOrder() {
     const saved = localStorage.getItem("orders_isTableView");
     return saved === "true";
   });
-  
+
   const handleSetIsTableView = (value) => {
     setIsTableView(value);
     localStorage.setItem("orders_isTableView", value);
@@ -1309,8 +1310,13 @@ function ManageOrder() {
     useState(false);
   const [orderToDownload, setOrderToDownload] = useState(null);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const PAGE_SIZE = 10; // Match your backend page size
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setPage(1);
+  };
 
   const getCurrentUserEmail = () => {
     try {
@@ -1337,11 +1343,11 @@ function ManageOrder() {
   };
 
   const { data: orders, isLoading: isLoadingOrders } = useQuery({
-    queryKey: ["orders", page, searchTerm],
+    queryKey: ["orders", page, searchTerm, pageSize],
     queryFn: async () => {
-      const url = `${API_ENDPOINTS.ORDERS}?page=${page}&page_size=${PAGE_SIZE}${searchTerm ? `&search="${searchTerm}"` : ""}`;
+      const url = `${API_ENDPOINTS.ORDERS}?page=${page}&page_size=${pageSize}${searchTerm ? `&search="${searchTerm}"` : ""}`;
       const response = await axiosInstance.get(url);
-      setTotalPages(Math.ceil(response.data.count / PAGE_SIZE));
+      setTotalPages(Math.ceil(response.data.count / pageSize));
       return response.data.results || response.data || [];
     },
     keepPreviousData: true,
@@ -1828,22 +1834,20 @@ function ManageOrder() {
               <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
                 <button
                   onClick={() => handleSetIsTableView(false)}
-                  className={`p-2 rounded-lg transition-all ${
-                    !isTableView 
-                      ? "bg-white text-emerald-600 shadow-sm" 
+                  className={`p-2 rounded-lg transition-all ${!isTableView
+                      ? "bg-white text-emerald-600 shadow-sm"
                       : "text-muted-foreground hover:text-gray-900"
-                  }`}
+                    }`}
                   title="Card View"
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleSetIsTableView(true)}
-                  className={`p-2 rounded-lg transition-all ${
-                    isTableView 
-                      ? "bg-white text-emerald-600 shadow-sm" 
+                  className={`p-2 rounded-lg transition-all ${isTableView
+                      ? "bg-white text-emerald-600 shadow-sm"
                       : "text-muted-foreground hover:text-gray-900"
-                  }`}
+                    }`}
                   title="Table View"
                 >
                   <List className="w-4 h-4" />
@@ -2393,7 +2397,54 @@ function ManageOrder() {
 
           {/* Pagination */}
           {totalPages > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-4 border-t border-muted">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-muted">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Show</span>
+                <Creatable
+                  value={{ value: pageSize, label: pageSize }}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handlePageSizeChange(Number(selectedOption.value));
+                    }
+                  }}
+                  onInputChange={(inputValue) => {
+                    if (inputValue && !isNaN(inputValue) && Number(inputValue) > 0) {
+                      handlePageSizeChange(Number(inputValue));
+                    }
+                  }}
+                  options={[
+                    { value: 10, label: "10" },
+                    { value: 50, label: "50" },
+                    { value: 100, label: "100" },
+                  ]}
+                  isValidNewOption={(inputValue) => inputValue && !isNaN(inputValue) && Number(inputValue) > 0}
+                  formatCreateLabel={(inputValue) => inputValue}
+                  className="w-24 react-select-container"
+                  classNamePrefix="react-select"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: "2.25rem",
+                      fontSize: "0.875rem",
+                      borderColor: "hsl(var(--border))",
+                      backgroundColor: "hsl(var(--background))",
+                      "&:hover": { borderColor: "hsl(var(--primary))" },
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      borderRadius: "0.75rem",
+                      overflow: "hidden",
+                      zIndex: 9999,
+                    }),
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999,
+                    }),
+                  }}
+                />
+                <span className="text-sm text-gray-600">per page</span>
+              </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"

@@ -15,13 +15,13 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
+import Select from "react-select";
+import Creatable from "react-select/creatable";
 import {
   MoreVertical,
   Eye,
   Pencil,
   Trash2,
-  ChevronDown,
-  ChevronUp,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -31,7 +31,6 @@ import {
   LayoutGrid,
   List,
 } from "lucide-react";
-import Select from "react-select";
 import {
   Table,
   TableHeader,
@@ -55,11 +54,14 @@ const ProductTable = ({
   totalCount,
   currentPage,
   onPageChange,
+  isSimplifiedView,
+  onToggleView,
+  pageSize,
+  onPageSizeChange,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [companyData, setCompanyData] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
-  const [expandedCards, setExpandedCards] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isTableView, setIsTableView] = useState(() => {
@@ -109,7 +111,7 @@ const ProductTable = ({
 
   const filteredProducts = sortedProducts.filter((product) => {
     const matchesCategory = selectedCategory
-      ? (product.category === selectedCategory || product.category_name === selectedCategory)
+      ? product.category === selectedCategory
       : true;
     const matchesSearchTerm = searchTerm
       ? product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -325,6 +327,13 @@ const ProductTable = ({
             </div>
           </div>
           <div className="w-full sm:max-w-xs flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={onToggleView}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white flex-none rounded-xl"
+            >
+              {isSimplifiedView ? t("detailed") : t("simplified")}
+            </Button>
             <div className="flex-1">
               <Select
                 options={categoryOptions}
@@ -415,15 +424,42 @@ const ProductTable = ({
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 {t("category_name")}
               </TableHead>
-              {(isElectronics || isShop) && (
-                <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                  {t("specification")}
-                </TableHead>
-              )}
-              {isElectronics && (
-                <TableHead className="font-bold text-gray-900 whitespace-nowrap">
-                  {t("is_bundle")}
-                </TableHead>
+              {!isSimplifiedView && (
+                <>
+                  {(isElectronics || isShop) && (
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      {t("specification")}
+                    </TableHead>
+                  )}
+                  {isElectronics && (
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      {t("is_bundle")}
+                    </TableHead>
+                  )}
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("description")}
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("supplier")}
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("unit")}
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("piece")}
+                  </TableHead>
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("package")}
+                  </TableHead>
+                  {showReceiptOption && (
+                    <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                      Receipt No
+                    </TableHead>
+                  )}
+                  <TableHead className="font-bold text-gray-900 whitespace-nowrap">
+                    {t("created_by")}
+                  </TableHead>
+                </>
               )}
               <TableHead className="font-bold text-gray-900 whitespace-nowrap">
                 {t("buying_price")}
@@ -469,25 +505,52 @@ const ProductTable = ({
                       {product.name}
                     </TableCell>
                     <TableCell className="text-gray-600 text-sm font-medium">
-                      {product.category_name || "N/A"}
+                      {product.category || "N/A"}
                     </TableCell>
-                    {(isElectronics || isShop) && (
-                      <TableCell className="text-gray-600 text-sm font-medium">
-                        {product.specification || "N/A"}
-                      </TableCell>
-                    )}
-                    {isElectronics && (
-                      <TableCell className="text-gray-600 text-sm font-medium">
-                        {product.is_bundle ? (
-                          <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
-                            Yes
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                            No
-                          </span>
+                    {!isSimplifiedView && (
+                      <>
+                        {(isElectronics || isShop) && (
+                          <TableCell className="text-gray-600 text-sm font-medium">
+                            {product.specification || "N/A"}
+                          </TableCell>
                         )}
-                      </TableCell>
+                        {isElectronics && (
+                          <TableCell className="text-gray-600 text-sm font-medium">
+                            {product.is_bundle ? (
+                              <span className="inline-flex items-center px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                                Yes
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                                No
+                              </span>
+                            )}
+                          </TableCell>
+                        )}
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.description || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.supplier_name || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.unit || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.piece || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.package || "N/A"}
+                        </TableCell>
+                        {showReceiptOption && (
+                          <TableCell className="text-gray-600 text-sm font-medium">
+                            {product.receipt_no || "N/A"}
+                          </TableCell>
+                        )}
+                        <TableCell className="text-gray-600 text-sm font-medium">
+                          {product.user || "N/A"}
+                        </TableCell>
+                      </>
                     )}
                     <TableCell className="text-gray-600 text-sm font-medium">
                       {formatCurrency(product.buying_price)} ETB
@@ -516,26 +579,6 @@ const ProductTable = ({
                           className="w-40 rounded-xl shadow-lg border-gray-100 p-1"
                         >
                           <DropdownMenuItem
-                            onClick={() =>
-                              setExpandedCards((prev) => {
-                                const isCurrentlyExpanded = prev[product.id];
-                                return isCurrentlyExpanded
-                                  ? {}
-                                  : { [product.id]: true };
-                              })
-                            }
-                            className="cursor-pointer gap-2 py-2 rounded-lg text-blue-600 font-medium hover:text-blue-700 hover:bg-blue-50"
-                          >
-                            {expandedCards[product.id] ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
-                            {expandedCards[product.id]
-                              ? t("hide_details") || "Hide Details"
-                              : t("show_details") || "Show Details"}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
                             onClick={() => onViewClick(product)}
                             className="cursor-pointer gap-2 py-2 rounded-lg text-gray-600 font-medium hover:text-gray-900 hover:bg-gray-50"
                           >
@@ -557,97 +600,11 @@ const ProductTable = ({
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                  {expandedCards[product.id] && (
-                    <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-                      <TableCell colSpan={isElectronics ? 9 : 7} className="p-0 border-b">
-                        <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-gray-50/50">
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("description")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.description || "N/A"}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("supplier")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.supplier_name || "N/A"}
-                            </p>
-                          </div>
-                          {(isElectronics || isShop) && (
-                            <div>
-                              <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                                {t("specification")}
-                              </p>
-                              <p className="font-medium text-gray-900">
-                                {product.specification || "N/A"}
-                              </p>
-                            </div>
-                          )}
-                          {isElectronics && (
-                            <div>
-                              <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                                {t("is_bundle")}
-                              </p>
-                              <p className="font-medium text-gray-900">
-                                {product.is_bundle ? "Yes" : "No"}
-                              </p>
-                            </div>
-                          )}
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("unit")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.unit}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("piece")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.piece || "N/A"}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("package")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.package || "N/A"}
-                            </p>
-                          </div>
-                          {showReceiptOption && (
-                            <div>
-                              <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                                Receipt No
-                              </p>
-                              <p className="font-medium text-gray-900">
-                                {product.receipt_no || "N/A"}
-                              </p>
-                            </div>
-                          )}
-                          <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                              {t("created_by")}
-                            </p>
-                            <p className="font-medium text-gray-900">
-                              {product.user}
-                            </p>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </React.Fragment>
               ))
             ) : isLoadingProducts ? (
               <TableRow>
-                <TableCell colSpan={isElectronics ? 9 : 7} className="h-32 text-center">
+                <TableCell colSpan={isSimplifiedView ? (isElectronics ? 7 : 6) : (isElectronics ? 15 : 14)} className="h-32 text-center">
                   <div className="flex justify-center items-center gap-3 text-emerald-600">
                     <Spinner className="size-6" />
                     <span className="text-sm font-medium text-gray-400">
@@ -659,7 +616,7 @@ const ProductTable = ({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={isElectronics ? 9 : 7}
+                  colSpan={isSimplifiedView ? (isElectronics ? 7 : 6) : (isElectronics ? 15 : 14)}
                   className="h-24 text-center text-gray-500 font-medium"
                 >
                   No products found.
@@ -772,119 +729,6 @@ const ProductTable = ({
                   </span>
                 </div>
               </div>
-
-              <button
-                onClick={() =>
-                  setExpandedCards((prev) => {
-                    const isCurrentlyExpanded = prev[product.id];
-                    return isCurrentlyExpanded ? {} : { [product.id]: true };
-                  })
-                }
-                className="w-full pt-3 border-t flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                {expandedCards[product.id] ? (
-                  <>
-                    <span>{t("hide_details") || "Hide Details"}</span>
-                    <ChevronUp className="h-4 w-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>{t("show_details") || "Show Details"}</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </>
-                )}
-              </button>
-
-              {expandedCards[product.id] && (
-                <div className="mt-1 pt-3 border-t space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("category_name")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.category_name || "N/A"}
-                    </span>
-                  </div>
-                  {(isElectronics || isShop) && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                        {t("specification")}
-                      </span>
-                      <span className="font-medium text-gray-900">
-                        {product.specification || "N/A"}
-                      </span>
-                    </div>
-                  )}
-                  {isElectronics && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                        {t("is_bundle")}
-                      </span>
-                      <span className="font-medium text-gray-900">
-                        {product.is_bundle ? "Yes" : "No"}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("description")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.description || "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("supplier")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.supplier_name || "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("unit")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.unit}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("piece")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.piece || "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("package")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.package || "N/A"}
-                    </span>
-                  </div>
-                  {showReceiptOption && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                        Receipt No
-                      </span>
-                      <span className="font-medium text-gray-900">
-                        {product.receipt_no || "N/A"}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      {t("created_by")}
-                    </span>
-                    <span className="font-medium text-gray-900">
-                      {product.user}
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
           ))
         ) : isLoadingProducts ? (
@@ -903,7 +747,54 @@ const ProductTable = ({
 
       {/* Pagination */}
       {totalPages > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-4 border-t border-muted">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-muted">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Show</span>
+            <Creatable
+              value={{ value: pageSize, label: pageSize }}
+              onChange={(selectedOption) => {
+                if (selectedOption) {
+                  onPageSizeChange(Number(selectedOption.value));
+                }
+              }}
+              onInputChange={(inputValue) => {
+                if (inputValue && !isNaN(inputValue) && Number(inputValue) > 0) {
+                  onPageSizeChange(Number(inputValue));
+                }
+              }}
+              options={[
+                { value: 10, label: "10" },
+                { value: 50, label: "50" },
+                { value: 100, label: "100" },
+              ]}
+              isValidNewOption={(inputValue) => inputValue && !isNaN(inputValue) && Number(inputValue) > 0}
+              formatCreateLabel={(inputValue) => inputValue}
+              className="w-24 react-select-container"
+              classNamePrefix="react-select"
+              menuPortalTarget={document.body}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  minHeight: "2.25rem",
+                  fontSize: "0.875rem",
+                  borderColor: "hsl(var(--border))",
+                  backgroundColor: "hsl(var(--background))",
+                  "&:hover": { borderColor: "hsl(var(--primary))" },
+                }),
+                menu: (base) => ({
+                  ...base,
+                  borderRadius: "0.75rem",
+                  overflow: "hidden",
+                  zIndex: 9999,
+                }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
+              }}
+            />
+            <span className="text-sm text-gray-600">per page</span>
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"

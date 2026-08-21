@@ -255,7 +255,7 @@ const ManageSupplier = () => {
                 </p>
                 <p className="font-semibold text-gray-900">{supplier.contact_info || "N/A"}</p>
               </div>
-              
+
               <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-2 mb-1">
                   <FileText className="w-3 h-3" /> {t("supplier_tin")}
@@ -389,9 +389,8 @@ const ManageSupplier = () => {
                     type="text"
                     name="name"
                     {...register("name")}
-                    className={`w-full pl-10 h-11 bg-white border ${
-                      errors.name ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                    } rounded-xl transition-all outline-none text-sm font-medium`}
+                    className={`w-full pl-10 h-11 bg-white border ${errors.name ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
                 {errors.name && (
@@ -400,7 +399,7 @@ const ManageSupplier = () => {
                   </p>
                 )}
               </div>
-              
+
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2 block">
                   {t("contact_info")}
@@ -411,9 +410,8 @@ const ManageSupplier = () => {
                     type="text"
                     name="contact_info"
                     {...register("contact_info")}
-                    className={`w-full pl-10 h-11 bg-white border ${
-                      errors.contact_info ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                    } rounded-xl transition-all outline-none text-sm font-medium`}
+                    className={`w-full pl-10 h-11 bg-white border ${errors.contact_info ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
                 {errors.contact_info && (
@@ -422,7 +420,7 @@ const ManageSupplier = () => {
                   </p>
                 )}
               </div>
-              
+
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2 block">
                   {t("tin_number")}
@@ -433,9 +431,8 @@ const ManageSupplier = () => {
                     type="text"
                     name="tin_number"
                     {...register("tin_number")}
-                    className={`w-full pl-10 h-11 bg-white border ${
-                      errors.tin_number ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
-                    } rounded-xl transition-all outline-none text-sm font-medium`}
+                    className={`w-full pl-10 h-11 bg-white border ${errors.tin_number ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 focus:border-emerald-500/50 focus:ring-emerald-500/20"
+                      } rounded-xl transition-all outline-none text-sm font-medium`}
                   />
                 </div>
                 {errors.tin_number && (
@@ -476,7 +473,7 @@ const ManageSupplier = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 left-6 bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6" />
         </button>
@@ -662,7 +659,7 @@ const ManageSupplier = () => {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  
+
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">
                       {t("created_by")}
@@ -694,7 +691,7 @@ const ManageSupplier = () => {
                       </>
                     )}
                   </button>
-                  
+
                   {expandedCards[supplier.id] && (
                     <div className="pt-4 border-t border-gray-100 space-y-4">
                       <div>
@@ -754,11 +751,10 @@ const ManageSupplier = () => {
                           key={pageNum}
                           variant={currentPage === pageNum ? "default" : "ghost"}
                           size="icon"
-                          className={`h-10 w-10 rounded-xl font-bold transition-all ${
-                            currentPage === pageNum 
-                              ? " text-white shadow-md shadow-emerald-600/20" 
+                          className={`h-10 w-10 rounded-xl font-bold transition-all ${currentPage === pageNum
+                              ? " text-white shadow-md shadow-emerald-600/20"
                               : "text-gray-500 hover:bg-gray-100"
-                          }`}
+                            }`}
                           onClick={() => setCurrentPage(pageNum)}
                         >
                           {pageNum}

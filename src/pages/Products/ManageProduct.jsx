@@ -16,6 +16,7 @@ import { usePlan } from "@/contexts/PlanProvider";
 const ManageProduct = () => {
   const { planData } = usePlan();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -24,8 +25,18 @@ const ManageProduct = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSimplifiedView, setIsSimplifiedView] = useState(true);
   const { register, handleSubmit, setValue } = useForm();
   const queryClient = useQueryClient();
+
+  const toggleView = () => {
+    setIsSimplifiedView(!isSimplifiedView);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setPage(1);
+  };
 
   // Check if user has Basic plan
   const isBasicPlan = planData?.planName?.toLowerCase() === "basic" ||
@@ -36,9 +47,9 @@ const ManageProduct = () => {
   const showBundle = !isBasicPlan;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["products", page, searchTerm],
+    queryKey: ["products", page, searchTerm, pageSize],
     queryFn: async () => {
-      let url = `${API_ENDPOINTS.PRODUCTS}?page=${page}`;
+      let url = `${API_ENDPOINTS.PRODUCTS}?page=${page}&page_size=${pageSize}`;
       if (searchTerm) {
         url += `&search=${searchTerm}`;
       }
@@ -149,8 +160,7 @@ const ManageProduct = () => {
     if (data.package !== selectedProduct.package) {
       formData.append("package", data.package);
     }
-    // Only append category if it is not empty
-    if (data.category) {
+    if (data.category !== selectedProduct.category) {
       formData.append("category", data.category);
     }
     if (selectedFile) {
@@ -280,6 +290,10 @@ const ManageProduct = () => {
             totalCount={totalCount}
             currentPage={page}
             onPageChange={setPage}
+            isSimplifiedView={isSimplifiedView}
+            onToggleView={toggleView}
+            pageSize={pageSize}
+            onPageSizeChange={handlePageSizeChange}
           />
           {isModalOpen && <Modal product={selectedProduct} onClose={closeModal} isShop={isShop} />}
           {isConfirmDeleteOpen && (

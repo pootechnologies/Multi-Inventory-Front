@@ -74,6 +74,24 @@ const ProductTable = ({
     localStorage.setItem("products_isTableView", value);
   };
 
+  // Debounce function
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  // Debounced page size change handler
+  const debouncedPageSizeChange = debounce((value) => {
+    onPageSizeChange(value);
+  }, 500);
+
   const getCurrentUserEmail = () => {
     try {
       const userInfo = localStorage.getItem("user_info");
@@ -759,7 +777,7 @@ const ProductTable = ({
               }}
               onInputChange={(inputValue) => {
                 if (inputValue && !isNaN(inputValue) && Number(inputValue) > 0) {
-                  onPageSizeChange(Number(inputValue));
+                  debouncedPageSizeChange(Number(inputValue));
                 }
               }}
               options={[

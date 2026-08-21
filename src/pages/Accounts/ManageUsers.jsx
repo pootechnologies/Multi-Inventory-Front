@@ -325,10 +325,9 @@ const ManageUsers = () => {
                   unstyled
                   classNames={{
                     control: ({ isFocused }) =>
-                      `flex rounded-xl border px-4 py-2 text-sm transition-all bg-white dark:bg-slate-800 ${
-                        isFocused
-                          ? "border-blue-500 ring-2 ring-blue-500/20"
-                          : "border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500"
+                      `flex rounded-xl border px-4 py-2 text-sm transition-all bg-white dark:bg-slate-800 ${isFocused
+                        ? "border-blue-500 ring-2 ring-blue-500/20"
+                        : "border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500"
                       }`,
                     valueContainer: () => "gap-1 text-slate-900 dark:text-slate-100",
                     singleValue: () => "text-slate-900 dark:text-slate-100",
@@ -338,10 +337,9 @@ const ManageUsers = () => {
                       "mt-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg overflow-hidden z-50",
                     menuList: () => "p-1",
                     option: ({ isFocused, isSelected }) =>
-                      `px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
-                        isSelected
-                          ? "bg-blue-500 text-white"
-                          : isFocused
+                      `px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${isSelected
+                        ? "bg-blue-500 text-white"
+                        : isFocused
                           ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                           : "text-slate-700 dark:text-slate-300"
                       }`,
@@ -426,10 +424,9 @@ const ManageUsers = () => {
                   unstyled
                   classNames={{
                     control: ({ isFocused }) =>
-                      `flex rounded-xl border px-4 py-2 text-sm transition-all bg-white dark:bg-slate-800 ${
-                        isFocused
-                          ? "border-blue-500 ring-2 ring-blue-500/20"
-                          : "border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500"
+                      `flex rounded-xl border px-4 py-2 text-sm transition-all bg-white dark:bg-slate-800 ${isFocused
+                        ? "border-blue-500 ring-2 ring-blue-500/20"
+                        : "border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500"
                       }`,
                     valueContainer: () => "gap-1 text-slate-900 dark:text-slate-100",
                     singleValue: () => "text-slate-900 dark:text-slate-100",
@@ -439,10 +436,9 @@ const ManageUsers = () => {
                       "mt-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg overflow-hidden z-50",
                     menuList: () => "p-1",
                     option: ({ isFocused, isSelected }) =>
-                      `px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
-                        isSelected
-                          ? "bg-blue-500 text-white"
-                          : isFocused
+                      `px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${isSelected
+                        ? "bg-blue-500 text-white"
+                        : isFocused
                           ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
                           : "text-slate-700 dark:text-slate-300"
                       }`,
@@ -711,7 +707,7 @@ const ManageUsers = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-24 left-6 h-12 w-12 rounded-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 border border-white/20 dark:border-black/20"
+          className="fixed bottom-[100px] md:bottom-[80px] left-[30px] md:left-[255px] bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-all z-20"
         >
           <ChevronUp className="h-6 w-6 group-hover:scale-125 transition-transform" />
         </button>

@@ -1003,7 +1003,6 @@ const AddCredit = () => {
                   variant_spec: variant.specification,
                   variant_desc: variant.description,
                 });
-                console.log('Credit - Variant added to acc:', {
                   id: variant.id,
                   specification: variant.specification,
                   image: variant.image,
@@ -1012,8 +1011,6 @@ const AddCredit = () => {
               }
               return acc;
             }, []);
-            console.log('Credit - Unique variants for product', product.name, ':', uniqueVariants);
-
             return {
               ...product,
               variants: uniqueVariants,
@@ -2235,15 +2232,6 @@ const ProductVariantsDisplay = ({
 
   if (!product || !product.variants || product.variants.length === 0)
     return null;
-
-  // Debug: Check if variants have images
-  console.log('AddCredit ProductVariantsDisplay - Product:', product.name);
-  console.log('AddCredit ProductVariantsDisplay - Variants:', product.variants.map(v => ({
-    id: v.id,
-    specification: v.specification,
-    hasImage: !!v.image,
-    imagePath: v.image
-  })));
 
   // Check if any variant has a specification
   const hasSpecifications = product.variants.some(v => v.specification);

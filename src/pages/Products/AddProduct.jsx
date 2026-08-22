@@ -46,12 +46,12 @@ const AddProduct = () => {
   const [editingCell, setEditingCell] = useState(null); // { rowIndex, field }
   const [isConfirmImportOpen, setIsConfirmImportOpen] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  
+
   // Check if user has Basic plan
-  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 
-                      planData?.status === "basic" || 
-                      planData?.status === "no_payment";
-  
+  const isBasicPlan = planData?.planName?.toLowerCase() === "basic" ||
+    planData?.status === "basic" ||
+    planData?.status === "no_payment";
+
   // Show Is Bundle for Pro, Premium, and Tokiyo plans (not Basic)
   const showBundle = !isBasicPlan;
 
@@ -81,10 +81,10 @@ const AddProduct = () => {
       try {
         const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS}?include_all=True`);
         const productsList = response.data.all_results || response.data.results || response.data || [];
-        
+
         // Extract unique category names
         const uniqueCategories = [...new Set(productsList.map(product => product.category).filter(Boolean))];
-        
+
         setCategories(
           uniqueCategories.map(categoryName => ({
             value: categoryName,
@@ -194,22 +194,10 @@ const AddProduct = () => {
     if (selectedImage) formData.append("image", selectedImage);
 
     try {
-      console.log("Submitting product data:", {
-        name: data.name,
-        category: selectedCategory?.value,
-        selling_price: data.selling_price,
-        stock: data.stock,
-        hasImage: !!selectedImage,
-        imageSize: selectedImage?.size,
-        imageType: selectedImage?.type,
-      });
-
       const response = await axiosInstance.post(API_ENDPOINTS.PRODUCTS, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      
-      console.log("Product added successfully:", response.data);
-      
+
       // Reset form and state
       reset();
       setSelectedCategory(null);
@@ -217,7 +205,7 @@ const AddProduct = () => {
       setIsBundle(false);
       setSelectedImage(null);
       setImagePreview(null);
-      
+
       toast.success("Product added successfully!");
     } catch (error) {
       console.error("There was an error adding the product:", error);
@@ -225,7 +213,7 @@ const AddProduct = () => {
       console.error("Error data:", error.response?.data);
       console.error("Error status:", error.response?.status);
       console.error("Error headers:", error.response?.headers);
-      
+
       // Detailed error logging
       if (error.response?.data) {
         console.error("Backend error details:", error.response.data);
@@ -233,14 +221,14 @@ const AddProduct = () => {
           console.error("Error string:", error.response.data);
         }
       }
-      
+
       // Show specific error message if available
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data?.message || 
-                          error.response?.data?.detail ||
-                          error.message ||
-                          "Failed to add product";
-      
+      const errorMessage = error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        error.message ||
+        "Failed to add product";
+
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -291,7 +279,7 @@ const AddProduct = () => {
       setIsImportModalOpen(false);
       setImportedData([]);
       setEditingCell(null);
-      
+
       // Small delay to ensure state updates are processed
       setTimeout(() => {
         const reader = new FileReader();
@@ -301,10 +289,10 @@ const AddProduct = () => {
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          
+
           // Get headers from first row
           const headers = jsonData[0];
-          
+
           // Convert to array of objects using headers
           const products = jsonData.slice(1).map(row => {
             const product = {};
@@ -313,15 +301,13 @@ const AddProduct = () => {
             });
             return product;
           });
-          
-          console.log('Imported Excel Data:', products);
           setImportedData(products);
           setIsImportModalOpen(true);
         };
         reader.readAsArrayBuffer(file);
       }, 100);
     }
-    
+
     // Reset file input value to allow selecting the same file again
     e.target.value = '';
   };
@@ -357,23 +343,23 @@ const AddProduct = () => {
       const worksheet = XLSX.utils.json_to_sheet(importedData);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
-      
+
       // Generate Excel file as blob
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      
+
       // Create FormData and append the file
       const formData = new FormData();
       formData.append('file', blob, 'products_import.xlsx');
-      
+
       const response = await axiosInstance.post(API_ENDPOINTS.IMPORT_PRODUCTS, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      
+
       toast.success(`${importedData.length} products imported successfully!`);
       closeImportModal();
       closeConfirmImport();
-      
+
       // Optionally refresh categories or other data if needed
     } catch (error) {
       console.error("There was an error importing the products:", error);
@@ -555,32 +541,31 @@ const AddProduct = () => {
 
             {/* Specification */}
             {(() => {
-              console.log("Specification field check - isElectronics:", isElectronics, "isShop:", isShop);
               return isElectronics || isShop;
             })() && (
-              <div className="space-y-2 md:col-span-2">
-                <label
-                  htmlFor="specification"
-                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
-                >
-                  {t("specification")}
-                </label>
-                <div className="relative group">
-                  <AlignLeft className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
-                  <Input
-                    type="text"
-                    id="specification"
-                    className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.specification ? "border-red-500" : ""}`}
-                    {...register("specification")}
-                  />
+                <div className="space-y-2 md:col-span-2">
+                  <label
+                    htmlFor="specification"
+                    className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1 block"
+                  >
+                    {t("specification")}
+                  </label>
+                  <div className="relative group">
+                    <AlignLeft className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-600 transition-colors" />
+                    <Input
+                      type="text"
+                      id="specification"
+                      className={`pl-10 h-11 bg-muted/20 border-muted-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl transition-all ${errors.specification ? "border-red-500" : ""}`}
+                      {...register("specification")}
+                    />
+                  </div>
+                  {errors.specification && (
+                    <p className="text-red-500 text-xs mt-1 ml-1">
+                      {errors.specification.message}
+                    </p>
+                  )}
                 </div>
-                {errors.specification && (
-                  <p className="text-red-500 text-xs mt-1 ml-1">
-                    {errors.specification.message}
-                  </p>
-                )}
-              </div>
-            )}
+              )}
 
             {/* Buying Price */}
             <div className="space-y-2">
@@ -889,11 +874,10 @@ const AddProduct = () => {
                 />
                 <div
                   onClick={() => document.getElementById('image').click()}
-                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-                    imagePreview
-                      ? 'border-emerald-500 bg-emerald-50'
-                      : 'border-muted-foreground/30 bg-muted/20 hover:border-emerald-500/50 hover:bg-emerald-50/50'
-                  }`}
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${imagePreview
+                    ? 'border-emerald-500 bg-emerald-50'
+                    : 'border-muted-foreground/30 bg-muted/20 hover:border-emerald-500/50 hover:bg-emerald-50/50'
+                    }`}
                 >
                   {imagePreview ? (
                     <div className="relative">
@@ -956,7 +940,7 @@ const AddProduct = () => {
         onClose={closeSupplierModal}
         onSupplierAdded={handleSupplierAdded}
       />
-      
+
       {/* Import Preview Modal */}
       {isImportModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 h-screen w-screen">
@@ -1174,7 +1158,7 @@ const AddProduct = () => {
           </div>
         </div>
       )}
-      
+
       {/* Confirm Import Modal */}
       {isConfirmImportOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[10000] p-4 h-screen w-screen" onClick={() => !isImporting && closeConfirmImport()}>

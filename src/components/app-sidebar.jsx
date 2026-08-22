@@ -321,7 +321,6 @@ const data = {
 
 export function AppSidebar({ ...props }) {
   const { planData } = usePlan();
-  console.log(planData)
   
   // Check if user has Basic plan
   const isBasicPlan = planData?.planName?.toLowerCase() === "basic" || 

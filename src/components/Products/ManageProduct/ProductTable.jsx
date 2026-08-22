@@ -60,6 +60,7 @@ const ProductTable = ({
   onPageSizeChange,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [totalProducts, setTotalProducts] = useState(0);
   const [companyData, setCompanyData] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -190,6 +191,27 @@ const ProductTable = ({
       }
     };
     fetchCompanyData();
+  }, []);
+
+
+  // Fetch total product
+  useEffect(() => {
+    const fetcthTotalProductCount = async () => {
+      try {
+        const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS_COUNT}`);
+        if (response.data) {
+          setTotalProducts(response?.data?.total_products);
+          // localstorage for storage how many products we have
+          localStorage.setItem("total_products", response?.data?.total_products);
+        } else {
+          setError("Invalid data format received for total products");
+        }
+        setLoading(false);
+      } catch (err) {
+        handleError(err, "Failed to fetch total revenue data");
+      }
+    };
+    fetcthTotalProductCount();
   }, []);
 
   const exportToExcel = async () => {
@@ -355,56 +377,54 @@ const ProductTable = ({
             <div className="flex-1">
               <Select
                 options={categoryOptions}
-              isClearable
-              placeholder={t("all_category") || "Select category..."}
-              className="w-full react-select-container"
-              classNamePrefix="react-select"
-              onChange={handleCategoryChange}
-              value={
-                selectedCategory
-                  ? { value: selectedCategory, label: selectedCategory }
-                  : null
-              }
-              styles={{
-                control: (base) => ({
-                  ...base,
-                  height: "2.75rem",
-                  paddingLeft: "0.5rem",
-                  borderRadius: "0.75rem",
-                  borderColor: "hsl(var(--border))",
-                  backgroundColor: "hsl(var(--background))",
-                  "&:hover": {
-                    borderColor: "hsl(var(--primary))",
-                  },
-                }),
-                menu: (base) => ({
-                  ...base,
-                  borderRadius: "0.75rem",
-                  overflow: "hidden",
-                }),
-              }}
-            />
+                isClearable
+                placeholder={t("all_category") || "Select category..."}
+                className="w-full react-select-container"
+                classNamePrefix="react-select"
+                onChange={handleCategoryChange}
+                value={
+                  selectedCategory
+                    ? { value: selectedCategory, label: selectedCategory }
+                    : null
+                }
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    height: "2.75rem",
+                    paddingLeft: "0.5rem",
+                    borderRadius: "0.75rem",
+                    borderColor: "hsl(var(--border))",
+                    backgroundColor: "hsl(var(--background))",
+                    "&:hover": {
+                      borderColor: "hsl(var(--primary))",
+                    },
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    borderRadius: "0.75rem",
+                    overflow: "hidden",
+                  }),
+                }}
+              />
             </div>
-            
+
             <div className="md:hidden flex items-center bg-muted/50 p-1 rounded-xl shrink-0">
               <button
                 onClick={() => handleSetIsTableView(false)}
-                className={`p-2 rounded-lg transition-all ${
-                  !isTableView 
-                    ? "bg-white text-emerald-600 shadow-sm" 
-                    : "text-muted-foreground hover:text-gray-900"
-                }`}
+                className={`p-2 rounded-lg transition-all ${!isTableView
+                  ? "bg-white text-emerald-600 shadow-sm"
+                  : "text-muted-foreground hover:text-gray-900"
+                  }`}
                 title="Card View"
               >
                 <LayoutGrid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleSetIsTableView(true)}
-                className={`p-2 rounded-lg transition-all ${
-                  isTableView 
-                    ? "bg-white text-emerald-600 shadow-sm" 
-                    : "text-muted-foreground hover:text-gray-900"
-                }`}
+                className={`p-2 rounded-lg transition-all ${isTableView
+                  ? "bg-white text-emerald-600 shadow-sm"
+                  : "text-muted-foreground hover:text-gray-900"
+                  }`}
                 title="Table View"
               >
                 <List className="w-4 h-4" />
@@ -412,8 +432,14 @@ const ProductTable = ({
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-sm font-medium text-gray-500 hidden sm:block whitespace-nowrap">
+        <div className="flex flex-col  gap-4">
+          <div className="text-sm font-medium text-gray-500  sm:block whitespace-nowrap">
+            {t("total_products")}:{" "}
+            <span className="text-gray-900 font-bold ml-1">
+              {totalProducts}
+            </span>
+          </div>
+          <div className="text-sm font-medium text-gray-500  sm:block whitespace-nowrap">
             {t("total_amount")}:{" "}
             <span className="text-gray-900 font-bold ml-1">
               {formatCurrency(totalAmount)}
@@ -862,7 +888,7 @@ const ProductTable = ({
           </div>
         </div>
       )}
-      
+
       {/* Image Modal */}
       {isImageModalOpen && (
         <ImageModal

@@ -264,6 +264,8 @@ const ManageProduct = () => {
     };
   }, []);
 
+  const allProductsCount = localStorage.getItem("total_products");
+
   return (
     <div className="flex-1  p-4 md:p-8 max-w-7xl mx-auto w-full">
       {isVisible && (
@@ -285,24 +287,26 @@ const ManageProduct = () => {
               {t("manage_products")}
             </h2>
             <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleDeleteAllClick}
-              className="bg-white dark:bg-gray-800 border-red-500/30 text-red-600 hover:bg-red-50 rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
-            >
-              <Trash2 className="h-4 w-4 shrink-0" />
-              {t("delete_all", "Delete All")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleExportProducts}
-              className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
-            >
-              <Download className="h-4 w-4 shrink-0" />
-              {t("export_products", "Export Products")}
-            </Button>
+              {allProductsCount > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleDeleteAllClick}
+                  className="bg-white dark:bg-gray-800 border-red-500/30 text-red-600 hover:bg-red-50 rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+                >
+                  <Trash2 className="h-4 w-4 shrink-0" />
+                  {t("delete_all", "Delete All")}
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleExportProducts}
+                className="bg-white dark:bg-gray-800 border-muted-foreground/20 hover:bg-muted text-gray-900 dark:text-white rounded-xl px-6 font-medium transition-colors whitespace-nowrap flex items-center gap-2"
+              >
+                <Download className="h-4 w-4 shrink-0" />
+                {t("export_products", "Export Products")}
+              </Button>
             </div>
           </div>
         </div>
@@ -334,6 +338,7 @@ const ManageProduct = () => {
               onCancel={closeConfirmDelete}
             />
           )}
+
           {isConfirmDeleteAllOpen && (
             <ConfirmDeleteModal
               onConfirm={deleteAllProducts}

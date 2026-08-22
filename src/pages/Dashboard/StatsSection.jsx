@@ -23,6 +23,7 @@ const StatsSection = () => {
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [profit, setProfit] = useState(0);
   const [totalProductsCost, setTotalProductsCost] = useState(0);
   const [StockShortageCount, setStockShortageCount] = useState(0);
@@ -47,6 +48,25 @@ const StatsSection = () => {
       }
     };
     fetchTotalRevenue();
+  }, []);
+
+
+  // Fetch total product
+  useEffect(() => {
+    const fetcthTotalProductCount = async () => {
+      try {
+        const response = await axiosInstance.get(`${API_ENDPOINTS.PRODUCTS_COUNT}`);
+        if (response.data) {
+          setTotalProducts(response?.data?.total_products);
+        } else {
+          setError("Invalid data format received for total products");
+        }
+        setLoading(false);
+      } catch (err) {
+        handleError(err, "Failed to fetch total revenue data");
+      }
+    };
+    fetcthTotalProductCount();
   }, []);
 
   // Fetch products data
@@ -234,7 +254,7 @@ const StatsSection = () => {
               </p>
             </div>
             <h3 className="text-2xl font-bold text-gray-900">
-              {products.length}
+              {totalProducts}
             </h3>
           </div>
         </div>

@@ -228,8 +228,6 @@ const Permissions = () => {
       permissions: selectedPermissions,
     };
 
-    console.log(payload);
-
     try {
       if (selectedGroupId) {
         await axiosInstance.patch(`${API_ENDPOINTS.TENANT_GROUPS}${selectedGroupId}/`, payload);

@@ -25,10 +25,8 @@ async function generateIcons() {
       .flatten({ background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toFile(path.join(outputDir, name));
-    console.log(`Generated ${name}`);
   }
   
-  console.log('All icons generated successfully!');
 }
 
 async function generateAll() {

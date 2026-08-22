@@ -434,8 +434,6 @@ const MyDoc = ({
   const itemsPerFirstPage = hasReceipt ? 15 : 25;
   const itemsPerPage = 30;
 
-  console.log(companyData?.logo)
-
   const itemChunks = [];
   if (order.items.length > 0) {
     itemChunks.push(order.items.slice(0, itemsPerFirstPage));
